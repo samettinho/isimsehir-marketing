@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir Online 2.0 · Sosyal Medya Stüdyosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<!-- Yerel kopya: CDN/SRI bağımlılığı yok, çevrimdışı ve telefonda da çalışır -->
+<script src="html2canvas.min.js"></script>
+<script src="gif.js"></script>
+<style>
+  :root{
+    --bg:#14102D; --bg2:#0d0a20; --cream:#FBF6EA; --ink2:#C8C8DA; --ink3:#9494B3; --ink4:#6B6B8C;
+    --violet:#7C5CFF; --gold:#F5C842;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif;color:var(--cream);background:var(--bg);
+    background-image:
+      radial-gradient(ellipse 90% 50% at 0% 0%, rgba(124,92,255,.20), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 100% 10%, rgba(91,143,255,.16), transparent 65%),
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,107,157,.08), transparent 70%);
+    -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:80px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+  /* ── Page header ── */
+  header.top{padding:54px 0 26px;text-align:center}
+  .brandrow{display:inline-flex;align-items:center;gap:12px;margin-bottom:18px}
+  .brandmark{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;
+    background:linear-gradient(135deg,#9F87FF,#7C5CFF 55%,#5237C0);box-shadow:0 8px 22px -8px rgba(124,92,255,.7);
+    font-family:'Fraunces',serif;font-weight:900;color:#fff;font-size:22px}
+  .brandtxt{text-align:left;line-height:1.05}
+  .brandtxt b{font-family:'Fraunces',serif;font-weight:900;font-size:17px;letter-spacing:-.02em;display:block}
+  .brandtxt span{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3)}
+  header.top h1{font-family:'Fraunces',serif;font-weight:900;letter-spacing:-.02em;
+    font-size:clamp(34px,5vw,56px);line-height:1.02;margin-bottom:14px}
+  header.top h1 em{font-style:normal;background:linear-gradient(135deg,#C5B3FF,#9F87FF 50%,#7C5CFF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  header.top p{color:var(--ink2);font-size:clamp(15px,1.6vw,18px);max-width:640px;margin:0 auto}
+  .hand{font-family:'Caveat',cursive;color:var(--gold);font-size:24px}
+
+  /* ── Info banner ── */
+  .banner{margin:30px auto 8px;max-width:920px;display:flex;gap:16px;align-items:flex-start;
+    border:1px solid rgba(245,200,66,.25);background:rgba(245,200,66,.06);border-radius:18px;padding:18px 20px}
+  .banner .ic{font-size:22px;line-height:1}
+  .banner b{color:var(--cream)}
+  .banner p{color:var(--ink2);font-size:13.5px;line-height:1.6}
+
+  /* ── How-to chips ── */
+  .howto{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:26px 0 40px}
+  .howto span{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.04);border-radius:999px;padding:8px 15px;font-size:12.5px;color:var(--ink2)}
+  .howto span b{color:var(--cream)}
+
+  /* ── Posts ── */
+  .post{display:grid;grid-template-columns:460px 1fr;gap:34px;align-items:start;
+    border:1px solid rgba(255,255,255,.08);background:rgba(31,24,64,.4);backdrop-filter:blur(6px);
+    border-radius:26px;padding:26px;margin-bottom:30px}
+  @media(max-width:880px){.post{grid-template-columns:1fr}}
+
+  .cardWrap{width:100%;max-width:460px;aspect-ratio:1/1;position:relative;overflow:hidden;
+    border-radius:26px;box-shadow:0 24px 60px -24px rgba(0,0,0,.7);justify-self:center}
+  /* The exported 1080 graphic */
+  .card{position:absolute;top:0;left:0;width:1080px;height:1080px;transform-origin:top left;
+    overflow:hidden;font-family:'Inter',sans-serif;color:var(--cream)}
+  .tpl{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column}
+  .tpl-badge{padding:88px}
+  .card .dots{position:absolute;inset:0;opacity:.5;
+    background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.12) 1.4px, transparent 0);background-size:34px 34px}
+  .card .glow{position:absolute;inset:0}
+  .card .frame{position:absolute;inset:26px;border:1.5px solid rgba(255,255,255,.10);border-radius:46px;pointer-events:none}
+  .c-head{position:relative;display:flex;align-items:center;justify-content:space-between;z-index:2}
+  .c-brand{display:flex;align-items:center;gap:18px}
+  .c-mark{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;color:#fff;
+    font-family:'Fraunces',serif;font-weight:900;font-size:34px;box-shadow:0 10px 26px -8px rgba(0,0,0,.5)}
+  .c-brand b{font-family:'Fraunces',serif;font-weight:900;font-size:30px;letter-spacing:-.02em;line-height:1;display:block;color:var(--cream)}
+  .c-brand span{font-size:17px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink3)}
+  .c-badge{font-family:'Fraunces',serif;font-weight:900;font-size:30px;color:#0d0a20;
+    background:linear-gradient(135deg,#FFE286,#F5C842);padding:12px 26px;border-radius:999px;box-shadow:0 8px 20px -6px rgba(245,200,66,.6)}
+
+  .c-body{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;gap:30px;z-index:2}
+  .c-kicker{font-size:26px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+  .c-title{font-family:'Fraunces',serif;font-weight:900;letter-spacing:-.02em;line-height:1.02;font-size:84px;color:var(--cream)}
+  .c-sub{font-size:38px;line-height:1.32;color:var(--ink2);font-weight:500;max-width:780px}
+
+  /* motif badge (emoji) */
+  .c-emoji{width:188px;height:188px;border-radius:46px;display:grid;place-items:center;font-size:104px;
+    box-shadow:0 18px 44px -14px rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.18)}
+  /* motif tiles */
+  .c-tiles{display:flex;gap:20px}
+  .c-tile{width:150px;height:172px;border-radius:26px;display:grid;place-items:center;
+    font-family:'Fraunces',serif;font-weight:900;font-size:96px;color:#fff;
+    box-shadow:0 14px 30px -10px rgba(0,0,0,.5),inset 0 2px 0 rgba(255,255,255,.28)}
+  /* chips */
+  .c-chips{display:flex;flex-wrap:wrap;gap:16px}
+  .c-chip{display:inline-flex;align-items:center;gap:12px;border:1.5px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.07);border-radius:999px;padding:14px 26px;font-size:30px;font-weight:600;color:var(--cream)}
+  .c-chip i{width:14px;height:14px;border-radius:50%;display:inline-block}
+
+  .c-foot{position:relative;display:flex;align-items:center;justify-content:space-between;z-index:2}
+  .c-store{display:inline-flex;align-items:center;gap:14px;background:var(--cream);color:#0d0a20;
+    padding:16px 28px;border-radius:999px;font-weight:800;font-size:30px}
+  .c-store svg{width:34px;height:34px}
+  .c-handle{font-family:'Caveat',cursive;font-weight:700;font-size:40px;color:var(--gold)}
+
+  /* ════════ Shared template bits ════════ */
+  .shimmer{position:absolute;top:0;left:0;width:42%;height:100%;z-index:5;pointer-events:none;opacity:0;
+    background:linear-gradient(100deg,transparent 18%,rgba(255,255,255,.13) 50%,transparent 82%);transform:translateX(-130%)}
+  .mk{display:flex;align-items:center;gap:16px}
+  .mk-i{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;color:#fff;
+    font-family:'Fraunces',serif;font-weight:900;font-size:30px;box-shadow:0 8px 20px -6px rgba(0,0,0,.5)}
+  .mk b{font-family:'Fraunces',serif;font-weight:900;font-size:26px;letter-spacing:-.02em;line-height:1;display:block;color:var(--cream)}
+  .mk span{font-size:14px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink3)}
+  .pill-badge{font-family:'Fraunces',serif;font-weight:900;font-size:26px;color:#0d0a20;
+    background:linear-gradient(135deg,#FFE286,#F5C842);padding:10px 24px;border-radius:999px;box-shadow:0 8px 20px -6px rgba(245,200,66,.55)}
+  .store2{display:inline-flex;align-items:center;gap:12px;background:var(--cream);color:#0d0a20;padding:14px 26px;border-radius:999px;font-weight:800;font-size:27px}
+  .store2 svg{width:30px;height:30px}
+  .handle2{font-family:'Caveat',cursive;font-weight:700;font-size:38px;color:var(--gold)}
+  .chips2{display:flex;flex-wrap:wrap;gap:15px}
+  .chip2{display:inline-flex;align-items:center;gap:11px;border:1.5px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);
+    border-radius:999px;padding:12px 24px;font-size:28px;font-weight:600;color:var(--cream)}
+  .chip2 i{width:13px;height:13px;border-radius:50%;flex:none}
+  .emb{border-radius:42px;display:grid;place-items:center;box-shadow:0 18px 44px -14px rgba(0,0,0,.5);border:1.5px solid rgba(255,255,255,.18)}
+  .tilerow{display:flex;gap:18px}
+  .tilex{border-radius:24px;display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:900;color:#fff;
+    box-shadow:0 14px 30px -10px rgba(0,0,0,.5),inset 0 2px 0 rgba(255,255,255,.28)}
+
+  /* ════ POSTER ════ */
+  .tpl-poster{padding:92px;align-items:center;text-align:center}
+  .tpl-poster .po-top{width:100%;display:flex;align-items:center;justify-content:space-between}
+  .tpl-poster .po-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+  .po-kicker{font-size:28px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+  .po-title{font-family:'Fraunces',serif;font-weight:900;letter-spacing:-.025em;line-height:1;font-size:106px;color:var(--cream)}
+  .po-rule{width:150px;height:8px;border-radius:99px}
+  .po-sub{font-size:38px;line-height:1.3;color:var(--ink2);max-width:840px;font-weight:500}
+  .tpl-poster .po-foot{width:100%;display:flex;align-items:center;justify-content:space-between}
+
+  /* ════ TICKET ════ */
+  .tpl-ticket{padding:70px;justify-content:center}
+  .tk{display:flex;border-radius:40px;overflow:hidden;transform:rotate(-2.2deg);box-shadow:0 44px 90px -34px rgba(0,0,0,.75)}
+  .tk-main{flex:1;padding:62px;display:flex;flex-direction:column;gap:24px;background:linear-gradient(160deg,#241a4d,#150f33)}
+  .tk-top{display:flex;align-items:center;justify-content:space-between}
+  .tk-kicker{font-size:25px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+  .tk-title{font-family:'Fraunces',serif;font-weight:900;line-height:1.02;font-size:76px;color:var(--cream)}
+  .tk-sub{font-size:32px;line-height:1.3;color:var(--ink2);font-weight:500}
+  .tk-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .tk-stub{position:relative;width:286px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:40px 24px;
+    border-left:5px dashed rgba(13,10,32,.45)}
+  .tk-notch{position:absolute;left:-26px;width:52px;height:52px;border-radius:50%;background:#100c28}
+  .tk-notch.t{top:-26px}.tk-notch.b{bottom:-26px}
+  .tk-emoji{font-size:124px;line-height:1}
+  .tk-letters{font-family:'Fraunces',serif;font-weight:900;font-size:96px;color:#0d0a20;letter-spacing:2px}
+  .tk-stubtitle{font-family:'Fraunces',serif;font-weight:900;font-size:27px;color:#0d0a20;text-align:center;line-height:1.25;letter-spacing:.06em}
+  .tk-barcode{display:flex;gap:5px;height:64px;align-items:stretch}
+  .tk-barcode i{width:6px;background:#0d0a20;border-radius:2px}
+  .tk-barcode i:nth-child(3n){width:11px}.tk-barcode i:nth-child(4n){width:4px}
+
+  /* ════ BAND ════ */
+  .tpl-band{flex-direction:row}
+  .bd-left{width:42%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:46px;padding:54px}
+  .bd-right{flex:1;display:flex;flex-direction:column;padding:84px 70px;gap:24px;position:relative;background:linear-gradient(160deg,#1b1340,#100c28)}
+  .bd-badge{position:absolute;top:60px;right:64px}
+  .bd-kicker{font-size:26px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;margin-top:36px}
+  .bd-title{font-family:'Fraunces',serif;font-weight:900;line-height:1.02;font-size:80px;color:var(--cream)}
+  .bd-sub{font-size:35px;line-height:1.3;color:var(--ink2);font-weight:500}
+  .bd-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+
+  /* ════ STAT ════ */
+  .tpl-stat{padding:92px}
+  .tpl-stat .st-top{display:flex;align-items:center;justify-content:space-between}
+  .tpl-stat .st-mid{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .st-kicker{font-size:28px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+  .st-big{font-family:'Fraunces',serif;font-weight:900;line-height:.86;letter-spacing:-.03em}
+  .st-title{font-family:'Fraunces',serif;font-weight:900;line-height:1.04;font-size:62px;color:var(--cream);margin-top:10px}
+  .st-sub{font-size:34px;line-height:1.3;color:var(--ink2);font-weight:500;max-width:840px}
+  .tpl-stat .st-foot{display:flex;align-items:center;justify-content:space-between}
+
+  /* ════ NOTEBOOK ════ */
+  .tpl-note{padding:84px;color:#2A2348}
+  .nb-margin{position:absolute;left:128px;top:0;bottom:0;width:3px;background:rgba(224,60,60,.45);z-index:1}
+  .nb-top{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:2}
+  .nb-mk{display:flex;align-items:center;gap:14px}
+  .nb-mk-i{width:60px;height:60px;border-radius:16px;display:grid;place-items:center;color:#fff;font-family:'Fraunces',serif;font-weight:900;font-size:28px;background:linear-gradient(135deg,#9F87FF,#7C5CFF)}
+  .nb-mk b{font-family:'Fraunces',serif;font-weight:900;font-size:26px;color:#2A2348;line-height:1;display:block}
+  .nb-mk span{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#7A6FA0}
+  .nb-badge{font-family:'Caveat',cursive;font-weight:700;font-size:36px;color:#fff;background:#E0567A;padding:4px 24px;border-radius:999px;transform:rotate(3deg)}
+  .nb-mid{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;position:relative;z-index:2}
+  .nb-kicker{font-family:'Caveat',cursive;font-weight:700;font-size:48px;color:#7C5CFF}
+  .nb-title{font-family:'Fraunces',serif;font-weight:900;line-height:1.02;font-size:82px;color:#221A3E}
+  .nb-sub{font-family:'Caveat',cursive;font-size:46px;line-height:1.3;color:#4A4070;font-weight:600;max-width:760px}
+  .nb-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .nb-list li{display:flex;align-items:center;gap:16px;font-family:'Caveat',cursive;font-size:42px;font-weight:600;color:#3A3160}
+  .nb-check{width:42px;height:42px;flex:none}
+  .nb-foot{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+  .nb-handle{font-family:'Caveat',cursive;font-weight:700;font-size:42px;color:#E0A917}
+  .nb-store{display:inline-flex;align-items:center;gap:12px;background:#7C5CFF;color:#fff;padding:14px 26px;border-radius:999px;font-weight:800;font-size:26px}
+  .nb-store svg{width:28px;height:28px}
+  .nb-stickers{position:absolute;right:84px;top:230px;display:flex;gap:14px;z-index:2}
+  .nb-sticker{font-size:120px;line-height:1;transform:rotate(9deg)}
+
+  /* ════ PHONE ════ */
+  .tpl-phone{flex-direction:row;padding:78px 66px;gap:46px;align-items:center}
+  .ph-left{flex:1;display:flex;flex-direction:column;gap:24px}
+  .ph-badge{align-self:flex-start}
+  .ph-kicker{font-size:25px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+  .ph-title{font-family:'Fraunces',serif;font-weight:900;line-height:1.03;font-size:70px;color:var(--cream)}
+  .ph-sub{font-size:32px;line-height:1.32;color:var(--ink2);font-weight:500}
+  .ph-foot{margin-top:12px;display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+  .ph-right{width:372px;display:flex;justify-content:center}
+  .phone{width:360px;height:752px;border-radius:62px;background:#0a0816;border:6px solid #2a2447;padding:15px;box-shadow:0 44px 90px -34px rgba(0,0,0,.8);position:relative}
+  .ph-notch{position:absolute;left:50%;top:21px;transform:translateX(-50%);width:118px;height:30px;border-radius:0 0 22px 22px;background:#0a0816;z-index:3}
+  .ph-screen{width:100%;height:100%;border-radius:48px;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(170deg,#1b1340,#100c28)}
+  .ph-status{padding:38px 28px 0;font-size:21px;font-weight:700;color:var(--ink2);display:flex;justify-content:space-between}
+  .ph-hero{margin:22px 22px 0;border-radius:28px;padding:26px;display:flex;flex-direction:column;gap:14px}
+  .ph-hero .he{width:80px;height:80px;border-radius:20px;display:grid;place-items:center;font-size:44px;background:rgba(255,255,255,.18)}
+  .ph-hero .ht{font-family:'Fraunces',serif;font-weight:900;font-size:32px;color:#fff;line-height:1.06}
+  .ph-rows{padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+  .ph-row{display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:15px 16px;font-size:23px;color:var(--cream);font-weight:600}
+  .ph-row i{width:12px;height:12px;border-radius:50%;flex:none}
+  .ph-cta{margin:auto 22px 28px;text-align:center;background:var(--cream);color:#0d0a20;border-radius:16px;padding:17px;font-weight:800;font-size:25px}
+
+  /* ════ Live preview animations ════ */
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+  @keyframes tiltloop{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+  @keyframes glowpulse{0%,100%{opacity:.5}50%{opacity:.95}}
+  @keyframes sheen{0%{transform:translateX(-130%);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateX(265%);opacity:0}}
+  .cardWrap [data-motif]{animation:floaty 5s ease-in-out infinite}
+  .cardWrap .tilex,.cardWrap .c-tile{animation:tiltloop 4.4s ease-in-out infinite}
+  .cardWrap .glow{animation:glowpulse 6s ease-in-out infinite}
+  .cardWrap:hover .shimmer{animation:sheen 1.5s ease}
+  @media(prefers-reduced-motion:reduce){.cardWrap *{animation:none!important}}
+
+  /* ── Control panel ── */
+  .panel{display:flex;flex-direction:column;gap:14px;padding-top:4px}
+  .panel .ttl{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:900;font-size:20px}
+  .panel .ttl .pill{font-family:'Inter';font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    padding:4px 10px;border-radius:999px;background:rgba(124,92,255,.18);color:#C5B3FF}
+  textarea.cap{width:100%;min-height:172px;resize:vertical;border-radius:16px;padding:15px 16px;
+    border:1px solid rgba(255,255,255,.12);background:rgba(8,8,19,.55);color:var(--cream);
+    font-family:'Inter';font-size:14px;line-height:1.6}
+  textarea.cap:focus{outline:none;border-color:rgba(124,92,255,.6)}
+  .tags{font-size:12.5px;color:#C5B3FF;background:rgba(124,92,255,.10);border:1px solid rgba(124,92,255,.22);
+    border-radius:12px;padding:10px 13px;line-height:1.6;word-break:break-word}
+  .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:2px}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;border-radius:12px;
+    padding:11px 15px;font-family:'Inter';font-weight:700;font-size:13px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+  .btn svg{width:16px;height:16px}
+  .btn-copy{background:rgba(255,255,255,.08);color:var(--cream);border:1px solid rgba(255,255,255,.14)}
+  .btn-x{background:#000;color:#fff;border:1px solid rgba(255,255,255,.18)}
+  .btn-dl{background:linear-gradient(135deg,#9F87FF,#7C5CFF);color:#fff}
+  .btn-gif{background:linear-gradient(135deg,#51CF66,#10B981);color:#fff}
+  .btn-ig{background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF);color:#fff}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:#0d0a20;border:1px solid rgba(124,92,255,.5);color:var(--cream);padding:13px 22px;border-radius:14px;
+    font-size:14px;font-weight:600;box-shadow:0 18px 40px -12px rgba(0,0,0,.7);transition:.25s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  footer.foot{text-align:center;color:var(--ink4);font-size:12.5px;margin-top:40px;line-height:1.7}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brandrow">
+        <div class="brandmark">İŞ</div>
+        <div class="brandtxt"><b>İsim Şehir</b><span>Online</span></div>
+      </div>
+      <div class="hand">— sosyal medya stüdyosu —</div>
+      <h1>İsim Şehir Online <em>2.0</em> kampanyası</h1>
+      <p><b>40 hazır gönderi</b> — 2.0 yenilikleri, oyun kuralları, premium ve topluluk. Beğendiğini
+         <b>kopyala</b>, <b>X'te paylaş</b>, <b>görseli indir</b> (1080×1080) ya da <b>Instagram'da</b> kullan.</p>
+
+      <div class="howto">
+        <span>🎨 <b>7 farklı tasarım kalıbı</b> · poster, bilet, defter, telefon…</span>
+        <span>📋 <b>Kopyala</b> · başlık + hashtag panoya</span>
+        <span>𝕏 <b>X'te Paylaş</b> · metin hazır açılır</span>
+        <span>⬇️ <b>Görseli İndir</b> · 1080×1080 PNG</span>
+        <span>🟢 <b>GIF İndir</b> · animasyonlu (en iyi http link üzerinden)</span>
+        <span>📸 <b>Instagram</b> · görseli yükle, başlığı yapıştır</span>
+      </div>
+    </header>
+
+    <div class="banner">
+      <div class="ic">🔗</div>
+      <div>
+        <p><b>"Tek tıkla otomatik paylaşım" mümkün mü?</b> Kısmen.
+        X'te tek tık paylaşım bu sayfada zaten çalışıyor (metin hazır açılır).
+        Tam otomatik (sen onayla → arka planda hem X'e hem Instagram'a gönderilsin) için
+        ücretli X API'si ve Instagram için bir <b>İşletme/Creator hesabı + Meta uygulama onayı</b> gerekir.
+        Bu küçük bir backend ile yapılabilir — detayları sohbette anlattım.</p>
+      </div>
+    </div>
+
+    <div id="posts"></div>
+
+    <footer class="foot">
+      İsim Şehir Online · @isimsehironline · App Store'da yayında<br/>
+      Görsel indirme için modern bir tarayıcı kullan (Chrome / Safari / Edge).
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Kopyalandı ✓</div>
+
+<script>
+const APP_URL = "https://apps.apple.com/app/isim-sehir-online/id6766661912";
+
+// accent → gradient stops + glow + kicker color
+const ACCENTS = {
+  violet:{grad:"#9F87FF,#7C5CFF,#5237C0",glow:"rgba(124,92,255,.42)",kick:"#C5B3FF"},
+  sky:{grad:"#7BB0FF,#5B8FFF,#4070E0",glow:"rgba(91,143,255,.40)",kick:"#9EC3FF"},
+  gold:{grad:"#FFE286,#F5C842,#B8870D",glow:"rgba(245,200,66,.38)",kick:"#F5D778"},
+  leaf:{grad:"#7BE093,#51CF66,#2EB94F",glow:"rgba(81,207,102,.34)",kick:"#8DE6A2"},
+  coral:{grad:"#FF9CC0,#FF6B9D,#E03B73",glow:"rgba(255,107,157,.36)",kick:"#FFA9C8"},
+  emerald:{grad:"#6EE7B7,#10B981,#047857",glow:"rgba(16,185,129,.34)",kick:"#8FF0CC"},
+  rose:{grad:"#FFB1B1,#FB6F6F,#E03B3B",glow:"rgba(251,111,111,.34)",kick:"#FFB9B9"},
+  tangerine:{grad:"#FFD18A,#FFB84D,#E69416",glow:"rgba(255,184,77,.38)",kick:"#FFD08A"},
+};
+const TILEV = {
+  violet:"#9F87FF,#7C5CFF,#5237C0", sky:"#7BB0FF,#5B8FFF,#4070E0",
+  leaf:"#7BE093,#51CF66,#2EB94F", gold:"#FFE286,#F5C842,#B8870D",
+  coral:"#FF9CC0,#FF6B9D,#E03B73", emerald:"#6EE7B7,#10B981,#047857",
+};
+
+const POSTS = [
+  {
+    accent:"violet", badge:"v2.0", kicker:"BÜYÜK GÜNCELLEME",
+    title:"İsim Şehir\nOnline 2.0", sub:"Daha hızlı. Daha sosyal. Baştan aşağı yenilendi.",
+    motif:{type:"tiles",tiles:[["İ","violet"],["Ş","sky"],["O","gold"]]},
+    caption:"📣 İsim Şehir Online 2.0 burada!\nÇocukluğumuzun kâğıt-kalem efsanesi şimdi çok daha hızlı, çok daha sosyal:\n\n🔐 Apple & Google ile giriş\n🏆 Liderlik tablosu\n🌍 Herkese açık odalar\n💎 Yeni premium planları\n…ve dahası 👇\n\nHemen güncelle, masaya otur! 🎯\n📲 App Store'da İsim Şehir Online",
+    tags:"#İsimŞehir #İsimŞehirOnline #KelimeOyunu #MobilOyun #Güncelleme @isimsehironline",
+  },
+  {
+    accent:"sky", badge:"YENİ", kicker:"🔐 GİRİŞ",
+    title:"Tek dokunuşla\niçeride.", sub:"Apple, Google veya e-posta ile saniyede giriş.",
+    motif:{type:"emoji",emoji:"🔐"},
+    chips:["Apple","Google","E-posta"],
+    caption:"🔐 Tek dokunuşla içerideyiz!\nArtık Apple ya da Google hesabınla saniyede giriş yap. E-posta/şifre sevenler için o da yerinde 😉\n\nŞifre hatırlamak yok, oyun başlasın! ⚡️\n📲 App Store'da İsim Şehir Online",
+    tags:"#İsimŞehir #AppleİleGiriş #GoogleİleGiriş #MobilOyun #KelimeOyunu",
+  },
+  {
+    accent:"gold", badge:"YENİ", kicker:"🏆 LİDERLİK",
+    title:"Adın tabloya\nyazılsın.", sub:"Puan, galibiyet ve maç sayısına göre zirveye oyna.",
+    motif:{type:"emoji",emoji:"🏆"},
+    chips:["🥇 Haftalık","🥈 Aylık","🥉 Tüm zamanlar"],
+    caption:"🏆 Adın tabloya yazılsın!\nYepyeni Liderlik sekmesi geldi. Puan, galibiyet ve maç sayısına göre haftalık, aylık ve tüm zamanların şampiyonu sen ol.\n\nİlk 3'e özel podyum seni bekliyor 🥇🥈🥉\nZirveye oyna! 🔥",
+    tags:"#İsimŞehir #Liderlik #Leaderboard #KelimeOyunu #Rekabet @isimsehironline",
+  },
+  {
+    accent:"emerald", badge:"CANLI", kicker:"🌍 HERKESE AÇIK",
+    title:"Arkadaşın yoksa\nrastgele oyna.", sub:"Açık oda listesinden katıl ya da kendi açık odanı aç.",
+    motif:{type:"emoji",emoji:"🌍"},
+    chips:["Açık odalar","Anında katıl","15 kişiye kadar"],
+    caption:"🌍 Arkadaşın müsait değil mi? Sorun değil!\nHerkese Açık Odalar ile rastgele kişilerle anında oyna. Açık oda listesinden katıl ya da kendi odanı aç, Türkiye'nin her yerinden rakip gelsin 🇹🇷\n\nYeni rakip, yeni arkadaş, eski oyun! 🎯",
+    tags:"#İsimŞehir #OnlineOyun #ÇokOyunculu #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"gold", badge:"YENİ", kicker:"💎 PREMIUM",
+    title:"Sana uyan\nplanı seç.", sub:"Aylık, yıllık ya da ömür boyu — dilersen tamamen reklamsız Pro.",
+    motif:{type:"emoji",emoji:"💎"},
+    chips:["Aylık","Yıllık","Lifetime","Reklamsız Pro"],
+    caption:"💎 Sana uyan planı seç!\nAylık, yıllık ya da ömür boyu (lifetime) — dilersen tamamen reklamsız Pro plan.\n\n✨ Sınırsız özel kategori\n👥 Arkadaş + DM\n💾 Kayıtlı oda şablonları\n📊 Detaylı istatistikler\n\nYeni kayıt olan herkese 2 gün hediye Premium 🎁",
+    tags:"#İsimŞehir #Premium #ReklamsızOyun #MobilOyun #KelimeOyunu",
+  },
+  {
+    accent:"coral", badge:"YENİLENDİ", kicker:"✅ OYLAMA",
+    title:"Herkes kendi\nhızında.", sub:"Otomatik geçiş ve geri sayımla takılmalar tarih oldu.",
+    motif:{type:"emoji",emoji:"✅"},
+    chips:["Kendi hızında","Otomatik geçiş","Geri sayım"],
+    caption:"✅ Oylama yenilendi, takılma bitti!\nArtık herkes kendi hızında oy veriyor. Otomatik geçiş ve geri sayım sayesinde tur akışı tertemiz ⏱️\n\n\"Bu kelime sayılır mı?\" kararı yine masada 😄",
+    tags:"#İsimŞehir #OyunGüncellemesi #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"violet", badge:"PREMIUM", kicker:"📌 ŞABLONLAR",
+    title:"Odanı bir kez\nkur, hep hazır.", sub:"Ayarlarını ve davet listeni şablon yap, tek dokunuşla kur.",
+    motif:{type:"emoji",emoji:"📌"},
+    chips:["Aile gecesi","Hızlı tur","Zorlu mod"],
+    caption:"📌 Odanı bir kez kur, hep hazır olsun!\nPremium ile sık kullandığın oda ayarlarını ve davet listeni şablon olarak kaydet. Tek dokunuşla yeni oda, sıfır uğraş 💾\n\nAile gecesi mi, hızlı tur mu? Şablon seç, başla! ⚡️",
+    tags:"#İsimŞehir #Premium #MobilOyun #KelimeOyunu",
+  },
+  {
+    accent:"sky", badge:"YENİ", kicker:"🎯 SON OYUNLARIM",
+    title:"Her maçın\nhikâyesi sende.", sub:"Geçmiş oyunlarına ve tur tur detaylara profilinden ulaş.",
+    motif:{type:"emoji",emoji:"🎯"},
+    chips:["Son oyunlar","Tur tur detay","İstatistik"],
+    caption:"🎯 Her maçın hikâyesi profilinde!\nYeni \"Son Oyunlarım\" ile geçmiş oyunlarına ve tur tur detaylarına ulaş. Hangi kategoride güçlüsün, kaç tur kazandın — hepsi kayıtlı 📊\n\nGelişimini izle, daha iyi oyna! 📈",
+    tags:"#İsimŞehir #İstatistik #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"leaf", badge:"YENİ", kicker:"🛡️ GÜVENLİK",
+    title:"Birlikte daha\ngüvenli.", sub:"Uygunsuz mesajları tek dokunuşla bildir.",
+    motif:{type:"emoji",emoji:"🛡️"},
+    chips:["Mesaj bildir","Topluluk kuralları","Temiz ortam"],
+    caption:"🛡️ Birlikte daha güvenli!\nUygunsuz mesajları artık tek dokunuşla bildirebilirsin. Topluluk kurallarımızla herkes için daha temiz, daha keyifli bir oyun ortamı 💜\n\nSaygı masada da geçerli 🤝",
+    tags:"#İsimŞehir #GüvenliTopluluk #MobilOyun #KelimeOyunu",
+  },
+  {
+    accent:"rose", badge:"YAKINDA", kicker:"🔜 YENİ MODLAR",
+    title:"Wordle &\nPopüler Cevap.", sub:"Ana ekranda yeni oyun modlarının ilk işaretleri.",
+    motif:{type:"tiles",tiles:[["W","leaf"],["O","gold"],["R","leaf"],["D","gold"]]},
+    chips:["Wordle","Popüler Cevap","Çok yakında"],
+    caption:"🔜 Yeni modlar kapıda!\nAna ekranda Wordle ve Popüler Cevap'ın ilk işaretleri belirdi 👀\nAynı dünya, yepyeni kelime savaşları çok yakında 🎲\n\nTakipte kal, kaçırma! 🔔",
+    tags:"#İsimŞehir #Wordle #PopülerCevap #Yakında #MobilOyun @isimsehironline",
+  },
+
+  /* ───────── 11–40: oyun, kurallar, topluluk, premium, güven ───────── */
+  {
+    accent:"violet", badge:"NASIL", kicker:"🎮 NASIL OYNANIR",
+    title:"Üç adım,\nbildiğin oyun.", sub:"Harf düşer, kelimeyi yaz, masadakiler onaylar.",
+    motif:{type:"emoji",emoji:"🎮"}, chips:["Harf düşer","Kelimeyi yaz","Oylama"],
+    caption:"🎮 İsim Şehir 3 adımda:\n1️⃣ Rastgele bir harf düşer ⏱️\n2️⃣ Her kategoriyi o harfle başlayan kelimeyle doldur\n3️⃣ Cevaplar açılır, masadakiler oylar ✅\n\nEn çok puanı toplayan kürsüye çıkar! 🏆\n📲 App Store'da İsim Şehir Online",
+    tags:"#İsimŞehir #NasılOynanır #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"gold", badge:"PUAN", kicker:"💯 PUANLAMA",
+    title:"Yaratıcı ol,\nfarkı kap.", sub:"Solo cevap +20, geçerli +10, aynı kelime +5.",
+    motif:{type:"emoji",emoji:"💯"}, chips:["Solo +20","Geçerli +10","Aynı +5"],
+    caption:"💯 Puan nasıl gelir?\n🥇 Solo cevap (o kategoride geçerli yazan tek kişi sensen) = +20\n✅ Geçerli cevap = +10\n👯 Başkasıyla aynı kelime = +5\n❌ Boş / hatalı = 0\n\nSıradan değil, sıra dışı kelimeler kazandırır! 🧠",
+    tags:"#İsimŞehir #KelimeOyunu #Strateji #MobilOyun",
+  },
+  {
+    accent:"sky", badge:"OYNA", kicker:"🎲 HARF ÇEKİMİ",
+    title:"Her tur\nyeni bir harf.", sub:"Slot makinesi döner, kullanılan harf bir daha gelmez.",
+    motif:{type:"tiles",tiles:[["?","sky"],["A","violet"],["?","gold"]]},
+    chips:["Her tur yeni harf","Kullanılan harf gelmez"],
+    caption:"🎲 Harf çekimi heyecanı!\nSlot makinesi döner, dönerrr… ve harfin düşer 🎰\nHer tur farklı bir harf, kullanılan harfler bir daha gelmez.\n\nB ile şehir? Ç ile ünlü? Beyin jimnastiği başlasın! 🧠",
+    tags:"#İsimŞehir #KelimeOyunu #MobilOyun #Eğlence",
+  },
+  {
+    accent:"coral", badge:"MOD", kicker:"⏱️ OYUN MODLARI",
+    title:"Süreli mi,\nilk bitiren mi?", sub:"15–300 sn süreli tur ya da ilk bitirenler turu kapatır.",
+    motif:{type:"emoji",emoji:"⏱️"}, chips:["Süreli 15–300 sn","İlk bitiren"],
+    caption:"⏱️ Tempoyu sen seç!\n⌛ Süreli mod: 15 sn'lik nefes nefese turlardan 5 dakikalık maraton turlara\n🏁 İlk bitiren mod: belirlediğin kişi sayısı bitince tur kapanır\n\nRahat mı oynarsın, kıyasıya mı? Karar senin! 🎯",
+    tags:"#İsimŞehir #OyunModu #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"leaf", badge:"OYNA", kicker:"👥 MASA KURULDU",
+    title:"2 kişiden\n15 kişiye.", sub:"Tüm arkadaş grubu aynı masada, aynı anda.",
+    motif:{type:"emoji",emoji:"👥"}, chips:["2–15 oyuncu","Tüm grup masada","Anında katılım"],
+    caption:"👥 İkili düello mu, 15 kişilik curcuna mı?\nOda sahibi kategori, süre ve oyuncu sayısını ayarlar; davet kodunu paylaşır, herkes anında girer.\n\nNe kadar kalabalık, o kadar keyifli! 🎉\n📲 App Store'da İsim Şehir Online",
+    tags:"#İsimŞehir #ÇokOyunculu #ArkadaşlarlaOyun #MobilOyun",
+  },
+  {
+    accent:"violet", badge:"OYNA", kicker:"🏁 BİTİŞ KOŞULU",
+    title:"Maçı sen\nşekillendir.", sub:"Tur sayısı, puan limiti ya da ikisinden biri (hibrit).",
+    motif:{type:"emoji",emoji:"🏁"}, chips:["1–25 tur","20–500 puan","Hibrit"],
+    caption:"🏁 Maç ne zaman biter? Sen karar ver:\n🔁 Belirli tur sayısı (1–25)\n🎯 Hedef puana ilk ulaşan (20–500)\n⚡ Hibrit: hangisi önce gelirse\n\nKısa parti de var, maraton da. Tam sana göre! 🏆",
+    tags:"#İsimŞehir #OyunAyarları #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"gold", badge:"FİNAL", kicker:"🏆 MAÇ SONU",
+    title:"Şampiyon belli,\nkonfeti hazır.", sub:"Holografik şampiyon kartı ve kürsü seni bekliyor.",
+    motif:{type:"emoji",emoji:"👑"}, chips:["Holografik kart","Konfeti","Şampiyon"],
+    caption:"🏆 ŞAMPİYON!\nMaç biter, konfetiler patlar, holografik şampiyon kartın açılır ✨\nLEGENDARY mi yakalarsın, EPIC mi? 🎴\n\nKazanmak gurur, kaybedince rövanş — aynı oda, yeni harf! 🔥",
+    tags:"#İsimŞehir #Şampiyon #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"sky", badge:"FİNAL", kicker:"⭐ TURUN YILDIZI",
+    title:"Bu turun\nyıldızı sensin.", sub:"En iyi tur skorunu yapan oyuncu özel bonusla parlar.",
+    motif:{type:"emoji",emoji:"⭐"}, chips:["Turun yıldızı","Tur tur sonuç"],
+    caption:"⭐ \"Bu turun yıldızı · +N puan\"\nHer turun sonunda en parlak hamleyi yapan belli olur. Tek bir yaratıcı kelime, seni turun yıldızı yapabilir! 🌟\n\nSen hangi turun yıldızı olacaksın? 😎",
+    tags:"#İsimŞehir #KelimeOyunu #MobilOyun #Eğlence",
+  },
+  {
+    accent:"emerald", badge:"AYAR", kicker:"📖 SÖZLÜK MODU",
+    title:"Sözlük açık mı,\nkapalı mı?", sub:"Bilinen kelimeler otomatik geçsin ya da her kelime oylansın.",
+    motif:{type:"emoji",emoji:"📖"}, chips:["Sözlük açık","Sözlük kapalı","Eski mod"],
+    caption:"📖 Nasıl oynamak istersin?\n✅ Sözlük AÇIK: bilinen kelimeler otomatik geçer, sadece yeni/şüpheli kelimeler oylanır — hızlı akış.\n🗳️ Sözlük KAPALI: her kelime masada oylanır — nostaljik \"eski mod\".\n\nSeçim senin! 🎯",
+    tags:"#İsimŞehir #KelimeOyunu #OyunAyarları #MobilOyun",
+  },
+  {
+    accent:"gold", badge:"İPUCU", kicker:"💡 KATEGORİ ÖNERİLERİ",
+    title:"Fikir mi lazım?\nBiz hallederiz.", sub:"Hazır öneri havuzundan seç, topluluk sözlüğüne katkıda bulun.",
+    motif:{type:"emoji",emoji:"💡"}, chips:["Hazır öneriler","🔄 Yenile","Topluluk sözlüğü"],
+    caption:"💡 Kategori bulmakta zorlanma!\nYemek, Film, Ülke, Nehir, Futbolcu, Padişah, Gezegen… Hazır öneri havuzundan seç, \"Yenile\" ile yenilerini gör 🔄\n\nYeni kelime önererek topluluk sözlüğünü de büyütürsün 📚",
+    tags:"#İsimŞehir #KelimeOyunu #MobilOyun #Topluluk",
+  },
+  {
+    accent:"violet", badge:"PREMIUM", kicker:"🎨 ÖZEL KATEGORİ",
+    title:"25 kategoriye\nkadar senin.", sub:"Premium ile kategori ekle, sil, sürükle-bırak sırala.",
+    motif:{type:"emoji",emoji:"🎨"}, chips:["25 kategoriye kadar","Sürükle-bırak","✦ Premium"],
+    caption:"🎨 Klasik 6 kategoriyle yetinme!\nPremium ile 25 kategoriye kadar kendi listeni kur, sürükle-bırak sırala, istediğini sil ☰\n\nHer grubun kendi oyunu olsun — kurallar senin! ✦",
+    tags:"#İsimŞehir #Premium #ÖzelKategori #MobilOyun",
+  },
+  {
+    accent:"coral", badge:"İPUCU", kicker:"✍️ YARATICI KATEGORİ",
+    title:"\"Annenin huyu\"\nkategorisi?", sub:"En çılgın kategorilerle masayı kahkahaya boğ.",
+    motif:{type:"emoji",emoji:"✍️"}, chips:["Annenin huyu","90'lar dizisi","Mahalle takma adı"],
+    caption:"✍️ Kategorileri sen yaz, masa gülsün!\n😂 \"Annenin huyu\"\n📺 \"90'lar dizisi\"\n🏘️ \"Mahalle takma adı\"\n🍕 \"Pizza çeşidi\"\n\nEn yaratıcı kategori en çok kahkahayı getirir. Sıra sende! (✦ Premium)",
+    tags:"#İsimŞehir #Premium #Eğlence #KelimeOyunu",
+  },
+  {
+    accent:"sky", badge:"PREMIUM", kicker:"🫂 ARKADAŞLAR",
+    title:"Tanıdıkların\nhep listede.", sub:"Kullanıcı adıyla arkadaş ekle, çevrimiçi olanları gör.",
+    motif:{type:"emoji",emoji:"🫂"}, chips:["kullanıcı#1234","Çevrimiçi gör","✦ Premium"],
+    caption:"🫂 Arkadaşların hep yanında!\nPremium ile kullanıcı adı#1234 ile arkadaş ekle, kimin çevrimiçi olduğunu gör, ayrı oda kurmadan birlikte oyna 🟢\n\nTanıdık yüzlerle oyun bambaşka! ✦",
+    tags:"#İsimŞehir #Premium #Arkadaşlar #MobilOyun",
+  },
+  {
+    accent:"violet", badge:"PREMIUM", kicker:"💬 ÖZEL MESAJ",
+    title:"Sohbet et,\nodaya çağır.", sub:"Arkadaşlarınla birebir DM, tek mesajla davet.",
+    motif:{type:"emoji",emoji:"💬"}, chips:["Birebir DM","Odaya davet","✦ Premium"],
+    caption:"💬 \"Naber, oda kurdum gel!\"\nPremium ile arkadaşlarınla birebir mesajlaş, plan yap, tek dokunuşla odana davet et 📩\n\nUygunsuz mesaj mı? Uzun bas, bildir — topluluk güvende 🛡️",
+    tags:"#İsimŞehir #Premium #Sohbet #MobilOyun",
+  },
+  {
+    accent:"leaf", badge:"YENİLENDİ", kicker:"📨 DAVET SİSTEMİ",
+    title:"Davet etmek\nbir dokunuş.", sub:"Çevrimiçi arkadaşlar en üstte, bildirimle anında çağır.",
+    motif:{type:"emoji",emoji:"📨"}, chips:["Çevrimiçi üstte","Bildirimle çağır","6 haneli kod"],
+    caption:"📨 Davet sistemi yenilendi!\nÇevrimiçi arkadaşların artık en üstte — bildirimle saniyede odaya çağır 🔔\nKlasik 6 haneli davet kodu da yerinde, paylaş ve oyna.\n\nDaha hızlı, daha düzenli! ⚡️",
+    tags:"#İsimŞehir #Güncelleme #Arkadaşlar #MobilOyun",
+  },
+  {
+    accent:"tangerine", badge:"YENİ", kicker:"👀 İZLEYİCİ MODU",
+    title:"Geç gelene\nde yer var.", sub:"Maç başlasa bile 5 kişiye kadar izleyici olarak gir.",
+    motif:{type:"emoji",emoji:"👀"}, chips:["5 izleyici","Sohbete dahil","Sonraki turda oyna"],
+    caption:"👀 Maç başladı diye üzülme!\n5 kişiye kadar izleyici olarak gir, akışı izle, bir sonraki tura oyuncu olarak katıl 🎮\n\nHiç kimse kapıda kalmaz! 🚪✨",
+    tags:"#İsimŞehir #İzleyici #ÇokOyunculu #MobilOyun",
+  },
+  {
+    accent:"emerald", badge:"YENİ", kicker:"🔒 GİZLİLİK",
+    title:"İstatistiğin,\nsenin kuralın.", sub:"Hangi grubu kim görsün — grup grup sen seçersin.",
+    motif:{type:"emoji",emoji:"🔒"}, chips:["Herkes / sadece sen","Grup grup kontrol"],
+    caption:"🔒 Verilerin kontrolü sende!\nİstatistiklerini herkese açabilir ya da tamamen gizleyebilirsin — hem de grup grup. Kapattığın alanları kimse göremez.\n\nSen her zaman kendininkini görürsün 👀",
+    tags:"#İsimŞehir #Gizlilik #İstatistik #MobilOyun",
+  },
+  {
+    accent:"rose", badge:"İSTATİSTİK", kicker:"🔥 SERİ & TARZ",
+    title:"Serini koru,\ntarzını gör.", sub:"Streak, favori harfin ve favori kategorin profilinde.",
+    motif:{type:"emoji",emoji:"🔥"}, chips:["🔥 Streak","Favori harf","Favori kategori"],
+    caption:"🔥 Kaç gündür seri yapıyorsun?\nProfilinde streak'in (peş peşe oynanan günler), en uzun serin, favori harfin ve favori kategorin seni bekliyor ⭐\n\nKendini tanı, daha iyi oyna! 📈",
+    tags:"#İsimŞehir #İstatistik #Streak #MobilOyun",
+  },
+  {
+    accent:"sky", badge:"İSTATİSTİK", kicker:"📈 KELİME KARNESİ",
+    title:"Kaç kelime\nyazdın?", sub:"Toplam ve onaylanan kelimelerin tek tek kayıtlı.",
+    motif:{type:"emoji",emoji:"📈"}, chips:["Toplam kelime","Onaylı kelime","En iyi tur skoru"],
+    caption:"📈 Kelime karnen hazır!\nToplam kaç kelime yazdın, kaçı onaylandı, en iyi tur ve maç skorun ne — hepsi profilinde 📊\n\nRakamlar yalan söylemez, gelişimini izle! 🚀",
+    tags:"#İsimŞehir #İstatistik #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"gold", badge:"PREMIUM", kicker:"⚔️ KIYASLA",
+    title:"Arkadaşınla\nkozları paylaş.", sub:"Premium ile istatistikleri yan yana karşılaştır.",
+    motif:{type:"emoji",emoji:"⚔️"}, chips:["Arkadaşla kıyasla","Kim daha iyi?","✦ Premium"],
+    caption:"⚔️ \"Ben senden iyiyim!\" — kanıtla.\nPremium ile arkadaşlarının istatistiklerini gör, kendinkiyle yan yana koy, kim gerçekten kral belli olsun 👑\n\nLaf değil, rakam konuşsun! 📊",
+    tags:"#İsimŞehir #Premium #İstatistik #Rekabet",
+  },
+  {
+    accent:"violet", badge:"PLAN", kicker:"💜 STANDARD",
+    title:"Tüm özellikler,\naylık ₺19,90.", sub:"Premium'un her şeyi açık; reklamlar kalır.",
+    motif:{type:"emoji",emoji:"💜"}, chips:["Tüm özellikler","₺19,90/ay","Reklamlı"],
+    caption:"💜 En uygun başlangıç: Standard\nSadece ₺19,90/ay ile özel kategoriler, arkadaşlar, DM, açık odalar, şablonlar — hepsi açık! (Reklamlar görünmeye devam eder.)\n\nReklamsız deneyim istersen Pro planlar hazır 🚀",
+    tags:"#İsimŞehir #Premium #MobilOyun #KelimeOyunu",
+  },
+  {
+    accent:"gold", badge:"EN POPÜLER", kicker:"🏷️ YILLIK PRO",
+    title:"5 ayı bedava\nkap.", sub:"Yıllık Pro ₺249,90 — reklamsız, ~%40 indirim.",
+    motif:{type:"emoji",emoji:"🏷️"}, chips:["₺249,90/yıl","~%40 indirim","5 ay bedava"],
+    caption:"🏷️ En çok seçilen plan: Yıllık Pro\n₺249,90/yıl ile tamamen reklamsız + tüm premium özellikler. Aylık almaya kıyasla yaklaşık 5 ay bedavaya geliyor! 🤑\n\nBir kere al, yıl boyu kafan rahat 😎",
+    tags:"#İsimŞehir #Premium #ReklamsızOyun #MobilOyun",
+  },
+  {
+    accent:"gold", badge:"PLAN", kicker:"♾️ LIFETIME",
+    title:"Bir kere al,\nömür boyu oyna.", sub:"Lifetime ₺499,90 — tek seferlik, ömür boyu reklamsız.",
+    motif:{type:"emoji",emoji:"♾️"}, chips:["₺499,90","Tek seferlik","Ömür boyu"],
+    caption:"♾️ Aboneliklerden sıkıldın mı? Lifetime tam sana göre.\nTek seferlik ₺499,90 — ömür boyu reklamsız + bütün premium özellikler. Yıllık yenileme yok, sürpriz yok 💎\n\nBir ödeme, sonsuz oyun! 🎯",
+    tags:"#İsimŞehir #Premium #Lifetime #MobilOyun",
+  },
+  {
+    accent:"emerald", badge:"PRO", kicker:"✨ REKLAMSIZ",
+    title:"Akışın hiç\nkesilmesin.", sub:"Pro planlarda banner ve oyun-sonu reklamı tamamen kapanır.",
+    motif:{type:"emoji",emoji:"✨"}, chips:["Banner yok","Interstitial yok","Pro"],
+    caption:"✨ Reklamsız oynamanın keyfi başka!\nPro planlarda banner yok, oyun sonu reklamı yok — tur biter bitmez yeni tura 🚀\n\nKesintisiz, akıcı, tertemiz bir oyun deneyimi seni bekliyor 💫",
+    tags:"#İsimŞehir #Premium #ReklamsızOyun #MobilOyun",
+  },
+  {
+    accent:"violet", badge:"PREMIUM", kicker:"🎁 PREMIUM",
+    title:"Premium ile\nneler açılır?", sub:"Tek üyelikte açık odalar, kategoriler, arkadaşlar ve dahası.",
+    motif:{type:"emoji",emoji:"🎁"}, chips:["Açık odalar","Özel kategori","Arkadaş + DM","Şablonlar"],
+    caption:"🎁 Premium = tüm masa senin tarafında:\n🌍 Herkese açık odalar\n🎨 25 kategoriye kadar özel liste\n👥 Arkadaş ekleme + DM\n📊 Detaylı istatistik + arkadaş kıyası\n💾 5 kayıtlı oda şablonu + otomatik davet\n🚀 Yeni özelliklere ilk erişim\n\nHangi plan? Sana kalmış 😉",
+    tags:"#İsimŞehir #Premium #MobilOyun #KelimeOyunu",
+  },
+  {
+    accent:"sky", badge:"GÜVEN", kicker:"🔏 GÜVENLİK",
+    title:"Verin güvende,\nrahat oyna.", sub:"Şifreler bcrypt ile hash'li, trafik TLS ile şifreli, sunucu AB'de.",
+    motif:{type:"emoji",emoji:"🔏"}, chips:["bcrypt şifre","TLS şifreleme","AB sunucu"],
+    caption:"🔏 Güvenliğin bizim işimiz.\nParolaların asla düz metin tutulmaz (bcrypt ile hash'lenir), tüm veri TLS ile şifreli iletilir, sunucularımız AB içinde 🇪🇺\n\nSen oyununa odaklan, gerisini bize bırak 🛡️",
+    tags:"#İsimŞehir #Güvenlik #Gizlilik #MobilOyun",
+  },
+  {
+    accent:"rose", badge:"GÜVEN", kicker:"🗝️ HESABIN SENİN",
+    title:"Hesabın,\nsenin kontrolünde.", sub:"İstediğin an tek dokunuşla hesabını ve tüm verini sil.",
+    motif:{type:"emoji",emoji:"🗝️"}, chips:["Tek dokunuşla sil","Tüm veri gider","Şeffaf"],
+    caption:"🗝️ Verin senin, kararın senin.\nDilediğin an uygulama içinden hesabını tek dokunuşla silebilirsin — mesajların, oyun verin, arkadaş listen otomatik silinir 🧹\n\nGizli madde yok, şeffaflık esas 💜",
+    tags:"#İsimŞehir #Gizlilik #Güven #MobilOyun",
+  },
+  {
+    accent:"leaf", badge:"DESTEK", kicker:"🎧 HER ZAMAN BURADAYIZ",
+    title:"Takıldın mı?\nBiz buradayız.", sub:"Uygulama içinden destek talebi aç, takip numaranı al.",
+    motif:{type:"emoji",emoji:"🎧"}, chips:["Ticket #numara","E-posta + uygulama","Hızlı dönüş"],
+    caption:"🎧 Bir sorun mu var? Yalnız değilsin!\nUygulama içinden destek talebi oluştur, anında bir takip numarası al (#1234). Cevabımız hem e-postana hem uygulamana düşer 📩\n\nSesini duyuyoruz! 💬",
+    tags:"#İsimŞehir #Destek #MobilOyun #KelimeOyunu",
+  },
+  {
+    accent:"gold", badge:"NOSTALJİ", kicker:"📝 KÂĞIT-KALEMDEN",
+    title:"Çocukluğun,\nşimdi cebinde.", sub:"Kâğıt-kalem efsanesi gerçek zamanlı, çok oyunculu olarak geri döndü.",
+    motif:{type:"tiles",tiles:[["İ","violet"],["Ş","sky"],["O","gold"]]},
+    chips:["Kâğıt-kalem","Gerçek zamanlı","Şimdi cepte"],
+    caption:"📝 Hani sıralarda gizli gizli oynardık ya?\nO İsim Şehir şimdi cebinde — gerçek zamanlı, çok oyunculu, sohbetli 💜\nAynı kurallar, aynı heyecan… ama çok daha hızlı.\n\nNostaljiyi yeniden yaşa! 🎯",
+    tags:"#İsimŞehir #Nostalji #KelimeOyunu #MobilOyun",
+  },
+  {
+    accent:"coral", badge:"TAKİP", kicker:"📲 BİZİ TAKİP ET",
+    title:"Haberin olsun,\nkaçırma.", sub:"Yeni özellikler, çekilişler ve sürprizler için takipte kal.",
+    motif:{type:"emoji",emoji:"🔔"}, chips:["Instagram","X","@isimsehironline"],
+    caption:"📲 Bizi takip et, hiçbir yeniliği kaçırma!\nInstagram ve X'te @isimsehironline 💜\nYeni oyun modları, güncellemeler ve sürprizler önce orada 🔔\n\nSen de masaya otur: App Store'da İsim Şehir Online 🎯",
+    tags:"#İsimŞehir #İsimŞehirOnline #KelimeOyunu #MobilOyun @isimsehironline",
+  },
+];
+
+const APPLE_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>';
+const X_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
+const DL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>';
+const COPY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8a2 2 0 012 2v10M16 8H8a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-8a2 2 0 00-2-2z"/></svg>';
+const GIF_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path stroke-linecap="round" d="M8 9.5a2.5 2.5 0 100 5 2.5 2.5 0 001.8-.8V12H9M13 9v6M16.5 9H19m-2.5 3h2"/></svg>';
+const IG_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.17.05 1.97.25 2.43.41.61.24 1.05.52 1.5.98.46.45.74.89.98 1.5.16.46.36 1.26.41 2.43.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.17-.25 1.97-.41 2.43-.24.61-.52 1.05-.98 1.5-.45.46-.89.74-1.5.98-.46.16-1.26.36-2.43.41-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.17-.05-1.97-.25-2.43-.41a4 4 0 01-1.5-.98 4 4 0 01-.98-1.5c-.16-.46-.36-1.26-.41-2.43C2.21 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.17.25-1.97.41-2.43.24-.61.52-1.05.98-1.5.45-.46.89-.74 1.5-.98.46-.16 1.26-.36 2.43-.41C8.4 2.21 8.8 2.2 12 2.2zm0 4.86A4.94 4.94 0 1012 17a4.94 4.94 0 000-9.88zm0 8.14A3.2 3.2 0 1112 8.8a3.2 3.2 0 010 6.4zm6.3-8.34a1.15 1.15 0 11-2.3 0 1.15 1.15 0 012.3 0z"/></svg>';
+
+function grad(stops){return `linear-gradient(135deg, ${stops.split(",").map((c,i)=>`${c} ${i*50}%`).join(",")})`;}
+function nl(s){return s.replace(/\n/g,"<br/>");}
+function dim(glow){return glow.replace(/\.\d+\)/,'.16)');}
+function isEmoji(s){return /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}]/u.test(s);}
+
+/* ── shared snippets ── */
+function decoDark(A){return `
+  <div class="glow" style="background:radial-gradient(ellipse 70% 55% at 85% -5%, ${A.glow}, transparent 60%),radial-gradient(ellipse 60% 50% at 0% 105%, ${dim(A.glow)}, transparent 70%)"></div>
+  <div class="dots"></div><div class="frame"></div>`;}
+function markD(){return `<div class="mk"><div class="mk-i" style="background:${grad('#9F87FF,#7C5CFF,#5237C0')}">İŞ</div><div><b>İsim Şehir</b><span>Online</span></div></div>`;}
+function store2(){return `<div class="store2">${APPLE_SVG}<span>App Store'da</span></div>`;}
+function handle2(){return `<div class="handle2">@isimsehironline</div>`;}
+function badgeP(p){return `<div class="pill-badge">${p.badge}</div>`;}
+function chips2(A,chips){return chips?`<div class="chips2">${chips.map(c=>`<span class="chip2"><i style="background:${grad(A.grad)}"></i>${c}</span>`).join("")}</div>`:"";}
+function emojiBadge(A,emoji,size){return `<div class="emb" data-motif style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.55)}px;background:${grad(A.grad)}">${emoji}</div>`;}
+function glassBadge(emoji,size){return `<div class="emb" data-motif style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.58)}px;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)">${emoji}</div>`;}
+function tilesRow(tiles,ts){return `<div class="tilerow" data-motif>${tiles.map(([l,v])=>`<div class="tilex" style="width:${ts}px;height:${Math.round(ts*1.14)}px;font-size:${Math.round(ts*0.62)}px;background:${grad(TILEV[v])}">${l}</div>`).join("")}</div>`;}
+function motifCenter(A,p,size){return p.motif.type==="emoji"?emojiBadge(A,p.motif.emoji,size):tilesRow(p.motif.tiles,Math.round(size*0.78));}
+function motifBand(p,size){return p.motif.type==="emoji"?glassBadge(p.motif.emoji,size):tilesRow(p.motif.tiles,Math.round(size*0.74));}
+function checkSVG(){return '<svg class="nb-check" viewBox="0 0 24 24" fill="none" stroke="#51A35F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 5"/></svg>';}
+
+/* ── templates ── each returns inner HTML of .card ── */
+function tplBadge(p,A){return decoDark(A)+`
+  <div class="tpl tpl-badge">
+    <div class="c-head"><div class="c-brand"><div class="c-mark" style="background:${grad('#9F87FF,#7C5CFF,#5237C0')}">İŞ</div><div><b>İsim Şehir</b><span>Online</span></div></div>${badgeP(p)}</div>
+    <div class="c-body">
+      ${p.motif.type==="emoji"?`<div class="c-emoji" data-motif style="background:${grad(A.grad)}">${p.motif.emoji}</div>`:`<div class="c-tiles" data-motif>${p.motif.tiles.map(([l,v])=>`<div class="c-tile" style="background:${grad(TILEV[v])}">${l}</div>`).join("")}</div>`}
+      <div><div class="c-kicker" style="color:${A.kick}">${p.kicker}</div><div class="c-title" style="margin-top:18px">${nl(p.title)}</div></div>
+      <div class="c-sub">${p.sub}</div>
+      ${p.chips?`<div class="c-chips">${p.chips.map(c=>`<span class="c-chip"><i style="background:${grad(A.grad)}"></i>${c}</span>`).join("")}</div>`:""}
+    </div>
+    <div class="c-foot"><div class="c-store">${APPLE_SVG}<span>App Store'da indir</span></div><div class="c-handle">@isimsehironline</div></div>
+  </div>`;}
+
+function tplPoster(p,A){return decoDark(A)+`
+  <div class="tpl tpl-poster">
+    <div class="po-top">${markD()}${badgeP(p)}</div>
+    <div class="po-mid">
+      ${motifCenter(A,p,158)}
+      <div class="po-kicker" style="color:${A.kick}">${p.kicker}</div>
+      <div class="po-title">${nl(p.title)}</div>
+      <div class="po-rule" style="background:${grad(A.grad)}"></div>
+      <div class="po-sub">${p.sub}</div>
+      ${chips2(A,p.chips)}
+    </div>
+    <div class="po-foot">${store2()}${handle2()}</div>
+  </div>`;}
+
+function tplTicket(p,A){
+  const stubArt = p.motif.type==="emoji"
+    ? `<div class="tk-emoji" data-motif>${p.motif.emoji}</div>`
+    : `<div class="tk-letters" data-motif>${p.motif.tiles.map(t=>t[0]).join("")}</div>`;
+  return decoDark(A)+`
+  <div class="tpl tpl-ticket">
+    <div class="tk">
+      <div class="tk-main">
+        <div class="tk-top">${markD()}${badgeP(p)}</div>
+        <div class="tk-kicker" style="color:${A.kick}">${p.kicker}</div>
+        <div class="tk-title">${nl(p.title)}</div>
+        <div class="tk-sub">${p.sub}</div>
+        ${chips2(A,p.chips)}
+        <div class="tk-foot">${store2()}${handle2()}</div>
+      </div>
+      <div class="tk-stub" style="background:${grad(A.grad)}">
+        <div class="tk-notch t"></div><div class="tk-notch b"></div>
+        ${stubArt}
+        <div class="tk-stubtitle">İSİM ŞEHİR<br/>· MASA ·<br/>1 KİŞİLİK</div>
+        <div class="tk-barcode">${"<i></i>".repeat(16)}</div>
+      </div>
+    </div>
+  </div>`;}
+
+function tplBand(p,A){return `
+  <div class="tpl tpl-band">
+    <div class="bd-left" style="background:${grad(A.grad)}">
+      ${markD()}
+      ${motifBand(p,224)}
+    </div>
+    <div class="bd-right">
+      <div class="dots" style="opacity:.4"></div>
+      <div class="bd-badge">${badgeP(p)}</div>
+      <div class="bd-kicker" style="color:${A.kick}">${p.kicker}</div>
+      <div class="bd-title">${nl(p.title)}</div>
+      <div class="bd-sub">${p.sub}</div>
+      ${chips2(A,p.chips)}
+      <div class="bd-foot">${store2()}${handle2()}</div>
+    </div>
+  </div>`;}
+
+function tplStat(p,A,stat){
+  const v = stat || p.badge;
+  const fs = isEmoji(v) ? 320 : (v.length<=2?360 : v.length<=4?300 : v.length<=6?212 : 156);
+  const bigStyle = isEmoji(v)
+    ? `font-size:${fs}px`
+    : `font-size:${fs}px;background:${grad(A.grad)};-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent`;
+  return decoDark(A)+`
+  <div class="tpl tpl-stat">
+    <div class="st-top">${markD()}${badgeP(p)}</div>
+    <div class="st-mid">
+      <div class="st-kicker" style="color:${A.kick}">${p.kicker}</div>
+      <div class="st-big" data-motif style="${bigStyle}">${v}</div>
+      <div class="st-title">${nl(p.title)}</div>
+      <div class="st-sub">${p.sub}</div>
+      ${chips2(A,p.chips)}
+    </div>
+    <div class="st-foot">${store2()}${handle2()}</div>
+  </div>`;}
+
+function tplNotebook(p,A){
+  const sticker = p.motif.type==="emoji"
+    ? `<div class="nb-sticker" data-motif>${p.motif.emoji}</div>`
+    : `<div data-motif>${tilesRow(p.motif.tiles,96)}</div>`;
+  return `
+  <div class="nb-margin"></div>
+  <div class="tpl tpl-note">
+    <div class="nb-top"><div class="nb-mk"><div class="nb-mk-i">İŞ</div><div><b>İsim Şehir</b><span>Online</span></div></div><div class="nb-badge">${p.badge}</div></div>
+    <div class="nb-mid">
+      <div class="nb-kicker">${p.kicker}</div>
+      <div class="nb-title">${nl(p.title)}</div>
+      <div class="nb-sub">${p.sub}</div>
+      ${p.chips?`<ul class="nb-list">${p.chips.map(c=>`<li>${checkSVG()} ${c}</li>`).join("")}</ul>`:""}
+    </div>
+    <div class="nb-stickers">${sticker}</div>
+    <div class="nb-foot"><div class="nb-handle">@isimsehironline</div><div class="nb-store">${APPLE_SVG}<span>App Store'da</span></div></div>
+  </div>`;}
+
+function tplPhone(p,A){
+  const heroIcon = p.motif.type==="emoji"?p.motif.emoji:p.motif.tiles[0][0];
+  const rows = (p.chips||["İsim Şehir","Online","Hemen oyna"]).slice(0,4);
+  return decoDark(A)+`
+  <div class="tpl tpl-phone">
+    <div class="ph-left">
+      <div class="ph-badge">${badgeP(p)}</div>
+      <div class="ph-kicker" style="color:${A.kick}">${p.kicker}</div>
+      <div class="ph-title">${nl(p.title)}</div>
+      <div class="ph-sub">${p.sub}</div>
+      ${chips2(A,p.chips)}
+      <div class="ph-foot">${store2()}${handle2()}</div>
+    </div>
+    <div class="ph-right">
+      <div class="phone">
+        <div class="ph-notch"></div>
+        <div class="ph-screen">
+          <div class="ph-status"><span>9:41</span><span>İsim Şehir</span></div>
+          <div class="ph-hero" data-motif style="background:${grad(A.grad)}">
+            <div class="he">${heroIcon}</div>
+            <div class="ht">${nl(p.title)}</div>
+          </div>
+          <div class="ph-rows">${rows.map(c=>`<div class="ph-row"><i style="background:${grad(A.grad)}"></i>${c}</div>`).join("")}</div>
+          <div class="ph-cta">App Store'da aç</div>
+        </div>
+      </div>
+    </div>
+  </div>`;}
+
+/* per-post template + big-stat assignments */
+const TPL = ["ticket","phone","phone","band","badge","band","phone","phone","poster","poster",
+  "ticket","stat","poster","band","stat","band","poster","poster","notebook","notebook",
+  "stat","notebook","phone","phone","band","stat","poster","stat","phone","band",
+  "stat","stat","stat","poster","badge","band","poster","phone","notebook","ticket"];
+const STAT = {11:"+20",14:"15",20:"25",25:"5",27:"🔥",30:"₺19,90",31:"₺249,90",32:"₺499,90"};
+
+function buildCard(p, idx){
+  const A = ACCENTS[p.accent];
+  const tpl = TPL[idx] || "badge";
+  let bg, html;
+  if(tpl==="notebook"){
+    bg = "repeating-linear-gradient(to bottom, transparent 0, transparent 63px, rgba(124,92,255,.13) 63px, rgba(124,92,255,.13) 65px), linear-gradient(180deg,#FBF6EA,#F4ECD8)";
+    html = tplNotebook(p,A);
+  } else if(tpl==="band"){
+    bg = "linear-gradient(160deg,#15102f,#100c28)";
+    html = tplBand(p,A);
+  } else {
+    bg = "linear-gradient(160deg,#1b1340,#100c28)";
+    const fn = {badge:tplBadge,poster:tplPoster,ticket:tplTicket,phone:tplPhone,
+      stat:(pp,aa)=>tplStat(pp,aa,STAT[idx])}[tpl];
+    html = fn(p,A);
+  }
+  return `<div class="cardWrap" data-tpl="${tpl}">
+    <div class="card" id="card${idx}" style="background:${bg}">
+      ${html}
+      <div class="shimmer" data-sh></div>
+    </div>
+  </div>`;
+}
+
+const TPL_LABEL = {badge:"Rozet",poster:"Poster",ticket:"Bilet",band:"Renk bandı",stat:"Dev istatistik",notebook:"Defter",phone:"Telefon"};
+function buildPanel(p, idx){
+  const tpl = TPL[idx] || "badge";
+  return `
+  <div class="panel">
+    <div class="ttl"><span class="pill">Gönderi ${idx+1}</span> ${p.kicker.replace(/^[^\sA-Za-zÇĞİÖŞÜçğıöşü]+\s*/,"")}
+      <span class="pill" style="background:rgba(245,200,66,.15);color:#F5D778">${TPL_LABEL[tpl]}</span></div>
+    <textarea class="cap" id="cap${idx}">${p.caption}</textarea>
+    <div class="tags" id="tags${idx}">${p.tags}</div>
+    <div class="btns">
+      <button class="btn btn-copy" onclick="copyPost(${idx})">${COPY_SVG} Başlığı Kopyala</button>
+      <button class="btn btn-x" onclick="shareX(${idx})">${X_SVG} X'te Paylaş</button>
+      <button class="btn btn-dl" onclick="downloadCard(${idx})">${DL_SVG} Görseli İndir</button>
+      <button class="btn btn-gif" onclick="downloadGif(${idx})">${GIF_SVG} GIF İndir</button>
+      <button class="btn btn-ig" onclick="openIG(${idx})">${IG_SVG} Instagram'ı Aç</button>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const root = document.getElementById("posts");
+  root.innerHTML = POSTS.map((p,i)=>
+    `<div class="post">${buildCard(p,i)}${buildPanel(p,i)}</div>`).join("");
+  layout();
+}
+
+function layout(){
+  document.querySelectorAll(".cardWrap").forEach(w=>{
+    const card = w.querySelector(".card");
+    const s = w.clientWidth / 1080;
+    card.style.transform = `scale(${s})`;
+  });
+}
+window.addEventListener("resize", layout);
+
+function fullText(idx){
+  const cap = document.getElementById("cap"+idx).value.trim();
+  const tags = document.getElementById("tags"+idx).textContent.trim();
+  return cap + "\n\n" + tags;
+}
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(window._tt); window._tt = setTimeout(()=>t.classList.remove("show"), 1900);
+}
+
+async function copyPost(idx){
+  try{ await navigator.clipboard.writeText(fullText(idx)); toast("Başlık + hashtag kopyalandı ✓"); }
+  catch(e){ toast("Kopyalanamadı — metni elle seç"); }
+}
+function shareX(idx){
+  const url = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(fullText(idx) + "\n" + APP_URL);
+  window.open(url, "_blank", "noopener");
+}
+function openIG(idx){
+  // Instagram'da gönderi API'siyle otomatik atılamaz; görseli indir + başlığı kopyala, sonra IG'de yapıştır.
+  copyPost(idx);
+  toast("Başlık kopyalandı — Instagram açılıyor, görseli yükleyip yapıştır 📸");
+  setTimeout(()=>window.open("https://www.instagram.com/", "_blank", "noopener"), 700);
+}
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+async function downloadCard(idx){
+  if(typeof html2canvas === "undefined"){
+    toast("Görsel motoru yüklenemedi — sayfayı (Cmd/Ctrl+Shift+R) yenile");
+    return;
+  }
+  const card = document.getElementById("card"+idx);
+  toast("Görsel hazırlanıyor… ⏳");
+  try{
+    const canvas = await html2canvas(card, {
+      backgroundColor: null, scale: 2, width: 1080, height: 1080,
+      windowWidth: 1080, windowHeight: 1080, useCORS: true,
+      onclone: (doc)=>{
+        const c = doc.getElementById("card"+idx); if(c) c.style.transform = "none";
+        const st = doc.createElement("style"); st.textContent = "*{animation:none!important}"; doc.head.appendChild(st);
+      }
+    });
+    const fname = `isimsehir-2.0-${String(idx+1).padStart(2,"0")}.png`;
+    const dataUrl = canvas.toDataURL("image/png");
+
+    if(isIOS){
+      // iOS Safari `download`'ı çoğu zaman yok sayar → görseli yeni sekmede aç,
+      // kullanıcı uzun basıp "Fotoğraflara Ekle" desin.
+      const w = window.open();
+      if(w){
+        w.document.write('<title>'+fname+'</title><meta name="viewport" content="width=device-width"><body style="margin:0;background:#100c28"><img src="'+dataUrl+'" style="width:100%;display:block"><p style="color:#fff;font-family:sans-serif;text-align:center;padding:14px">Görsele uzun bas → "Fotoğraflara Ekle"</p></body>');
+        toast("Görsel açıldı — uzun bas, Fotoğraflara Ekle 📸");
+      } else {
+        toast("Açılır pencere engellendi — izin verip tekrar dene");
+      }
+      return;
+    }
+
+    const a = document.createElement("a");
+    a.download = fname;
+    a.href = dataUrl;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast("İndirildi ✓ (1080×1080)");
+  }catch(e){ console.error(e); toast("İndirme başarısız: " + (e && e.message ? e.message : "bilinmeyen hata")); }
+}
+
+async function downloadGif(idx){
+  if(typeof GIF === "undefined"){
+    toast("GIF motoru yüklenemedi — http linkinden aç ya da yenile");
+    return;
+  }
+  if(typeof html2canvas === "undefined"){ toast("Görsel motoru yüklenemedi — yenile"); return; }
+  const card = document.getElementById("card"+idx);
+  const N = 14, sz = 540, scale = sz/1080;
+  toast("GIF hazırlanıyor… birkaç saniye sürer ⏳");
+  try{
+    const gif = new GIF({ workers:2, quality:10, width:sz, height:sz, workerScript:"gif.worker.js", background:"#100c28" });
+    for(let i=0;i<N;i++){
+      const t = i/N;
+      const sx = -130 + t*300;                 // shimmer sweep (%)
+      const by = Math.round(Math.sin(t*Math.PI*2)*11); // motif bob (px)
+      const cv = await html2canvas(card, {
+        backgroundColor:"#100c28", scale, width:1080, height:1080,
+        windowWidth:1080, windowHeight:1080, useCORS:true,
+        onclone:(doc)=>{
+          const c = doc.getElementById("card"+idx); if(c) c.style.transform="none";
+          const st = doc.createElement("style"); st.textContent="*{animation:none!important}"; doc.head.appendChild(st);
+          const m = c && c.querySelector("[data-motif]"); if(m) m.style.transform = "translateY("+by+"px)";
+          const sh = c && c.querySelector("[data-sh]"); if(sh){ sh.style.opacity="1"; sh.style.transform="translateX("+sx+"%)"; }
+        }
+      });
+      gif.addFrame(cv, { delay:90, copy:true });
+    }
+    gif.on("finished", (blob)=>{
+      const url = URL.createObjectURL(blob);
+      const fname = `isimsehir-2.0-${String(idx+1).padStart(2,"0")}.gif`;
+      if(isIOS){
+        const w = window.open(); if(w){ w.location = url; }
+        toast("GIF açıldı — uzun bas, kaydet 📸");
+      } else {
+        const a = document.createElement("a"); a.href=url; a.download=fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        toast("GIF indirildi ✓");
+      }
+      setTimeout(()=>URL.revokeObjectURL(url), 8000);
+    });
+    gif.render();
+  }catch(e){ console.error(e); toast("GIF başarısız: " + (e && e.message ? e.message : "hata") + " (http linki dene)"); }
+}
+
+render();
+</script>
+</body>
+</html>

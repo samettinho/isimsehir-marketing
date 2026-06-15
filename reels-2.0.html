@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir 2.0 · Reels Stüdyosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="gif.js"></script>
+<script src="mp4-muxer.min.js"></script>
+<style>
+  :root{--bg:#14102D;--cream:#FBF6EA;--ink2:#C8C8DA;--ink3:#9494B3;--ink4:#6B6B8C;--violet:#7C5CFF;--gold:#F5C842}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--cream);background:var(--bg);min-height:100vh;padding-bottom:80px;
+    background-image:radial-gradient(ellipse 90% 50% at 0% 0%,rgba(124,92,255,.20),transparent 60%),radial-gradient(ellipse 70% 50% at 100% 10%,rgba(91,143,255,.16),transparent 65%);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+  header.top{padding:50px 0 20px;text-align:center}
+  .brandrow{display:inline-flex;align-items:center;gap:12px;margin-bottom:16px}
+  .brandmark{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#9F87FF,#7C5CFF 55%,#5237C0);box-shadow:0 8px 22px -8px rgba(124,92,255,.7);font-family:'Fraunces',serif;font-weight:900;color:#fff;font-size:22px}
+  .brandtxt{text-align:left;line-height:1.05}
+  .brandtxt b{font-family:'Fraunces',serif;font-weight:900;font-size:17px;display:block}
+  .brandtxt span{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3)}
+  .hand{font-family:'Caveat',cursive;color:var(--gold);font-size:24px}
+  header.top h1{font-family:'Fraunces',serif;font-weight:900;letter-spacing:-.02em;font-size:clamp(32px,5vw,52px);line-height:1.03;margin:8px 0 12px}
+  header.top h1 em{font-style:normal;background:linear-gradient(135deg,#C5B3FF,#9F87FF 50%,#7C5CFF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  header.top p{color:var(--ink2);font-size:16px;max-width:680px;margin:0 auto}
+  .banner{margin:26px auto 6px;max-width:920px;display:flex;gap:14px;align-items:flex-start;border:1px solid rgba(245,200,66,.25);background:rgba(245,200,66,.06);border-radius:18px;padding:16px 20px}
+  .banner .ic{font-size:22px}
+  .banner p{color:var(--ink2);font-size:13.5px;line-height:1.6}
+  .banner b{color:var(--cream)}
+  .links{margin:16px 0 30px;text-align:center;font-size:13.5px;color:var(--ink3)}
+  .links a{color:#C5B3FF;text-decoration:none;border-bottom:1px solid rgba(124,92,255,.4)}
+
+  .reels{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:30px;margin-top:10px}
+  .reel{border:1px solid rgba(255,255,255,.08);background:rgba(31,24,64,.42);border-radius:26px;padding:18px;display:flex;flex-direction:column;gap:13px;align-items:center}
+  .frame{position:relative;width:300px;height:533px;border-radius:40px;background:#0a0816;border:5px solid #2a2447;padding:6px;box-shadow:0 30px 70px -30px rgba(0,0,0,.8)}
+  .frame canvas{width:100%;height:100%;border-radius:34px;display:block;background:#0c0920}
+  .frame .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
+  .frame .play span{width:74px;height:74px;border-radius:50%;background:rgba(10,8,22,.55);backdrop-filter:blur(6px);display:grid;place-items:center;font-size:30px;color:#fff;border:1.5px solid rgba(255,255,255,.3);opacity:0;transition:.2s}
+  .frame:hover .play span{opacity:1}
+  .rtitle{font-family:'Fraunces',serif;font-weight:900;font-size:17px;text-align:center}
+  .rtitle small{display:block;font-family:'Inter';font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px}
+  textarea.cap{width:100%;min-height:96px;resize:vertical;border-radius:14px;padding:12px 13px;border:1px solid rgba(255,255,255,.12);background:rgba(8,8,19,.55);color:var(--cream);font-family:'Inter';font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:rgba(124,92,255,.6)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:11px;padding:10px 13px;font-family:'Inter';font-weight:700;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+  .btn svg{width:15px;height:15px}
+  .btn-vid{background:linear-gradient(135deg,#9F87FF,#7C5CFF);color:#fff}
+  .btn-gif{background:linear-gradient(135deg,#51CF66,#10B981);color:#fff}
+  .btn-copy{background:rgba(255,255,255,.08);color:var(--cream);border:1px solid rgba(255,255,255,.14)}
+  .btn-x{background:#000;color:#fff;border:1px solid rgba(255,255,255,.18)}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);opacity:0;background:#0d0a20;border:1px solid rgba(124,92,255,.5);color:var(--cream);padding:13px 22px;border-radius:14px;font-size:14px;font-weight:600;box-shadow:0 18px 40px -12px rgba(0,0,0,.7);transition:.25s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:var(--ink4);font-size:12.5px;margin-top:44px;line-height:1.7}
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(4,4,11,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:min(420px,94vw);background:#120d2b;border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.8)}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--cream);font-size:16px;cursor:pointer}
+  .mtitle{font-family:'Fraunces',serif;font-weight:900;font-size:20px;text-align:center;margin-bottom:14px}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia video,.mmedia img{width:240px;height:427px;border-radius:22px;background:#0c0920;object-fit:cover;display:none}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--ink3);line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brandrow"><div class="brandmark">İŞ</div><div class="brandtxt"><b>İsim Şehir</b><span>Online</span></div></div>
+      <div class="hand">— reels stüdyosu —</div>
+      <h1>Hareketli <em>Reels</em> &amp; Story</h1>
+      <p>Dikey 9:16, çok sahneli, akan animasyonlar. Üzerine gel → oynar. <b>Video</b> (MP4/WebM) ya da <b>GIF</b> indir, Instagram Reels / X / TikTok'ta paylaş.</p>
+      <div class="banner"><div class="ic">🎬</div><div><p><b>Artık gerçek MP4 üretiyor</b> (WebCodecs ile kare kare encode) — bilgisayarda da iPhone'da da açılır, Instagram Reels'e direkt yüklenir. Buton sonrası bir <b>önizleme</b> açılır: bilgisayarda <b>İndir</b>, iPhone'da <b>Paylaş → Videoyu Kaydet</b>. GIF her yerde açılır (feed için). <b>http link üzerinden aç</b> (bu zaten öyle açıldı).</p></div></div>
+      <div class="links">Statik 40 gönderi mi lazım? → <a href="sosyal-medya-2.0.html">sosyal-medya-2.0.html</a></div>
+    </header>
+
+    <div class="reels" id="reels"></div>
+
+    <footer class="foot">İsim Şehir Online · @isimsehironline · App Store'da yayında<br/>1080×1920 · 30fps · ses yok (Reels'e müziği uygulamada eklersin)</footer>
+  </div>
+  <div class="toast" id="toast">Hazır ✓</div>
+
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <button class="mclose" onclick="closeModal()" aria-label="Kapat">✕</button>
+      <div class="mtitle" id="mtitle">Hazır 🎬</div>
+      <div class="mmedia"><video id="resVid" controls playsinline muted loop></video><img id="resImg" alt="" /></div>
+      <div class="mbtns">
+        <a class="btn btn-vid" id="resDl" download>⬇ İndir</a>
+        <button class="btn btn-gif" id="resShare" onclick="shareResult()">📲 Paylaş / Kaydet</button>
+      </div>
+      <p class="mhint" id="mhint"></p>
+    </div>
+  </div>
+
+<script>
+const APP_URL="https://apps.apple.com/app/isim-sehir-online/id6766661912";
+const W=1080,H=1920;
+const TILEC={violet:["#9F87FF","#7C5CFF","#5237C0"],sky:["#7BB0FF","#5B8FFF","#4070E0"],leaf:["#7BE093","#51CF66","#2EB94F"],gold:["#FFE286","#F5C842","#B8870D"],coral:["#FF9CC0","#FF6B9D","#E03B73"],emerald:["#6EE7B7","#10B981","#047857"]};
+const ACC={
+  violet:{glow:"rgba(124,92,255,.55)",stops:["#C5B3FF","#7C5CFF"],kick:"#C5B3FF"},
+  sky:{glow:"rgba(91,143,255,.5)",stops:["#9EC3FF","#5B8FFF"],kick:"#9EC3FF"},
+  gold:{glow:"rgba(245,200,66,.46)",stops:["#FFE286","#F5C842"],kick:"#F5D778"},
+  emerald:{glow:"rgba(16,185,129,.46)",stops:["#8FF0CC","#10B981"],kick:"#8FF0CC"},
+  coral:{glow:"rgba(255,107,157,.46)",stops:["#FFA9C8","#FF6B9D"],kick:"#FFA9C8"},
+};
+
+/* ── easing & utils ── */
+const clamp01=t=>Math.max(0,Math.min(1,t));
+const inv=(lp,s,l)=>clamp01((lp-s)/l);
+const eOutCubic=t=>1-Math.pow(1-t,3);
+const eOutBack=t=>{const c=1.70158,c3=c+1;return 1+c3*Math.pow(t-1,3)+c*Math.pow(t-1,2);};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+function isEmoji(s){return /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/u.test(s);}
+
+/* ── canvas drawing helpers ── */
+function rr(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function gradText(ctx,txt,x,y,font,stops,maxW){ctx.font=font;ctx.textAlign="center";ctx.textBaseline="alphabetic";const w=Math.min(ctx.measureText(txt).width,maxW||1e5);const g=ctx.createLinearGradient(x-w/2,0,x+w/2,0);stops.forEach((s,i)=>g.addColorStop(i/(stops.length-1),s));ctx.fillStyle=g;ctx.fillText(txt,x,y);}
+function lines(txt){return txt.split("\n");}
+function drawLines(ctx,txt,x,y,lh,font,fill,stops){ctx.font=font;ctx.textAlign="center";ctx.textBaseline="alphabetic";const L=lines(txt);L.forEach((ln,i)=>{const yy=y+i*lh;if(stops){gradText(ctx,ln,x,yy,font,stops);}else{ctx.fillStyle=fill;ctx.fillText(ln,x,yy);}});return y+L.length*lh;}
+function drawTile(ctx,cx,cy,s,stops,letter,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=s*0.2;ctx.shadowOffsetY=s*0.12;const g=ctx.createLinearGradient(-s/2,-s/2,s/2,s/2);g.addColorStop(0,stops[0]);g.addColorStop(.5,stops[1]);g.addColorStop(1,stops[2]);ctx.fillStyle=g;rr(ctx,-s/2,-s*0.57,s,s*1.14,s*0.17);ctx.fill();ctx.shadowColor="transparent";ctx.fillStyle="#fff";ctx.font=`900 ${Math.round(s*0.62)}px Fraunces, serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.04);ctx.restore();}
+function avatar(ctx,x,y,r,stops,ini){const g=ctx.createLinearGradient(x-r,y-r,x+r,y+r);g.addColorStop(0,stops[0]);g.addColorStop(1,stops[1]);ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.font=`900 ${Math.round(r*0.9)}px Fraunces, serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(ini,x,y+2);}
+function pillBox(ctx,x,y,w,h,fill,stroke){rr(ctx,x,y,w,h,h/2);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.lineWidth=2;ctx.strokeStyle=stroke;ctx.stroke();}}
+
+/* ── persistent background ── */
+function drawBG(ctx,R,t){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#1b1340");g.addColorStop(1,"#0b0820");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const gx=540+Math.sin(t/2600)*200,gy=520+Math.cos(t/3100)*150;
+  const rg=ctx.createRadialGradient(gx,gy,0,gx,gy,860);rg.addColorStop(0,R.acc.glow);rg.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.globalAlpha=.05;ctx.fillStyle="#fff";ctx.font="900 340px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="middle";
+  const L=["İ","Ş","O","A","K","E"];for(let i=0;i<6;i++){let x=((i*230+t/45)%(W+360))-180;let y=240+i*300+Math.sin(t/1600+i)*34;ctx.fillText(L[i],x,y);}ctx.restore();
+}
+function drawOverlay(ctx,R,t){
+  const lx=64,ly=72;const g=ctx.createLinearGradient(lx,ly,lx+76,ly+76);g.addColorStop(0,"#9F87FF");g.addColorStop(1,"#5237C0");ctx.fillStyle=g;rr(ctx,lx,ly,76,76,21);ctx.fill();
+  ctx.fillStyle="#fff";ctx.font="900 36px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("İŞ",lx+38,ly+41);
+  ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillStyle="#FBF6EA";ctx.font="900 35px Fraunces, serif";ctx.fillText("İsim Şehir",lx+92,ly+30);
+  ctx.fillStyle="#9494B3";ctx.font="800 19px Inter, sans-serif";ctx.fillText("ONLINE · 2.0",lx+92,ly+57);
+  ctx.fillStyle="#F5C842";ctx.font="700 42px Caveat, cursive";ctx.textAlign="center";ctx.fillText("@isimsehironline",W/2,H-66);
+  ctx.fillStyle="rgba(255,255,255,.14)";rr(ctx,64,H-126,W-128,8,4);ctx.fill();
+  ctx.fillStyle="#F5C842";rr(ctx,64,H-126,(W-128)*clamp01(t/R.total),8,4);ctx.fill();
+}
+
+/* ── scene renderers ── */
+const SCENES={
+  intro(ctx,R,sc,lp){
+    const ts=sc.tiles,n=ts.length,S=200,gap=30,tw=n*S+(n-1)*gap;let x0=W/2-tw/2+S/2;
+    ts.forEach((tl,i)=>{const d=inv(lp,i*0.07,0.4),e=eOutBack(d);const y=640-(1-e)*620;drawTile(ctx,x0+i*(S+gap),y,S,TILEC[tl[1]],tl[0],(i%2?1:-1)*0.05);});
+    const td=inv(lp,0.34,0.4);ctx.save();ctx.globalAlpha*=td;ctx.translate(0,(1-eOutCubic(td))*50);
+      drawLines(ctx,sc.title,W/2,960,124,"900 116px Fraunces, serif",null,R.acc.stops);ctx.restore();
+    const nlines=lines(sc.title).length;const sd=inv(lp,0.55,0.4);ctx.save();ctx.globalAlpha*=sd;
+      ctx.fillStyle="#C8C8DA";ctx.font="500 46px Inter, sans-serif";ctx.textAlign="center";ctx.fillText(sc.sub,W/2,960+nlines*124+8);ctx.restore();
+  },
+  bullets(ctx,R,sc,lp){
+    const td=inv(lp,0.02,0.3);ctx.save();ctx.globalAlpha*=td;ctx.translate(0,(1-eOutCubic(td))*-30);
+      ctx.fillStyle="#FBF6EA";ctx.font="900 88px Fraunces, serif";ctx.textAlign="center";ctx.fillText(sc.title,W/2,560);ctx.restore();
+    sc.items.forEach((it,i)=>{
+      const d=inv(lp,0.18+i*0.16,0.34),e=eOutCubic(d);const y=760+i*168;
+      ctx.save();ctx.globalAlpha*=d;ctx.translate((1-e)*-120,0);
+      rr(ctx,130,y-66,W-260,124,32);ctx.fillStyle="rgba(255,255,255,.06)";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="rgba(255,255,255,.12)";ctx.stroke();
+      ctx.fillStyle="#FBF6EA";ctx.font="700 50px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(it,180,y);
+      ctx.restore();
+    });
+  },
+  big(ctx,R,sc,lp){
+    if(sc.kicker){const kd=inv(lp,0.05,0.3);ctx.save();ctx.globalAlpha*=kd;ctx.fillStyle=R.acc.kick;ctx.font="800 38px Inter, sans-serif";ctx.textAlign="center";ctx.letterSpacing="6px";ctx.fillText(sc.kicker.toUpperCase(),W/2,720);ctx.restore();}
+    const bd=inv(lp,0.12,0.42),e=eOutBack(bd);ctx.save();ctx.globalAlpha*=clamp01(bd*1.4);ctx.translate(W/2,sc.kicker?980:940);ctx.scale(e,e);ctx.translate(-W/2,0);
+      if(isEmoji(sc.big)){ctx.fillStyle="#fff";ctx.font="360px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(sc.big,W/2,0);}
+      else{const L=lines(sc.big);const longest=L.reduce((a,b)=>a.length>b.length?a:b);const fs=longest.length<=4?300:longest.length<=9?180:120;drawLines(ctx,sc.big,W/2,L.length>1?-fs*0.2:fs*0.34,fs*1.04,`900 ${fs}px Fraunces, serif`,null,R.acc.stops);}
+    ctx.restore();
+    if(sc.sub){const sd=inv(lp,0.4,0.4);ctx.save();ctx.globalAlpha*=sd;ctx.fillStyle="#C8C8DA";ctx.font="500 48px Inter, sans-serif";ctx.textAlign="center";ctx.fillText(sc.sub,W/2,sc.kicker?1200:1180);ctx.restore();}
+  },
+  plans(ctx,R,sc,lp){
+    const P=[{n:"Standard",p:"₺19,90",t:"aylık · reklamlı",hot:false},{n:"Aylık Pro",p:"₺34,90",t:"aylık · reklamsız",hot:false},{n:"Yıllık Pro",p:"₺249,90",t:"yıllık · ~%40 indirim",hot:true},{n:"Lifetime",p:"₺499,90",t:"tek seferlik · ömür boyu",hot:false}];
+    P.forEach((pl,i)=>{
+      const d=inv(lp,0.08+i*0.16,0.36),e=eOutCubic(d);const y=560+i*250;
+      ctx.save();ctx.globalAlpha*=d;ctx.translate((1-e)*160,0);
+      rr(ctx,120,y,W-240,210,40);ctx.fillStyle=pl.hot?"rgba(245,200,66,.12)":"rgba(255,255,255,.06)";ctx.fill();ctx.lineWidth=pl.hot?5:2;ctx.strokeStyle=pl.hot?"rgba(245,200,66,.6)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.textBaseline="alphabetic";ctx.fillStyle="#FBF6EA";ctx.font="900 56px Fraunces, serif";ctx.textAlign="left";ctx.fillText(pl.n,168,y+95);
+      ctx.fillStyle="#9494B3";ctx.font="600 32px Inter, sans-serif";ctx.fillText(pl.t,168,y+150);
+      ctx.textAlign="right";gradText(ctx,pl.p,W-168,y+118,"900 70px Fraunces, serif",pl.hot?["#FFE286","#F5C842"]:R.acc.stops);
+      if(pl.hot){rr(ctx,W-430,y-26,250,52,26);ctx.fillStyle="#F5C842";ctx.fill();ctx.fillStyle="#0d0a20";ctx.font="800 26px Inter, sans-serif";ctx.textAlign="center";ctx.fillText("EN POPÜLER",W-305,y+8);}
+      ctx.restore();
+    });
+  },
+  podium(ctx,R,sc,lp){
+    const data=[{rank:2,h:380,c:["#D9DEE8","#9AA3B5"],ini:"A",sc:1612},{rank:1,h:540,c:["#FFE286","#F5C842"],ini:"S",sc:1840},{rank:3,h:300,c:["#E0A66A","#A86A2E"],ini:"E",sc:1498}];
+    const base=1560,bw=240,gap=24,tot=data.length*bw+(data.length-1)*gap;let x0=W/2-tot/2;
+    data.forEach((b,i)=>{
+      const d=inv(lp,0.05+i*0.12,0.5),e=eOutCubic(d);const h=b.h*e;const x=x0+i*(bw+gap);
+      const g=ctx.createLinearGradient(x,base-h,x,base);g.addColorStop(0,b.c[0]);g.addColorStop(1,b.c[1]);ctx.fillStyle=g;rr(ctx,x,base-h,bw,h,28);ctx.fill();
+      ctx.fillStyle="rgba(13,10,32,.85)";ctx.font="900 90px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.rank,x+bw/2,base-h+80);
+      // avatar
+      const ay=base-h-70;ctx.save();ctx.globalAlpha*=clamp01(d*1.5);const ag=ctx.createLinearGradient(x+bw/2-46,ay-46,x+bw/2+46,ay+46);ag.addColorStop(0,b.c[0]);ag.addColorStop(1,b.c[1]);ctx.fillStyle=ag;ctx.beginPath();ctx.arc(x+bw/2,ay,52,0,7);ctx.fill();ctx.fillStyle="#0d0a20";ctx.font="900 50px Fraunces, serif";ctx.fillText(b.ini,x+bw/2,ay+3);
+      if(b.rank===1){ctx.font="64px Inter, sans-serif";ctx.fillText("👑",x+bw/2,ay-92);}
+      ctx.restore();
+      // score count-up
+      ctx.fillStyle="#FBF6EA";ctx.font="800 40px Inter, sans-serif";ctx.fillText(Math.round(b.sc*e).toLocaleString("tr-TR"),x+bw/2,base+70);
+    });
+    const hd=inv(lp,0.0,0.3);ctx.save();ctx.globalAlpha*=hd;ctx.fillStyle="#F5D778";ctx.font="800 38px Inter, sans-serif";ctx.textAlign="center";ctx.fillText("HAFTALIK LİDERLER",W/2,560);ctx.restore();
+  },
+  outro(ctx,R,sc,lp){
+    const pulse=1+Math.sin(lp*Math.PI*4)*0.02;
+    ctx.save();ctx.globalAlpha*=inv(lp,0.05,0.3);ctx.translate(W/2,860);ctx.scale(pulse,pulse);
+      drawLines(ctx,sc.title,0,0,116,"900 104px Fraunces, serif",null,R.acc.stops);ctx.restore();
+    const bd=inv(lp,0.25,0.4),e=eOutBack(bd);ctx.save();ctx.globalAlpha*=clamp01(bd*1.4);ctx.translate(W/2,1080);ctx.scale(e,e);
+      rr(ctx,-330,-60,660,120,60);ctx.fillStyle="#FBF6EA";ctx.fill();ctx.fillStyle="#0d0a20";ctx.font="800 44px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("⬇  App Store'da İndir",0,2);ctx.restore();
+    ctx.save();ctx.globalAlpha*=inv(lp,0.4,0.4);ctx.fillStyle="#9494B3";ctx.font="600 36px Inter, sans-serif";ctx.textAlign="center";ctx.fillText("İsim Şehir Online",W/2,1240);ctx.restore();
+  },
+  letterdraw(ctx,R,sc,lp){
+    const cx=W/2,cy=940,S=320;
+    ctx.save();ctx.globalAlpha*=inv(lp,0.02,0.25);ctx.fillStyle=R.acc.kick;ctx.font="800 38px Inter, sans-serif";ctx.textAlign="center";ctx.fillText("HARFİN DÜŞÜYOR…",cx,cy-320);ctx.restore();
+    const AB="ABCÇDEFGĞHIİJKLMNOPRSŞTUÜVYZ";let letter,pop=1;
+    if(lp<0.62){letter=AB[Math.floor(lp*AB.length*7)%AB.length];}else{letter=sc.letter;pop=eOutBack(inv(lp,0.62,0.32));}
+    ctx.save();ctx.translate(cx,cy);ctx.scale(pop,pop);ctx.translate(-cx,-cy);drawTile(ctx,cx,cy,S,TILEC[sc.col||"violet"],letter,0);ctx.restore();
+    ctx.save();ctx.globalAlpha*=inv(lp,0.72,0.28);ctx.fillStyle="#C8C8DA";ctx.font="500 46px Inter, sans-serif";ctx.textAlign="center";ctx.fillText(sc.sub||"5 saniye, aklına gelen ilk kelime!",cx,cy+330);ctx.restore();
+  },
+  typing(ctx,R,sc,lp,t){
+    const cx=W/2,cardY=760,cardH=320,cardW=880,x=cx-cardW/2;
+    rr(ctx,x,cardY,cardW,cardH,40);ctx.fillStyle="rgba(255,255,255,.06)";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="rgba(255,255,255,.12)";ctx.stroke();
+    ctx.fillStyle=R.acc.kick;ctx.font="800 38px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillText(sc.cat.toUpperCase(),x+52,cardY+96);
+    const full=sc.word,n=Math.min(full.length,Math.floor(inv(lp,0.05,0.7)*full.length)),shown=full.slice(0,n);
+    const blink=(Math.floor(t/420)%2===0);const cur=n<full.length?(blink?"|":""):"";
+    ctx.fillStyle="#FBF6EA";ctx.font="900 112px Fraunces, serif";ctx.fillText(shown+cur,x+52,cardY+232);
+    const vd=inv(lp,0.82,0.18);if(vd>0){ctx.save();ctx.globalAlpha*=vd;ctx.translate(x+cardW-160,cardY+cardH-66);ctx.rotate(-0.12);ctx.lineWidth=5;ctx.strokeStyle="#51CF66";rr(ctx,-120,-46,240,92,46);ctx.stroke();ctx.fillStyle="#51CF66";ctx.font="800 42px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("✓ geçerli",0,2);ctx.restore();}
+  },
+  countdown(ctx,R,sc,lp,t){
+    const cx=W/2,cy=940,r=260,frac=1-lp;
+    ctx.lineWidth=36;ctx.strokeStyle="rgba(255,255,255,.10)";ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();
+    const g=ctx.createLinearGradient(cx-r,cy-r,cx+r,cy+r);g.addColorStop(0,R.acc.stops[0]);g.addColorStop(1,R.acc.stops[1]);ctx.strokeStyle=g;ctx.lineCap="round";
+    ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.max(0.001,frac)*Math.PI*2);ctx.stroke();ctx.lineCap="butt";
+    const from=sc.from||5,num=Math.max(0,Math.ceil(frac*from)),pulse=num<=3?1+Math.sin(t/120)*0.05:1;
+    ctx.save();ctx.translate(cx,cy);ctx.scale(pulse,pulse);gradText(ctx,String(num),0,80,"900 240px Fraunces, serif",R.acc.stops);ctx.restore();
+    ctx.fillStyle=R.acc.kick;ctx.font="800 38px Inter, sans-serif";ctx.textAlign="center";ctx.fillText("SÜRE DOLMADAN YAZ!",cx,cy-330);
+  },
+  roomsetup(ctx,R,sc,lp){
+    ctx.fillStyle="#FBF6EA";ctx.font="900 78px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText("Oda ayarları",W/2,560);
+    const rows=[["👥","Oyuncu","6 kişi"],["⏱️","Süre","60 saniye"],["📋","Kategori","8 seçili"],["🏁","Mod","Süreli"]];
+    const x=150,wd=W-300,h=150,y0=680;
+    rows.forEach((rw,i)=>{const d=inv(lp,0.12+i*0.16,0.34),e=eOutCubic(d);ctx.save();ctx.globalAlpha*=d;ctx.translate((1-e)*120,0);const y=y0+i*180;
+      rr(ctx,x,y,wd,h,34);ctx.fillStyle="rgba(255,255,255,.06)";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="rgba(255,255,255,.12)";ctx.stroke();
+      ctx.font="58px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(rw[0],x+40,y+h/2);
+      ctx.fillStyle="#9494B3";ctx.font="600 34px Inter, sans-serif";ctx.fillText(rw[1],x+135,y+h/2-24);
+      ctx.fillStyle="#FBF6EA";ctx.font="800 46px Inter, sans-serif";ctx.fillText(rw[2],x+135,y+h/2+30);
+      ctx.fillStyle="#51CF66";ctx.font="900 56px Inter, sans-serif";ctx.textAlign="right";ctx.fillText("✓",x+wd-44,y+h/2);ctx.restore();});
+  },
+  lobby(ctx,R,sc,lp,t){
+    ctx.save();ctx.globalAlpha*=inv(lp,0.02,0.25);ctx.fillStyle=R.acc.kick;ctx.font="800 36px Inter, sans-serif";ctx.textAlign="center";ctx.fillText("DAVET KODU",W/2,560);
+    gradText(ctx,"4K2X9P",W/2,690,"900 132px Fraunces, serif",R.acc.stops);ctx.restore();
+    const avs=[["S","violet"],["A","sky"],["M","emerald"],["E","gold"],["B","coral"]],n=avs.length,gap=40,r=76,tot=n*(r*2)+(n-1)*gap;let x0=W/2-tot/2+r;
+    avs.forEach((a,i)=>{const d=inv(lp,0.25+i*0.1,0.3),e=eOutBack(d);ctx.save();ctx.globalAlpha*=clamp01(d*1.4);ctx.translate(x0+i*(r*2+gap),920);ctx.scale(e,e);
+      avatar(ctx,0,0,r,[TILEC[a[1]][0],TILEC[a[1]][1]],a[0]);ctx.fillStyle="#51CF66";ctx.beginPath();ctx.arc(r*0.64,r*0.64,16,0,7);ctx.fill();ctx.strokeStyle="#0b0820";ctx.lineWidth=4;ctx.stroke();ctx.restore();});
+    const bd=inv(lp,0.6,0.35),e=eOutBack(bd),pulse=1+Math.sin(t/200)*0.03;ctx.save();ctx.globalAlpha*=clamp01(bd*1.4);ctx.translate(W/2,1200);ctx.scale(e*pulse,e*pulse);
+      const g=ctx.createLinearGradient(-260,0,260,0);g.addColorStop(0,"#7BE093");g.addColorStop(1,"#10B981");ctx.fillStyle=g;rr(ctx,-260,-66,520,132,66);ctx.fill();
+      ctx.fillStyle="#06251a";ctx.font="900 50px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("▶  BAŞLA",0,2);ctx.restore();
+  },
+  chatscene(ctx,R,sc,lp){
+    ctx.fillStyle="#FBF6EA";ctx.font="900 76px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText(sc.title||"Sohbet",W/2,540);
+    let y=700;const maxW=640;
+    sc.msgs.forEach((m,i)=>{const d=inv(lp,0.12+i*0.18,0.3),e=eOutCubic(d);ctx.save();ctx.globalAlpha*=d;
+      ctx.font="500 46px Inter, sans-serif";const tw=Math.min(ctx.measureText(m.text).width+64,maxW),bh=116,bx=m.side==="r"?W-150-tw:150;
+      ctx.translate(m.side==="r"?(1-e)*80:(1-e)*-80,0);rr(ctx,bx,y,tw,bh,36);
+      if(m.side==="r"){ctx.fillStyle="#FBF6EA";ctx.fill();ctx.fillStyle="#0d0a20";}
+      else{const g=ctx.createLinearGradient(bx,y,bx,y+bh);g.addColorStop(0,"rgba(124,92,255,.32)");g.addColorStop(1,"rgba(124,92,255,.18)");ctx.fillStyle=g;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="rgba(159,135,255,.5)";ctx.stroke();ctx.fillStyle="#FBF6EA";}
+      ctx.textAlign=m.side==="r"?"right":"left";ctx.textBaseline="middle";ctx.fillText(m.text,m.side==="r"?bx+tw-32:bx+32,y+bh/2);ctx.restore();y+=bh+34;});
+    if(sc.status){const sd=inv(lp,0.72,0.28);ctx.save();ctx.globalAlpha*=sd;pillBox(ctx,W/2-200,y+12,400,76,"rgba(81,207,102,.2)","rgba(81,207,102,.5)");ctx.fillStyle="#7BE093";ctx.font="800 36px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("✓ "+sc.status,W/2,y+50);ctx.restore();}
+  },
+  roomlist(ctx,R,sc,lp,t){
+    ctx.fillStyle=R.acc.kick;ctx.font="800 36px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText("● CANLI · AÇIK ODALAR",W/2,540);
+    const rooms=[["selin","6 kategori · 4/8","S","violet"],["deniz","5 kategori · 7/10","D","sky"],["kerem","4 kategori · 2/6","K","emerald"]];
+    const x=140,wd=W-280,h=190,y0=640;
+    rooms.forEach((rm,i)=>{const d=inv(lp,0.12+i*0.16,0.34),e=eOutCubic(d);ctx.save();ctx.globalAlpha*=d;ctx.translate((1-e)*120,0);const y=y0+i*230;
+      rr(ctx,x,y,wd,h,40);ctx.fillStyle="rgba(255,255,255,.06)";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="rgba(255,255,255,.12)";ctx.stroke();
+      avatar(ctx,x+92,y+h/2,54,[TILEC[rm[3]][0],TILEC[rm[3]][1]],rm[2]);
+      ctx.fillStyle="#FBF6EA";ctx.font="800 46px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillText(rm[0]+" odası",x+172,y+85);
+      ctx.fillStyle="#9494B3";ctx.font="600 34px Inter, sans-serif";ctx.fillText(rm[1],x+172,y+140);
+      const bw=180,bh=82,bx=x+wd-bw-30,by=y+h/2-bh/2,tap=(i===0)?(1+Math.sin(t/160)*0.05):1;ctx.save();ctx.translate(bx+bw/2,by+bh/2);ctx.scale(tap,tap);
+        const g=ctx.createLinearGradient(-bw/2,0,bw/2,0);g.addColorStop(0,"#7BE093");g.addColorStop(1,"#10B981");ctx.fillStyle=g;rr(ctx,-bw/2,-bh/2,bw,bh,41);ctx.fill();
+        ctx.fillStyle="#06251a";ctx.font="800 38px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("Katıl",0,2);ctx.restore();ctx.restore();});
+  },
+  vote(ctx,R,sc,lp){
+    ctx.fillStyle="#FBF6EA";ctx.font="900 70px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText("Bu kelime sayılır mı?",W/2,540);
+    const cards=[["Trabzon",3,0,"yes"],["Tavşan",3,0,"yes"],["Tarık",1,2,"no"]];
+    const x=150,wd=W-300,h=180,y0=680;
+    cards.forEach((c,i)=>{const d=inv(lp,0.12+i*0.16,0.34);ctx.save();ctx.globalAlpha*=d;const y=y0+i*220;
+      rr(ctx,x,y,wd,h,38);ctx.fillStyle="rgba(255,255,255,.06)";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="rgba(255,255,255,.12)";ctx.stroke();
+      ctx.fillStyle="#FBF6EA";ctx.font="900 56px Fraunces, serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(c[0],x+44,y+h/2);
+      const grow=inv(lp,0.2+i*0.16,0.5);ctx.font="800 44px Inter, sans-serif";ctx.textAlign="right";
+      ctx.fillStyle="#7BE093";ctx.fillText("✓ "+Math.round(c[1]*grow),x+wd-250,y+h/2);
+      ctx.fillStyle="#FF8E8E";ctx.fillText("✗ "+Math.round(c[2]*grow),x+wd-90,y+h/2);
+      const vd=inv(lp,0.8,0.2);if(vd>0){ctx.save();ctx.globalAlpha*=vd;ctx.translate(x+150,y+38);ctx.rotate(-0.16);ctx.fillStyle=c[3]==="yes"?"#51CF66":"#FF6B6B";ctx.font="900 34px Inter, sans-serif";ctx.textAlign="center";ctx.fillText(c[3]==="yes"?"GEÇERLİ":"RED",0,0);ctx.restore();}ctx.restore();});
+  },
+  statbars(ctx,R,sc,lp){
+    ctx.fillStyle="#FBF6EA";ctx.font="900 80px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText(sc.title||"Kategori başarın",W/2,560);
+    const bars=[["İsim",92,"violet"],["Şehir",78,"sky"],["Hayvan",64,"emerald"],["Bitki",45,"gold"]];
+    const x=150,wd=W-300,h=72,y0=740;
+    bars.forEach((b,i)=>{const d=inv(lp,0.1+i*0.12,0.5),e=eOutCubic(d),y=y0+i*185;
+      ctx.fillStyle="#C8C8DA";ctx.font="700 40px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillText(b[0],x,y-22);
+      ctx.fillStyle="#FBF6EA";ctx.textAlign="right";ctx.fillText(Math.round(b[1]*e)+"%",x+wd,y-22);
+      rr(ctx,x,y,wd,h,h/2);ctx.fillStyle="rgba(255,255,255,.08)";ctx.fill();
+      const fw=Math.max(h,wd*b[1]/100*e);const g=ctx.createLinearGradient(x,0,x+fw,0);g.addColorStop(0,TILEC[b[2]][0]);g.addColorStop(1,TILEC[b[2]][1]);ctx.fillStyle=g;rr(ctx,x,y,fw,h,h/2);ctx.fill();});
+  },
+  catchips(ctx,R,sc,lp){
+    ctx.fillStyle="#FBF6EA";ctx.font="900 80px Fraunces, serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText("Kendi kategorin",W/2,560);
+    sc.chips.forEach((c,i)=>{const d=inv(lp,0.1+i*0.13,0.34),e=eOutBack(d);ctx.save();ctx.globalAlpha*=clamp01(d*1.4);const y=750+i*155;ctx.translate(W/2,y);ctx.scale(e,e);
+      ctx.font="700 52px Inter, sans-serif";const tw=ctx.measureText(c).width+90;
+      const g=ctx.createLinearGradient(-tw/2,0,tw/2,0);g.addColorStop(0,R.acc.stops[0]);g.addColorStop(1,R.acc.stops[1]);
+      rr(ctx,-tw/2,-54,tw,108,54);ctx.fillStyle="rgba(255,255,255,.08)";ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=g;ctx.stroke();
+      ctx.fillStyle="#FBF6EA";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(c,0,2);ctx.restore();});
+  },
+};
+
+/* ── reels data ── */
+const REELS=[
+  {id:1,acc:"violet",title:"2.0 Lansman",sub:"genel duyuru",
+   caption:"📣 İsim Şehir Online 2.0 burada!\n🔐 Apple & Google giriş · 🏆 Liderlik · 🌍 Herkese açık odalar · 💎 Yeni premium\nHemen güncelle, masaya otur! 🎯\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #İsimŞehirOnline #KelimeOyunu #MobilOyun #Reels @isimsehironline",
+   scenes:[{type:"intro",tiles:[["İ","violet"],["Ş","sky"],["O","gold"]],title:"İsim Şehir\n2.0",sub:"Büyük güncelleme geldi",dur:2600},
+     {type:"bullets",title:"Neler yeni?",items:["🔐  Apple & Google giriş","🏆  Liderlik tablosu","🌍  Herkese açık odalar","💎  Yeni premium planları"],dur:4400},
+     {type:"outro",title:"Hemen\ngüncelle!",dur:2000}]},
+  {id:2,acc:"sky",title:"Nasıl Oynanır",sub:"3 adımda oyun",
+   caption:"🎮 İsim Şehir nasıl oynanır?\nHarf düşer → kelimeyi yaz → masadakiler oylar → şampiyon belli olur 🏆\nÇocukluğun oyunu, şimdi cebinde!\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #NasılOynanır #KelimeOyunu #MobilOyun #Reels",
+   scenes:[{type:"intro",tiles:[["K","sky"]],title:"Harf düşer",sub:"Her tur yeni bir harf",dur:1900},
+     {type:"big",big:"Kelimeyi yaz",sub:"Kategorileri o harfle doldur",dur:1700},
+     {type:"big",big:"Oylama",sub:"Masadakiler onaylar",dur:1700},
+     {type:"big",big:"🏆",sub:"Şampiyon — en çok puan kazanır",dur:1900},
+     {type:"outro",title:"Sen de\noyna!",dur:1700}]},
+  {id:3,acc:"gold",title:"Premium Planları",sub:"4 seçenek",
+   caption:"💎 Premium planını seç!\nStandard ₺19,90 · Aylık Pro ₺34,90 · Yıllık Pro ₺249,90 (en popüler) · Lifetime ₺499,90\nDilersen tamamen reklamsız Pro 🚀\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #Premium #ReklamsızOyun #MobilOyun #Reels",
+   scenes:[{type:"big",kicker:"Premium",big:"Planını seç",sub:"Sana uyanı bul",dur:1700},
+     {type:"plans",dur:3600},
+     {type:"outro",title:"Reklamsız\nPro'yu dene",dur:1900}]},
+  {id:4,acc:"gold",title:"Liderlik",sub:"podyum animasyonu",
+   caption:"🏆 Adın tabloya yazılsın!\nYeni Liderlik sekmesi: puan, galibiyet ve maç sayısına göre haftalık, aylık ve tüm zamanlar.\nİlk 3 için özel podyum 🥇🥈🥉\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #Liderlik #Leaderboard #Rekabet #Reels @isimsehironline",
+   scenes:[{type:"big",kicker:"Yeni",big:"Liderlik",sub:"Zirveye oyna",dur:1700},
+     {type:"podium",dur:3400},
+     {type:"outro",title:"İlk 3'e\ngir!",dur:1700}]},
+  {id:5,acc:"emerald",title:"Puanlama",sub:"+20 / +10 / +5",
+   caption:"💯 Puan nasıl gelir?\nSolo cevap +20 · Geçerli +10 · Aynı kelime +5\nSıra dışı kelimeler kazandırır — yaratıcı ol! 🧠\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #KelimeOyunu #Strateji #MobilOyun #Reels",
+   scenes:[{type:"big",kicker:"Puanlama",big:"+20",sub:"Solo cevap",dur:1500},
+     {type:"big",big:"+10",sub:"Geçerli cevap",dur:1250},
+     {type:"big",big:"+5",sub:"Aynı kelime",dur:1250},
+     {type:"big",big:"Yaratıcı ol,\nkazan",sub:"Sıra dışı kelimeler kazandırır",dur:1800},
+     {type:"outro",title:"Masaya\notur!",dur:1500}]},
+
+  {id:6,acc:"violet",title:"Oda Oluştur",sub:"oda kurma akışı",
+   caption:"🛠️ Kendi odanı kur, kuralları sen belirle!\nOyuncu sayısı, süre, kategoriler, mod — hepsi senin elinde. Davet kodunu paylaş, arkadaşların anında girsin.\nHazır olunca → BAŞLA 🎯\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #OdaKur #ÇokOyunculu #KelimeOyunu #Reels @isimsehironline",
+   scenes:[{type:"big",kicker:"Oda Kur",big:"Kendi odanı\nkur",sub:"Kuralları sen belirle",dur:2300},
+     {type:"roomsetup",dur:4400},
+     {type:"lobby",dur:3800},
+     {type:"outro",title:"Arkadaşları\nçağır!",dur:2000}]},
+
+  {id:7,acc:"sky",title:"Kelime Savaşı",sub:"harf çek · yaz · süre",
+   caption:"⚡ Harf düşer, kelime savaşı başlar!\nB geldi: Bursa, Balık, Berk… Beş saniyede aklına gelen ilk kelimeyi yakala. Süre dolmadan tüm kategorileri doldur!\nHızlı düşün, hızlı yaz 🧠\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #KelimeOyunu #KelimeSavaşı #MobilOyun #Reels",
+   scenes:[{type:"letterdraw",letter:"B",col:"sky",sub:"5 saniye, ilk kelime!",dur:3000},
+     {type:"typing",cat:"Şehir",word:"Bursa",dur:2600},
+     {type:"typing",cat:"Hayvan",word:"Balık",dur:2300},
+     {type:"typing",cat:"İsim",word:"Berk",dur:2300},
+     {type:"countdown",from:5,dur:2600},
+     {type:"outro",title:"Hızlı düşün,\nhızlı yaz!",dur:2000}]},
+
+  {id:8,acc:"coral",title:"Oylama",sub:"cevaplar oylanıyor",
+   caption:"🗳️ Cevaplar açıldı, sıra oylamada!\n\"Bu kelime sayılır mı?\" — kararı sen değil, masadakiler verir. Çoğunluk ne derse o. Aynen kâğıt-kalemle oynarken yaptığımız gibi 😄\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #Oylama #KelimeOyunu #MobilOyun #Reels",
+   scenes:[{type:"big",kicker:"Onaylama",big:"Cevaplar\naçıldı",sub:"Sıra oylamada",dur:2300},
+     {type:"vote",dur:4400},
+     {type:"big",big:"Çoğunluk\nkarar verir",sub:"Aynen kâğıttaki gibi",dur:2400},
+     {type:"outro",title:"Adil oyun!",dur:1900}]},
+
+  {id:9,acc:"emerald",title:"Herkese Açık Odalar",sub:"canlı oda listesi",
+   caption:"🌍 Arkadaşın yoksa rastgele oyna!\nHerkese açık oda listesinden anında katıl ya da kendi açık odanı aç. Türkiye'nin her yerinden, 15 kişiye kadar rakip seni bekliyor 🇹🇷\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #OnlineOyun #AçıkOdalar #ÇokOyunculu #Reels @isimsehironline",
+   scenes:[{type:"big",kicker:"Canlı",big:"Rastgele\noyna",sub:"Arkadaşın yoksa bile",dur:2300},
+     {type:"roomlist",dur:4400},
+     {type:"big",big:"15 kişiye\nkadar",sub:"Türkiye'nin her yerinden",dur:2400},
+     {type:"outro",title:"Hemen katıl!",dur:1900}]},
+
+  {id:10,acc:"violet",title:"Arkadaş & Sohbet",sub:"DM akışı",
+   caption:"👥 Arkadaşını ekle, sohbet et, davet et!\nPremium ile birebir mesajlaş, çevrimiçi arkadaşların en üstte. \"Oda kurdum gel!\" demek bir mesaj kadar kolay 💬\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #Premium #Arkadaşlar #Sohbet #Reels",
+   scenes:[{type:"big",kicker:"Premium",big:"Arkadaşını\nekle",sub:"Sohbet et, davet et",dur:2300},
+     {type:"chatscene",title:"Özel mesaj",msgs:[{side:"l",text:"Oda kurdum, gel! 👀"},{side:"r",text:"Kod ne?"},{side:"l",text:"4K2X9P"}],status:"Odaya katıldı",dur:4800},
+     {type:"big",big:"Çevrimiçi\narkadaşların",sub:"En üstte, tek tıkla davet",dur:2300},
+     {type:"outro",title:"Premium ile\naç!",dur:1900}]},
+
+  {id:11,acc:"gold",title:"İstatistik",sub:"kategori başarın",
+   caption:"📊 Her maçın hikâyesi profilinde!\n\"Son Oyunlarım\" ile geçmişine ve tur tur detaylara in. Hangi kategoride güçlüsün, galibiyet oranın ne — hepsi kayıtlı 📈\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #İstatistik #SonOyunlarım #MobilOyun #Reels",
+   scenes:[{type:"big",kicker:"Son Oyunlarım",big:"Karneni\ngör",sub:"Tur tur detay",dur:2300},
+     {type:"statbars",title:"Kategori başarın",dur:3900},
+     {type:"big",big:"%68",sub:"Galibiyet oranın",dur:2200},
+     {type:"outro",title:"Gelişimini\nizle!",dur:1900}]},
+
+  {id:12,acc:"gold",title:"Özel Kategoriler",sub:"kendi listen",
+   caption:"🎨 Klasik 6 kategoriyle yetinme!\nPremium ile 25 kategoriye kadar kendi listeni kur: \"Annenin huyu\", \"90'lar dizisi\", \"Futbolcu\"… Sürükle-bırak sırala. Her grubun kendi oyunu olsun! ✦\n📲 App Store'da İsim Şehir Online",
+   tags:"#İsimŞehir #Premium #ÖzelKategori #Eğlence #Reels",
+   scenes:[{type:"big",kicker:"Premium",big:"Kendi\nkategorin",sub:"25 kategoriye kadar",dur:2300},
+     {type:"catchips",chips:["Annenin huyu","90'lar dizisi","Futbolcu","Pizza çeşidi"],dur:4400},
+     {type:"big",big:"Sürükle-bırak\nsırala",sub:"Her grubun kendi oyunu",dur:2300},
+     {type:"outro",title:"Masaya renk\nkat!",dur:1900}]},
+];
+
+/* ── engine ── */
+function drawReelAt(R,t){
+  const ctx=R.ctx;drawBG(ctx,R,t);
+  let acc=0,sc=null,lp=1;
+  for(const s of R.scenes){if(t<acc+s.dur){sc=s;lp=(t-acc)/s.dur;break;}acc+=s.dur;}
+  if(!sc){sc=R.scenes[R.scenes.length-1];lp=1;}
+  const a=clamp01(Math.min(lp/0.12,(1-lp)/0.12,1));
+  ctx.save();ctx.globalAlpha=a;(SCENES[sc.type]||SCENES.big)(ctx,R,sc,lp,t);ctx.restore();
+  drawOverlay(ctx,R,t);
+}
+
+const toastEl=document.getElementById("toast");
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(window._tt);window._tt=setTimeout(()=>toastEl.classList.remove("show"),2200);}
+
+function buildReels(){
+  const root=document.getElementById("reels");
+  root.innerHTML=REELS.map(R=>`
+    <div class="reel">
+      <div class="frame">
+        <canvas id="rc${R.id}" width="${W}" height="${H}"></canvas>
+        <button class="play" onclick="restart(${R.id})" title="Baştan oynat"><span>▶</span></button>
+      </div>
+      <div class="rtitle">${R.title}<small>${R.sub}</small></div>
+      <textarea class="cap" id="rcap${R.id}">${R.caption}\n\n${R.tags}</textarea>
+      <div class="btns">
+        <button class="btn btn-vid" onclick="recordVideo(${R.id})">🎬 Video İndir</button>
+        <button class="btn btn-gif" onclick="recordGif(${R.id})">🟢 GIF İndir</button>
+        <button class="btn btn-copy" onclick="copyCap(${R.id})">📋 Kopyala</button>
+        <button class="btn btn-x" onclick="shareX(${R.id})">𝕏 Paylaş</button>
+      </div>
+    </div>`).join("");
+  REELS.forEach(R=>{
+    R.acc=ACC[R.acc]||ACC.violet;               // <-- string anahtarı nesneye çevir
+    R.canvas=document.getElementById("rc"+R.id);R.ctx=R.canvas.getContext("2d");
+    R.total=R.scenes.reduce((a,s)=>a+s.dur,0);R.base=performance.now();R.visible=true;R.active=false;
+    try{drawReelAt(R,Math.min(900,R.total*0.25));}catch(e){console.error("ilk çizim:",e);}
+  });
+  // animate only visible reels
+  const io=new IntersectionObserver(es=>es.forEach(e=>{const R=REELS.find(r=>r.canvas===e.target);if(R)R.visible=e.isIntersecting;}),{threshold:0.25});
+  REELS.forEach(R=>io.observe(R.canvas));
+  requestAnimationFrame(loop);
+}
+function loop(now){
+  REELS.forEach(R=>{if((R.visible||R.active)&&!R._encoding){try{const t=(now-R.base)%R.total;drawReelAt(R,t);}catch(e){console.error("frame:",e);}}});
+  requestAnimationFrame(loop);
+}
+function getR(id){return REELS.find(r=>r.id===id);}
+function restart(id){const R=getR(id);R.base=performance.now();R.visible=true;}
+
+/* ── share / copy ── */
+function capText(id){return document.getElementById("rcap"+id).value.trim();}
+async function copyCap(id){try{await navigator.clipboard.writeText(capText(id));toast("Başlık + hashtag kopyalandı ✓");}catch(e){toast("Kopyalanamadı — elle seç");}}
+function shareX(id){window.open("https://twitter.com/intent/tweet?text="+encodeURIComponent(capText(id)+"\n"+APP_URL),"_blank","noopener");}
+
+/* ── result modal (önizle + indir/paylaş) ── */
+let curFile=null,curUrl=null;
+function showResult(blob,ext,id,kind){
+  if(curUrl)URL.revokeObjectURL(curUrl);
+  curUrl=URL.createObjectURL(blob);
+  const fname=`isimsehir-reel-${id}.${ext}`;
+  try{curFile=new File([blob],fname,{type:blob.type});}catch(e){curFile=null;}
+  const vid=document.getElementById("resVid"),img=document.getElementById("resImg");
+  if(kind==="video"){vid.src=curUrl;vid.style.display="block";img.style.display="none";vid.play().catch(()=>{});}
+  else{img.src=curUrl;img.style.display="block";vid.style.display="none";vid.pause();vid.removeAttribute("src");vid.load();}
+  const a=document.getElementById("resDl");a.href=curUrl;a.download=fname;
+  document.getElementById("mtitle").textContent=ext.toUpperCase()+" hazır ✓";
+  const canShare=!!(curFile&&navigator.canShare&&navigator.canShare({files:[curFile]}));
+  document.getElementById("resShare").style.display=canShare?"inline-flex":"none";
+  document.getElementById("mhint").textContent=canShare
+    ? 'iPhone: "Paylaş / Kaydet" → "Videoyu Kaydet" (Fotoğraflar). Bilgisayar: "İndir".'
+    : 'İndir\'e bas. Dosya açılmazsa VLC ya da tarayıcıya sürükle.';
+  document.getElementById("modal").classList.add("show");
+  toast(ext.toUpperCase()+" hazır ✓");
+}
+function closeModal(){document.getElementById("modal").classList.remove("show");const v=document.getElementById("resVid");try{v.pause();}catch(e){}}
+async function shareResult(){if(!curFile){toast("Paylaşım desteklenmiyor — İndir'i kullan");return;}try{await navigator.share({files:[curFile],title:curFile.name});}catch(e){if(e&&e.name!=="AbortError")toast("Paylaşım başarısız — İndir'i dene");}}
+
+/* ── export: MP4 (WebCodecs + mp4-muxer) — her yerde açılır, IG Reels uyumlu ── */
+async function pickAvc(){
+  const cands=["avc1.640028","avc1.4d0028","avc1.420028","avc1.640032","avc1.42e028"];
+  for(const c of cands){try{const s=await VideoEncoder.isConfigSupported({codec:c,width:W,height:H,bitrate:8e6,framerate:30});if(s&&s.supported)return c;}catch(e){}}
+  return null;
+}
+async function encodeMP4(R){
+  if(!("VideoEncoder" in window)||!("VideoFrame" in window)||!window.Mp4Muxer)return null;
+  const codec=await pickAvc();if(!codec)return null;
+  const fps=30,frames=Math.max(1,Math.round(R.total/1000*fps));
+  const target=new Mp4Muxer.ArrayBufferTarget();
+  const muxer=new Mp4Muxer.Muxer({target,video:{codec:"avc",width:W,height:H},fastStart:"in-memory"});
+  let err=null;
+  const enc=new VideoEncoder({output:(chunk,meta)=>muxer.addVideoChunk(chunk,meta),error:e=>{err=e;console.error("enc",e);}});
+  enc.configure({codec,width:W,height:H,bitrate:8000000,framerate:fps});
+  R._encoding=true;
+  try{
+    for(let i=0;i<frames;i++){
+      if(err)break;
+      const t=i/frames*R.total;drawReelAt(R,t);
+      const vf=new VideoFrame(R.canvas,{timestamp:Math.round(i*1e6/fps),duration:Math.round(1e6/fps)});
+      enc.encode(vf,{keyFrame:i%fps===0});vf.close();
+      if(i%14===0)toast("🎬 MP4… %"+Math.round(i/frames*100));
+      if(enc.encodeQueueSize>6)await new Promise(r=>setTimeout(r));
+    }
+    await enc.flush();muxer.finalize();
+  }finally{R._encoding=false;try{enc.close();}catch(e){}}
+  if(err)return null;
+  return new Blob([target.buffer],{type:"video/mp4"});
+}
+function pickMime(){const c=["video/mp4;codecs=h264","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"];for(const m of c){try{if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;}catch(e){}}return"";}
+function recordWebM(R){return new Promise(res=>{
+  const mime=pickMime();if(!mime||!window.MediaRecorder)return res(null);
+  let stream;try{stream=R.canvas.captureStream(30);}catch(e){return res(null);}
+  let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});}catch(e){return res(null);}
+  const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  rec.onstop=()=>{R.active=false;res({blob:new Blob(chunks,{type:mime}),ext:mime.indexOf("mp4")>-1?"mp4":"webm"});};
+  R.active=true;R.base=performance.now();rec.start();
+  setTimeout(()=>{try{rec.stop();}catch(e){R.active=false;res(null);}},R.total+150);
+});}
+async function recordVideo(id){
+  const R=getR(id);
+  toast("🎬 Video hazırlanıyor (MP4)… ⏳");
+  try{const blob=await encodeMP4(R);if(blob){showResult(blob,"mp4",id,"video");return;}}catch(e){console.error(e);}
+  // yedek: MediaRecorder (WebM — Chrome/VLC açar). iPhone'da çalışmaz, o yüzden GIF öner.
+  toast("MP4 motoru yok — WebM deneniyor (Chrome/VLC ile açılır)");
+  try{const r=await recordWebM(R);if(r&&r.blob.size>0){showResult(r.blob,r.ext,id,"video");return;}}catch(e){console.error(e);}
+  toast("Bu cihaz video üretemiyor — 🟢 GIF İndir'i kullan");
+}
+
+/* ── export: GIF (her yerde açılır) ── */
+async function recordGif(id){
+  if(typeof GIF==="undefined"){toast("GIF motoru yüklenemedi — http link üzerinden aç");return;}
+  const R=getR(id);const fps=12,frames=Math.max(8,Math.round(R.total/1000*fps));
+  const gw=540,gh=960;const tmp=document.createElement("canvas");tmp.width=gw;tmp.height=gh;const tctx=tmp.getContext("2d");
+  toast("🟢 GIF hazırlanıyor… "+frames+" kare ⏳");
+  R._encoding=true;
+  try{
+    const gif=new GIF({workers:2,quality:12,width:gw,height:gh,workerScript:"gif.worker.js",background:"#0b0820"});
+    for(let i=0;i<frames;i++){const t=i/frames*R.total;drawReelAt(R,t);tctx.drawImage(R.canvas,0,0,gw,gh);gif.addFrame(tctx,{copy:true,delay:Math.round(1000/fps)});}
+    gif.on("finished",b=>{R._encoding=false;showResult(b,"gif",id,"image");});
+    gif.on("abort",()=>{R._encoding=false;toast("GIF iptal");});
+    gif.render();
+  }catch(e){R._encoding=false;console.error(e);toast("GIF başarısız: "+(e.message||"hata")+" (http link dene)");}
+}
+
+/* ── boot (fonts first so canvas text is correct) ── */
+(function boot(){
+  const go=()=>buildReels();
+  if(document.fonts&&document.fonts.ready){
+    Promise.all([
+      document.fonts.load("900 100px Fraunces"),document.fonts.load("700 40px Caveat"),
+      document.fonts.load("800 30px Inter"),document.fonts.load("500 46px Inter")
+    ]).then(()=>document.fonts.ready).then(go).catch(go);
+  } else { go(); }
+})();
+</script>
+</body>
+</html>
