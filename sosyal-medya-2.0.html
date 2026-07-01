@@ -117,6 +117,17 @@
     background:linear-gradient(135deg,#FFE286,#F5C842);padding:10px 24px;border-radius:999px;box-shadow:0 8px 20px -6px rgba(245,200,66,.55)}
   .store2{display:inline-flex;align-items:center;gap:12px;background:var(--cream);color:#0d0a20;padding:14px 26px;border-radius:999px;font-weight:800;font-size:27px}
   .store2 svg{width:30px;height:30px}
+  /* ── çift mağaza rozeti (App Store + Google Play yan yana) ── */
+  .dual{flex-wrap:nowrap;white-space:nowrap}
+  .dual svg{flex:none}
+  .dual .store-sep{width:2px;height:26px;border-radius:2px;background:currentColor;opacity:.28;margin:0 2px;flex:none}
+  .c-store.dual{gap:12px;font-size:27px}
+  .c-store.dual svg{width:32px;height:32px}
+  .store2.dual{gap:11px;font-size:25px}
+  .store2.dual .store-sep{height:24px}
+  .nb-store.dual{gap:11px;font-size:24px}
+  .nb-store.dual svg{width:26px;height:26px}
+  .nb-store.dual .store-sep{height:22px}
   .handle2{font-family:'Caveat',cursive;font-weight:700;font-size:38px;color:var(--gold)}
   .chips2{display:flex;flex-wrap:wrap;gap:15px}
   .chip2{display:inline-flex;align-items:center;gap:11px;border:1.5px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);
@@ -299,7 +310,7 @@
     <div id="posts"></div>
 
     <footer class="foot">
-      İsim Şehir Online · @isimsehironline · App Store'da yayında<br/>
+      İsim Şehir Online · @isimsehironline · App Store & Google Play'de yayında<br/>
       Görsel indirme için modern bir tarayıcı kullan (Chrome / Safari / Edge).
     </footer>
   </div>
@@ -331,7 +342,7 @@ const POSTS = [
     accent:"violet", badge:"v2.0", kicker:"BÜYÜK GÜNCELLEME",
     title:"İsim Şehir\nOnline 2.0", sub:"Daha hızlı. Daha sosyal. Baştan aşağı yenilendi.",
     motif:{type:"tiles",tiles:[["İ","violet"],["Ş","sky"],["O","gold"]]},
-    caption:"📣 İsim Şehir Online 2.0 burada!\nÇocukluğumuzun kâğıt-kalem efsanesi şimdi çok daha hızlı, çok daha sosyal:\n\n🔐 Apple & Google ile giriş\n🏆 Liderlik tablosu\n🌍 Herkese açık odalar\n💎 Yeni premium planları\n…ve dahası 👇\n\nHemen güncelle, masaya otur! 🎯\n📲 App Store'da İsim Şehir Online",
+    caption:"📣 İsim Şehir Online 2.0 burada!\nÇocukluğumuzun kâğıt-kalem efsanesi şimdi çok daha hızlı, çok daha sosyal:\n\n🔐 Apple & Google ile giriş\n🏆 Liderlik tablosu\n🌍 Herkese açık odalar\n💎 Yeni premium planları\n…ve dahası 👇\n\nHemen güncelle, masaya otur! 🎯\n📲 App Store & Google Play'de İsim Şehir Online",
     tags:"#İsimŞehir #İsimŞehirOnline #KelimeOyunu #MobilOyun #Güncelleme @isimsehironline",
   },
   {
@@ -339,7 +350,7 @@ const POSTS = [
     title:"Tek dokunuşla\niçeride.", sub:"Apple, Google veya e-posta ile saniyede giriş.",
     motif:{type:"emoji",emoji:"🔐"},
     chips:["Apple","Google","E-posta"],
-    caption:"🔐 Tek dokunuşla içerideyiz!\nArtık Apple ya da Google hesabınla saniyede giriş yap. E-posta/şifre sevenler için o da yerinde 😉\n\nŞifre hatırlamak yok, oyun başlasın! ⚡️\n📲 App Store'da İsim Şehir Online",
+    caption:"🔐 Tek dokunuşla içerideyiz!\nArtık Apple ya da Google hesabınla saniyede giriş yap. E-posta/şifre sevenler için o da yerinde 😉\n\nŞifre hatırlamak yok, oyun başlasın! ⚡️\n📲 App Store & Google Play'de İsim Şehir Online",
     tags:"#İsimŞehir #AppleİleGiriş #GoogleİleGiriş #MobilOyun #KelimeOyunu",
   },
   {
@@ -412,7 +423,7 @@ const POSTS = [
     accent:"violet", badge:"NASIL", kicker:"🎮 NASIL OYNANIR",
     title:"Üç adım,\nbildiğin oyun.", sub:"Harf düşer, kelimeyi yaz, masadakiler onaylar.",
     motif:{type:"emoji",emoji:"🎮"}, chips:["Harf düşer","Kelimeyi yaz","Oylama"],
-    caption:"🎮 İsim Şehir 3 adımda:\n1️⃣ Rastgele bir harf düşer ⏱️\n2️⃣ Her kategoriyi o harfle başlayan kelimeyle doldur\n3️⃣ Cevaplar açılır, masadakiler oylar ✅\n\nEn çok puanı toplayan kürsüye çıkar! 🏆\n📲 App Store'da İsim Şehir Online",
+    caption:"🎮 İsim Şehir 3 adımda:\n1️⃣ Rastgele bir harf düşer ⏱️\n2️⃣ Her kategoriyi o harfle başlayan kelimeyle doldur\n3️⃣ Cevaplar açılır, masadakiler oylar ✅\n\nEn çok puanı toplayan kürsüye çıkar! 🏆\n📲 App Store & Google Play'de İsim Şehir Online",
     tags:"#İsimŞehir #NasılOynanır #KelimeOyunu #MobilOyun",
   },
   {
@@ -441,7 +452,7 @@ const POSTS = [
     accent:"leaf", badge:"OYNA", kicker:"👥 MASA KURULDU",
     title:"2 kişiden\n15 kişiye.", sub:"Tüm arkadaş grubu aynı masada, aynı anda.",
     motif:{type:"emoji",emoji:"👥"}, chips:["2–15 oyuncu","Tüm grup masada","Anında katılım"],
-    caption:"👥 İkili düello mu, 15 kişilik curcuna mı?\nOda sahibi kategori, süre ve oyuncu sayısını ayarlar; davet kodunu paylaşır, herkes anında girer.\n\nNe kadar kalabalık, o kadar keyifli! 🎉\n📲 App Store'da İsim Şehir Online",
+    caption:"👥 İkili düello mu, 15 kişilik curcuna mı?\nOda sahibi kategori, süre ve oyuncu sayısını ayarlar; davet kodunu paylaşır, herkes anında girer.\n\nNe kadar kalabalık, o kadar keyifli! 🎉\n📲 App Store & Google Play'de İsim Şehir Online",
     tags:"#İsimŞehir #ÇokOyunculu #ArkadaşlarlaOyun #MobilOyun",
   },
   {
@@ -617,7 +628,7 @@ const POSTS = [
     accent:"coral", badge:"TAKİP", kicker:"📲 BİZİ TAKİP ET",
     title:"Haberin olsun,\nkaçırma.", sub:"Yeni özellikler, çekilişler ve sürprizler için takipte kal.",
     motif:{type:"emoji",emoji:"🔔"}, chips:["Instagram","X","@isimsehironline"],
-    caption:"📲 Bizi takip et, hiçbir yeniliği kaçırma!\nInstagram ve X'te @isimsehironline 💜\nYeni oyun modları, güncellemeler ve sürprizler önce orada 🔔\n\nSen de masaya otur: App Store'da İsim Şehir Online 🎯",
+    caption:"📲 Bizi takip et, hiçbir yeniliği kaçırma!\nInstagram ve X'te @isimsehironline 💜\nYeni oyun modları, güncellemeler ve sürprizler önce orada 🔔\n\nSen de masaya otur: App Store & Google Play'de İsim Şehir Online 🎯",
     tags:"#İsimŞehir #İsimŞehirOnline #KelimeOyunu #MobilOyun @isimsehironline",
   },
   {
@@ -639,11 +650,15 @@ const IG_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.
 // Google Play triangle — single-color (currentColor) so it sits dark-on-cream
 // in the store badges, just like APPLE_SVG.
 const GPLAY_SVG = '<svg viewBox="0 0 512 512" fill="currentColor"><path d="M76.5 16.9C73 20.4 71 25.3 71 31v450c0 5.7 2 10.6 5.5 14.1l253.6-253.6L76.5 16.9zM104.6 13.4c-7-2.8-15-1.2-20.4 4.2l241.1 241.1 50.5-50.5L104.6 13.4zm344.6 216.7-71.2-41.1-55.9 55.9 55.9 55.9 71.2-41.1c20.6-12 20.6-43.7 0-55.8zM84.2 502.6c5.4 5.4 13.4 7 20.4 4.2l221-127.6-50.5-50.5L84.2 502.6z"/></svg>';
-// Per-post store: a post may set `store:'play'` to render the Google Play
-// badge + "Google Play'de" locative; default is App Store.
+// İsim Şehir artık hem App Store hem Google Play'de — her rozet ikisini
+// birlikte gösterir (apple + play ikonu yan yana). `store:'play'` artık
+// yalnızca caption metnindeki vurguyu etkiler, görselde ikisi de durur.
+function dualStore(cls){
+  return `<div class="${cls} dual">${APPLE_SVG}<span>App Store</span><i class="store-sep"></i>${GPLAY_SVG}<span>Google Play</span></div>`;
+}
+// Geriye dönük uyum: eski storeBits çağrıları artık çift ikon döndürür.
 function storeBits(p){
-  const play = p && p.store === 'play';
-  return { svg: play ? GPLAY_SVG : APPLE_SVG, loc: play ? "Google Play'de" : "App Store'da" };
+  return { svg: APPLE_SVG + '<span class="store-sep-sm"></span>' + GPLAY_SVG, loc: "App Store & Google Play'de" };
 }
 function grad(stops){return `linear-gradient(135deg, ${stops.split(",").map((c,i)=>`${c} ${i*50}%`).join(",")})`;}
 function nl(s){return s.replace(/\n/g,"<br/>");}
@@ -655,7 +670,7 @@ function decoDark(A){return `
   <div class="glow" style="background:radial-gradient(ellipse 70% 55% at 85% -5%, ${A.glow}, transparent 60%),radial-gradient(ellipse 60% 50% at 0% 105%, ${dim(A.glow)}, transparent 70%)"></div>
   <div class="dots"></div><div class="frame"></div>`;}
 function markD(){return `<div class="mk"><div class="mk-i" style="background:${grad('#9F87FF,#7C5CFF,#5237C0')}">İŞ</div><div><b>İsim Şehir</b><span>Online</span></div></div>`;}
-function store2(p){const s=storeBits(p);return `<div class="store2">${s.svg}<span>${s.loc}</span></div>`;}
+function store2(p){return dualStore("store2");}
 function handle2(){return `<div class="handle2">@isimsehironline</div>`;}
 function badgeP(p){return `<div class="pill-badge">${p.badge}</div>`;}
 function chips2(A,chips){return chips?`<div class="chips2">${chips.map(c=>`<span class="chip2"><i style="background:${grad(A.grad)}"></i>${c}</span>`).join("")}</div>`:"";}
@@ -676,7 +691,7 @@ function tplBadge(p,A){return decoDark(A)+`
       <div class="c-sub">${p.sub}</div>
       ${p.chips?`<div class="c-chips">${p.chips.map(c=>`<span class="c-chip"><i style="background:${grad(A.grad)}"></i>${c}</span>`).join("")}</div>`:""}
     </div>
-    <div class="c-foot"><div class="c-store">${storeBits(p).svg}<span>${storeBits(p).loc} indir</span></div><div class="c-handle">@isimsehironline</div></div>
+    <div class="c-foot">${dualStore("c-store")}<div class="c-handle">@isimsehironline</div></div>
   </div>`;}
 
 function tplPoster(p,A){return decoDark(A)+`
@@ -768,7 +783,7 @@ function tplNotebook(p,A){
       ${p.chips?`<ul class="nb-list">${p.chips.map(c=>`<li>${checkSVG()} ${c}</li>`).join("")}</ul>`:""}
     </div>
     <div class="nb-stickers">${sticker}</div>
-    <div class="nb-foot"><div class="nb-handle">@isimsehironline</div><div class="nb-store">${storeBits(p).svg}<span>${storeBits(p).loc}</span></div></div>
+    <div class="nb-foot"><div class="nb-handle">@isimsehironline</div>${dualStore("nb-store")}</div>
   </div>`;}
 
 function tplPhone(p,A){
@@ -794,7 +809,7 @@ function tplPhone(p,A){
             <div class="ht">${nl(p.title)}</div>
           </div>
           <div class="ph-rows">${rows.map(c=>`<div class="ph-row"><i style="background:${grad(A.grad)}"></i>${c}</div>`).join("")}</div>
-          <div class="ph-cta">${storeBits(p).loc} aç</div>
+          <div class="ph-cta">Hemen indir</div>
         </div>
       </div>
     </div>
