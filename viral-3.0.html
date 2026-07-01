@@ -6,7 +6,7 @@
 <title>İsim Şehir · Viral Stüdyo 3.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Permanent+Marker&family=Patrick+Hand&family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Permanent+Marker&family=Patrick+Hand&family=Shantell+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
 <script src="gif.js"></script>
 <script src="mp4-muxer.min.js"></script>
 <style>
@@ -108,12 +108,14 @@ const APP_URL=APP_STORE;
 
 /* ══════════════════ palettes (jenerik değil — her aile farklı) ══════════════════ */
 const PAL={
-  ink:   {bg:"#F1E7CF", paper:true, fg:"#17307a", red:"#d6303a", accent:"#17307a", sub:"#5a5340", grid:"rgba(23,48,122,.10)"},
+  ink:   {bg:"#F1E7CF", paper:true, fg:"#17307a", red:"#d6303a", accent:"#17307a", sub:"#5a5340", grid:"rgba(23,48,122,.10)", hi:"#FCE94F"},
   high:  {bg:"#F4ECD8", paper:true, fg:"#1a1a1a", red:"#d6303a", accent:"#111", hi:"#FFE14D", sub:"#4a463a", grid:"rgba(0,0,0,.06)"},
-  brat:  {bg:"#c8f000", paper:false,fg:"#0c0c0c", red:"#0c0c0c", accent:"#0c0c0c", sub:"#2b2b0e"},
-  riso:  {bg:"#f3ebd6", paper:true, fg:"#e5372a", red:"#1a54ff", accent:"#e5372a", sub:"#7a5a2e", grid:"rgba(229,55,42,.10)"},
-  vhs:   {bg:"#0a0a12", paper:false,fg:"#f4f4ff", red:"#ff3ea5", accent:"#31e6ff", sub:"#9aa0c0"},
-  night: {bg:"#101014", paper:false,fg:"#F4ECD8", red:"#ff6b3d", accent:"#c8f000", sub:"#9a9aa8"},
+  brat:  {bg:"#c8f000", paper:false, light:true, fg:"#0c0c0c", red:"#0c0c0c", accent:"#0c0c0c", sub:"#2b2b0e", hi:"#FCE94F", chip:"#101007", chipText:"#c8f000"},
+  riso:  {bg:"#f3ebd6", paper:true, fg:"#e5372a", red:"#1a54ff", accent:"#e5372a", sub:"#7a5a2e", grid:"rgba(229,55,42,.10)", hi:"#FCE94F"},
+  vhs:   {bg:"#0a0a12", paper:false,fg:"#f4f4ff", red:"#ff3ea5", accent:"#31e6ff", sub:"#9aa0c0", hi:"#ffe14d", chip:"#31e6ff", chipText:"#06232a"},
+  night: {bg:"#101014", paper:false,fg:"#F4ECD8", red:"#ff6b3d", accent:"#c8f000", sub:"#9a9aa8", hi:"#ffe14d"},
+  // uygulama renkleri — koyu mor zemin, mor/altın vurgu, krem yazı (İsim Şehir Online teması)
+  app:   {bg:"#181334", paper:false,fg:"#FBF6EA", red:"#F5C842", accent:"#7C5CFF", sub:"#B7ADD8", hi:"#F5C842", grid:"rgba(159,135,255,.14)", chip:"#9F87FF", chipText:"#0d0a20"},
 };
 const TILEC={violet:["#9F87FF","#7C5CFF","#5237C0"],sky:["#7BB0FF","#5B8FFF","#4070E0"],leaf:["#7BE093","#51CF66","#2EB94F"],gold:["#FFE286","#F5C842","#B8870D"],coral:["#FF9CC0","#FF6B9D","#E03B73"],ink:["#3b62d6","#1f3fa8","#12266e"],red:["#ff7a80","#e0343d","#a11820"]};
 
@@ -184,11 +186,17 @@ function arrowDoodle(ctx,x1,y1,x2,y2,col){ctx.save();ctx.strokeStyle=col;ctx.lin
 function circleScribble(ctx,cx,cy,w,h,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=7;ctx.lineCap="round";for(let k=0;k<2;k++){ctx.beginPath();for(let a=0;a<=Math.PI*2+0.3;a+=0.25){const rr2=1+seeded(a*3+k)*0.06;ctx.lineTo(cx+Math.cos(a)*w/2*rr2+k*3,cy+Math.sin(a)*h/2*rr2);}ctx.stroke();}ctx.restore();}
 function underlineWavy(ctx,x,y,w,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=7;ctx.lineCap="round";ctx.beginPath();for(let i=0;i<=w;i+=12){ctx.lineTo(x+i,y+Math.sin(i/18)*5);}ctx.stroke();ctx.restore();}
 function highlighter(ctx,x,y,w,h,col){ctx.save();ctx.globalCompositeOperation="multiply";ctx.fillStyle=col;ctx.globalAlpha=.85;rr(ctx,x,y,w,h,4);ctx.fill();ctx.restore();}
+// tema-duyarlı vurgu kutusu: açık zeminde multiply, koyu zeminde parlak dolu kutu (koyu zeminde siyaha dönmesin)
+function hlBox(ctx,x,y,w,h,P){const light=P.paper||P.light;ctx.save();
+  if(light){ctx.globalCompositeOperation="multiply";ctx.globalAlpha=.9;ctx.fillStyle=P.hi||"#FCE94F";rr(ctx,x,y,w,h,4);ctx.fill();}
+  else{ctx.fillStyle=P.hi||"#FCE94F";rr(ctx,x,y,w,h,6);ctx.fill();}
+  ctx.restore();}
 
 // ── ink title with rotation + optional highlight ──
 function inkTitle(ctx,txt,cx,cy,size,col,rot,lh,align){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle=col;ctx.font=`400 ${size}px Anton, sans-serif`;ctx.textAlign=align||"center";ctx.textBaseline="alphabetic";
   const L=lines(txt);L.forEach((ln,i)=>ctx.fillText(ln,0,i*(lh||size*1.02)));ctx.restore();}
-function markerTitle(ctx,txt,cx,cy,size,col,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle=col;ctx.font=`400 ${size}px 'Permanent Marker', cursive`;ctx.textAlign="center";ctx.textBaseline="alphabetic";const L=lines(txt);L.forEach((ln,i)=>ctx.fillText(ln,0,i*size*1.08));ctx.restore();}
+// Shantell Sans — Türkçe (ş/ğ/İ/ç/ö/ü) tam destekli el yazısı-marker; Permanent Marker Türkçe harfleri bozuyordu
+function markerTitle(ctx,txt,cx,cy,size,col,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle=col;ctx.font=`800 ${size}px 'Shantell Sans','Patrick Hand',cursive`;ctx.textAlign="center";ctx.textBaseline="alphabetic";const L=lines(txt);L.forEach((ln,i)=>ctx.fillText(ln,0,i*size*1.08));ctx.restore();}
 function handText(ctx,txt,x,y,size,col,align){ctx.save();ctx.fillStyle=col;ctx.font=`400 ${size}px 'Patrick Hand', cursive`;ctx.textAlign=align||"left";ctx.textBaseline="alphabetic";const L=lines(txt);L.forEach((ln,i)=>ctx.fillText(ln,x,y+i*size*1.15));ctx.restore();}
 
 // ── kinetic caption sticker (CapCut/TikTok style, word-by-word) ──
@@ -210,8 +218,8 @@ function kineticCap(ctx,R,words,cy,lp,opt){
         const pop=isCur?eOutBack(inv(lp,o.i/(n*1.25),0.18)):1;
         ctx.save();ctx.translate(x+wOnly/2,y);ctx.scale(pop,pop);ctx.translate(-(x+wOnly/2),-y);
         const hot=opt.hot&&opt.hot.includes(o.i);
-        if(hot){highlighter(ctx,x-6,y-fs*0.82,wOnly+12,fs*1.02,opt.hotCol||"#FFE14D");}
-        ctx.fillStyle=isCur&&opt.curCol?opt.curCol:(hot?"#111":(opt.col||"#111"));
+        if(hot){hlBox(ctx,x-6,y-fs*0.82,wOnly+12,fs*1.02,R.P);}
+        ctx.fillStyle=hot?"#111":(isCur&&opt.curCol?opt.curCol:(opt.col||"#111"));
         ctx.font=`900 ${fs}px 'Archivo Black', sans-serif`;ctx.textAlign="left";ctx.textBaseline="alphabetic";
         if(opt.stroke){ctx.lineWidth=opt.stroke;ctx.strokeStyle=opt.strokeCol||"#000";ctx.strokeText(o.w,x,y);}
         ctx.fillText(o.w,x,y);ctx.restore();
@@ -230,12 +238,12 @@ function storeSticker(ctx,R,cy,scale){scale=scale||1;const W=R.W;ctx.save();ctx.
 
 // brand chip (top-left), theme-aware
 function brandChip(ctx,R){const P=R.P;const dark=!P.paper;const x=54,y=58;
-  ctx.save();ctx.fillStyle=dark?"#c8f000":P.fg;rr(ctx,x,y,64,64,16);ctx.fill();
-  ctx.fillStyle=dark?"#101007":P.bg;ctx.font="400 34px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("İŞ",x+32,y+35);
+  ctx.save();ctx.fillStyle=dark?(P.chip||"#c8f000"):P.fg;rr(ctx,x,y,64,64,16);ctx.fill();
+  ctx.fillStyle=dark?(P.chipText||"#101007"):P.bg;ctx.font="400 34px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("İŞ",x+32,y+35);
   ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillStyle=dark?"#fff":P.fg;ctx.font="400 30px Anton, sans-serif";ctx.fillText("İSİM ŞEHİR",x+78,y+28);
   ctx.fillStyle=dark?"#9a9aa8":P.sub;ctx.font="800 15px Inter, sans-serif";ctx.fillText("ONLINE",x+78,y+52);ctx.restore();}
-function handleFoot(ctx,R){const P=R.P;ctx.save();ctx.fillStyle=P.paper?P.fg:"#c8f000";ctx.font="700 40px 'Caveat', cursive";ctx.textAlign="center";ctx.fillText("@isimsehironline",R.W/2,R.H-70);ctx.restore();}
-function progress(ctx,R,t){const P=R.P;ctx.save();ctx.fillStyle=P.paper?"rgba(0,0,0,.10)":"rgba(255,255,255,.14)";rr(ctx,54,R.H-124,R.W-108,8,4);ctx.fill();ctx.fillStyle=P.paper?P.red:"#c8f000";rr(ctx,54,R.H-124,(R.W-108)*clamp01(t/R.total),8,4);ctx.fill();ctx.restore();}
+function handleFoot(ctx,R){const P=R.P;ctx.save();ctx.fillStyle=P.paper?P.fg:(P.chip||"#c8f000");ctx.font="700 40px 'Caveat', cursive";ctx.textAlign="center";ctx.fillText("@isimsehironline",R.W/2,R.H-70);ctx.restore();}
+function progress(ctx,R,t){const P=R.P;ctx.save();ctx.fillStyle=P.paper?"rgba(0,0,0,.10)":"rgba(255,255,255,.14)";rr(ctx,54,R.H-124,R.W-108,8,4);ctx.fill();ctx.fillStyle=P.paper?P.red:(P.chip||"#c8f000");rr(ctx,54,R.H-124,(R.W-108)*clamp01(t/R.total),8,4);ctx.fill();ctx.restore();}
 
 /* ══════════════════ VIDEO scene renderers ══════════════════ */
 const SCENES={
@@ -312,7 +320,7 @@ const SCENES={
     const rows=Math.max(sc.left.length,sc.right.length);const gap=(R.H-820)/rows;
     for(let i=0;i<rows;i++){const y=y0+90+i*gap;
       const dl=inv(lp,0.14+i*0.16,0.3);if(sc.left[i]){ctx.save();ctx.globalAlpha=dl;ctx.fillStyle=P.fg;ctx.font="600 48px Inter, sans-serif";ctx.textAlign="center";ctx.fillText(sc.left[i],x1+colW/2,y);ctx.restore();}
-      const dr=inv(lp,0.22+i*0.16,0.3);if(sc.right[i]){ctx.save();ctx.globalAlpha=clamp01(dr*1.3);const e=eOutBack(dr);ctx.translate(x2+colW/2,y);ctx.scale(e,e);highlighter(ctx,-ctx.measureText(sc.right[i]).width/2-10,-46,ctx.measureText(sc.right[i]).width+20,58,P.hi||"#FFE14D");ctx.fillStyle="#111";ctx.font="800 50px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText(sc.right[i],0,0);ctx.restore();}}
+      const dr=inv(lp,0.22+i*0.16,0.3);if(sc.right[i]){ctx.save();ctx.globalAlpha=clamp01(dr*1.3);const e=eOutBack(dr);ctx.translate(x2+colW/2,y);ctx.scale(e,e);hlBox(ctx,-ctx.measureText(sc.right[i]).width/2-10,-46,ctx.measureText(sc.right[i]).width+20,58,P);ctx.fillStyle="#111";ctx.font="800 50px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText(sc.right[i],0,0);ctx.restore();}}
   },
   // nostalgia montage — big emoji flashes + "hatırlıyor musun?" counter
   montage(ctx,R,sc,lp){const P=R.P;const items=sc.items;const idx=Math.min(items.length-1,Math.floor(lp*items.length));const it=items[idx];
@@ -583,20 +591,20 @@ const ITEMS=[
    tags:"#isimşehir #nostalji #90lar #kelimeoyunu #keşfet",
    scenes:[
      {type:"paperhook",tiles:[["İ","ink"],["Ş","red"],["O","ink"]],title:"2009",sub:"okulda, sıranın altından…",dur:3000},
-     {type:"kinetic",kicker:"O ZAMANLAR",text:"kâğıt bitince defterin arkası feda 📝",size:74,hot:[3],dur:3400},
+     {type:"kinetic",kicker:"O ZAMANLAR",text:"kâğıt bitince defterin arkası feda edilirdi📝",size:74,hot:[3],dur:3400},
      {type:"punch",kicker:"AMA ŞİMDİ",big:"2025",sub:"aynı oyun, artık telefonda",dur:2800},
      {type:"list",title:"NE DEĞİŞTİ?",items:["Online & çok oyunculu","Gerçek zamanlı süre","Sohbet + arkadaş davet","Tamamen ücretsiz"],dur:4600},
      {type:"outro",title:"ÇOCUKLUĞUN\nGERİ DÖNDÜ",dur:3200}]},
 
   {id:2,kind:"video",pal:"night",title:"Son 5 Saniye",sub:"panik · relatable",
-   caption:"😮‍💨 \"Z ile hayvan\" deyince beynim mavi ekran verdi.\nSon 5 saniye, parmaklar uçuyor… ZÜRAFA! 🦒 Son anda kurtardık.\nSen ne yazardın? Yoruma yaz 👇"+CTA,
+   caption:"😮‍💨 \"J ile hayvan\" deyince beynim mavi ekran verdi.\nSon 5 saniye, parmaklar uçuyor… JAGUAR! 🐆 Son anda kurtardık.\nSen ne yazardın? Yoruma yaz 👇"+CTA,
    tags:"#isimşehir #relatable #panik #kelimeoyunu #keşfet",
    scenes:[
-     {type:"kinetic",kicker:"POV:",text:"harf Z geldi ve masada kimse hazır değil",size:78,hot:[2],curCol:"#c8f000",dur:3200},
-     {type:"punch",kicker:"KATEGORİ",big:"Z ile\nHAYVAN",sub:"beyin: mavi ekran…",dur:2600},
+     {type:"kinetic",kicker:"POV:",text:"harf J geldi ve masada kimse hazır değil",size:78,hot:[2],curCol:"#c8f000",dur:3200},
+     {type:"punch",kicker:"KATEGORİ",big:"J ile\nHAYVAN",sub:"beyin: mavi ekran…",dur:2600},
      {type:"countdown",from:5,kicker:"SON SANİYELER",sub:"aklına gelen İLK kelime!",dur:4000},
-     {type:"typing",cat:"Z ile hayvan",word:"Zürafa",dur:3000},
-     {type:"punch",big:"🦒",sub:"son saniyede kurtardın!",dur:2200},
+     {type:"typing",cat:"J ile hayvan",word:"Jaguar",dur:3000},
+     {type:"punch",big:"🐆",sub:"son saniyede kurtardın!",dur:2200},
      {type:"outro",title:"MASAYA\nOTUR",dur:2600}]},
 
   {id:3,kind:"video",pal:"high",paperMode:"graph",title:"Kelime Tier List",sub:"tartışma · tier list",
@@ -695,12 +703,12 @@ const ITEMS=[
      {type:"punch",big:"🦜",sub:"sen ne yazdın?",dur:2600},
      {type:"outro",title:"YENİDEN\nOYNA",dur:2800}]},
 
-  {id:13,kind:"video",pal:"riso",title:"Herkes 'Kedi' Yazıyor",sub:"basic vs pro",
-   caption:"🐱 Herkes 'kedi' yazıyor ama profesyoneller listeyi görün 😎\nSen acemi misin, pro musun? Yoruma yaz 👇"+CTA,
+  {id:13,kind:"video",pal:"riso",title:"Herkes 'Hamsi' Yazıyor",sub:"basic vs pro",
+   caption:"🐱 Herkes 'Hamsi' yazıyor ama profesyoneller listeyi görün 😎\nSen acemi misin, pro musun? Yoruma yaz 👇"+CTA,
    tags:"#isimşehir #kelimeoyunu #strateji #keşfet #oyun",
    scenes:[
-     {type:"kinetic",kicker:"HERKES 'KEDİ' YAZIYOR",text:"ama pro oyuncular bunu yazıyor",size:76,hot:[5],dur:3200},
-     {type:"twocol",title:"H İLE HAYVAN",left:["Horoz","Hindi","Hamster"],right:["Hüthüt","Hamsi","Hirola"],dur:6800},
+     {type:"kinetic",kicker:"HERKES 'HAMSİ' YAZIYOR",text:"ama pro oyuncular bunu yazıyor",size:76,hot:[5],dur:3200},
+     {type:"twocol",title:"H İLE HAYVAN",left:["Horoz","Hamsi","Hamster"],right:["Hüthüt","Hirola","Hindi"],dur:6800},
      {type:"punch",big:"😎",sub:"pro seviye kelimeler",dur:2800},
      {type:"outro",title:"SEVİYE\nATLA",dur:2800}]},
 
@@ -768,7 +776,16 @@ const ITEMS=[
      {type:"punch",big:"🤔",sub:"daha iyisini yaz 👇",dur:3000},
      {type:"outro",title:"HER HAFTA\nYENİ HARF",dur:3000}]},
 
-  /* ═══════════════ GÖRSELLER (22) ═══════════════ */
+  {id:21,kind:"video",pal:"app",title:"Kağıt mı, App mi?",sub:"before / after · v2",
+   caption:"📄➡️📱 Eskiden kâğıt-kalem kaosu, şimdi tek dokunuş. Aynı keyif, sıfır kâğıt.\nHangi tarafı özlüyorsun? 👇"+CTA,
+   tags:"#isimşehir #beforeafter #nostalji #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"punch",kicker:"ESKİDEN",big:"📄",sub:"kâğıt, kalem, karışan sayfalar",dur:3400},
+     {type:"punch",kicker:"VE ŞİMDİ",big:"📱",sub:"tek dokunuş, süre otomatik",dur:3400},
+     {type:"list",title:"AYNI OYUN, YENİ HÂLİ",items:["Online & çok oyunculu","Gerçek zamanlı süre","Sıfır kâğıt, sıfır kavga","İstersen reklamsız"],dur:6000},
+     {type:"outro",title:"HEMEN\nDENE",dur:3000}]},
+
+  /* ═══════════════ GÖRSELLER (22 + 6 uygulama renkli varyant) ═══════════════ */
   {id:21,kind:"image",pal:"ink",render:"notebook",title:"Defter Sayfası",sub:"checklist · nostalji",
    data:{kicker:"İsim Şehir defteri",title:"Neden herkes\ntekrar oynuyor?",items:[
      {t:"Online & çok oyunculu",done:true},{t:"Gerçek zamanlı süre",done:true},{t:"Arkadaş davet + sohbet",done:true},{t:"Reklamsız seçeneği",done:true}],foot:"hepsi ÜCRETSİZ"},
@@ -891,8 +908,43 @@ const ITEMS=[
    tags:"#isimşehir #komik #relatable #kelimeoyunu #keşfet"},
 
   {id:42,kind:"image",pal:"riso",render:"thisthat",title:"Bu mu Şu mu #2",sub:"anket · this or that",
-   data:{title:"HANGİSİ DAHA ZOR HARF?",a:{emoji:"🥶",t:"Z HARFİ"},b:{emoji:"😵",t:"Ğ HARFİ"},foot:"hangisi seni bitirdi? 👇"},
-   caption:"🥶 Hangisi daha zor: Z mi Ğ mi? (Ğ ile şehir bulan efsane)\nSeni en çok hangi harf terletti? 👇"+CTA,
+   data:{title:"HANGİSİ DAHA ZOR HARF?",a:{emoji:"🥶",t:"Z HARFİ"},b:{emoji:"😵",t:"J HARFİ"},foot:"hangisi seni bitirdi? 👇"},
+   caption:"🥶 Hangisi daha zor: Z mi J mi? (J ile şehir bulan efsane)\nSeni en çok hangi harf terletti? 👇"+CTA,
+   tags:"#isimşehir #anket #komik #kelimeoyunu #keşfet"},
+
+  /* ── uygulama renkli varyantlar (mor/altın tema) — orijinaller de duruyor ── */
+  {id:43,kind:"image",pal:"app",render:"karne",title:"İsim Şehir Karnesi (App)",sub:"uygulama renkleri",
+   data:{title:"İSİM ŞEHİR KARNESİ",rows:[
+     {k:"Şehir bilgisi",v:"AA"},{k:"Hızlı yazma",v:"AA"},{k:"Z ile hayvan",v:"DD",hot:true},
+     {k:"Tartışma çıkarma",v:"AA"},{k:"Süreyi geçirme",v:"CC"}],foot:"öğretmen notu: masaya otur!"},
+   caption:"🎓 İsim Şehir karnem geldi, \"Z ile hayvan\"dan kaldım 😭\nSenin en zayıf kategorin hangisi? Yorumla 👇"+CTA,
+   tags:"#isimşehir #karne #nostalji #komik #keşfet"},
+
+  {id:44,kind:"image",pal:"app",render:"define",title:"Sözlük Tanımı (App)",sub:"uygulama renkleri",
+   data:{word:"isim şehir",ipa:"/isim şehir/ · isim, oyun",defs:[
+     "Müfredatın gayrı resmi dersi.","Masada dostluk bitiren tek kelime oyunu.","Artık cepte, online ve gerçek zamanlı hâli."]},
+   caption:"📖 İsim Şehir (isim): müfredatın gayrı resmi dersi 😌\nSenin tanımın ne olurdu? Yaz 👇"+CTA,
+   tags:"#isimşehir #sözlük #komik #nostalji #keşfet"},
+
+  {id:45,kind:"image",pal:"app",render:"bracket",title:"En İyi Hayvan Bracket (App)",sub:"uygulama renkleri",
+   data:{title:"EN İYİ 'K' HAYVANI",names:["Kanguru","Kaplan","Kirpi","Koala","Kobra","Köpek","Kurbağa","Kelebek"],champ:"Kanguru",foot:"sence şampiyon kim? 👇"},
+   caption:"🏆 'K ile hayvan' turnuvası! Bracket'i doldur, şampiyonu seç.\nSenin favorin hangisi? Yorumla 👇"+CTA,
+   tags:"#isimşehir #turnuva #kelimeoyunu #anket #keşfet"},
+
+  {id:46,kind:"image",pal:"app",render:"conspiracy",title:"Cevap Geçerli mi? (App)",sub:"uygulama renkleri",
+   data:{word:"İSTANBOL",cat:"İ ile şehir",notes:["Yazım yanlış mı?","Ağızda öyle mi?","Herkes anladı mı?"],foot:"jüri sensin — kararını yaz 👇"},
+   caption:"🕵️ 'İstanbol' geçerli mi? Masa ikiye bölündü 😅\nJüri sensin: GEÇERLİ mi GEÇERSİZ mi? 👇"+CTA,
+   tags:"#isimşehir #tartışma #komik #kelimeoyunu #keşfet"},
+
+  {id:47,kind:"image",pal:"app",render:"notebook",title:"Zor Harf Kılavuzu (App)",sub:"uygulama renkleri",
+   data:{kicker:"pro ipuçları",title:"Zor harfte\nne yazmalı?",items:[
+     {t:"F → Funda, Fesleğen (bitki)",done:true},{t:"J → Jaguar, Japonya",done:true},{t:"Z → Zürafa, Zonguldak",done:true},{t:"Ğ → yok! (kimse takılmasın)",done:true}],foot:"KAYDET, sonra lazım olur"},
+   caption:"📌 Zor harf kılavuzu: F, J, Z ve Ğ için pro cevaplar.\nKaydet, bir dahaki oyunda lazım olacak 👇"+CTA,
+   tags:"#isimşehir #ipucu #kelimeoyunu #strateji #keşfet"},
+
+  {id:48,kind:"image",pal:"app",render:"thisthat",title:"Bu mu Şu mu #2 (App)",sub:"uygulama renkleri",
+   data:{title:"HANGİSİ DAHA ZOR HARF?",a:{emoji:"🥶",t:"Z HARFİ"},b:{emoji:"😵",t:"J HARFİ"},foot:"hangisi seni bitirdi? 👇"},
+   caption:"🥶 Hangisi daha zor: Z mi J mi? (J ile şehir bulan efsane)\nSeni en çok hangi harf terletti? 👇"+CTA,
    tags:"#isimşehir #anket #komik #kelimeoyunu #keşfet"},
 ];
 
@@ -1020,7 +1072,7 @@ async function exportGif(id){if(typeof GIF==="undefined"){toast("GIF motoru yük
 /* ── boot ── */
 (function boot(){const go=()=>build();
   if(document.fonts&&document.fonts.ready){Promise.all([
-    document.fonts.load("400 100px Anton"),document.fonts.load("400 60px 'Permanent Marker'"),
+    document.fonts.load("400 100px Anton"),document.fonts.load("800 60px 'Shantell Sans'"),
     document.fonts.load("400 60px 'Patrick Hand'"),document.fonts.load("900 60px 'Archivo Black'"),
     document.fonts.load("800 40px Inter"),document.fonts.load("700 40px Caveat")
   ]).then(()=>document.fonts.ready).then(go).catch(go);}else{go();}})();
