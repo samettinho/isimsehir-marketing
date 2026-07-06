@@ -254,9 +254,12 @@ function wTile(ctx,x,y,s,letter,st,P,flip){
 // bir tahmin satırı: harfler sırayla yazılır (typeD 0..1), sonra karolar sırayla döner (flipD 0..1)
 function wRow(ctx,R,word,states,cy,s,typeD,flipD){
   const P=R.P;const n=word.length,gap=Math.round(s*0.12),tw=n*s+(n-1)*gap;let x0=R.W/2-tw/2;
+  // flip zamanlaması span'e normalize: flipD=1'de SON karo da çevirmeyi tamamlar
+  // (eski hali son harfi yarı-çevrilmiş/ezik bırakıyordu — J ve M kırpık görünüyordu)
+  const fw=1.6/n,span=(n-1)/n+fw;
   for(let i=0;i<n;i++){
     const typed=typeD>=(i+1)/n-0.001;
-    const fl=flipD<=0?0:clamp01((flipD-i/n)/(1.6/n));
+    const fl=flipD<=0?0:clamp01((flipD*span-i/n)/fw);
     if(!typed&&fl<=0){ // boş karo
       ctx.save();ctx.fillStyle=P.paper?"rgba(255,255,255,.4)":"rgba(255,255,255,.04)";rr(ctx,x0+i*(s+gap),cy,s,s,12);ctx.fill();
       ctx.lineWidth=3;ctx.strokeStyle=P.paper?"rgba(0,0,0,.18)":"rgba(255,255,255,.18)";ctx.stroke();ctx.restore();
