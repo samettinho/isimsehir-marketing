@@ -73,7 +73,7 @@
     <header class="top">
       <div class="kick">— yeni oyunlar stüdyosu —</div>
       <h1>Wordle <em>&amp;</em> Popüler Cevap</h1>
-      <p>Uygulamaya gelen <b>2 yeni günlük oyunun</b> tanıtımı. Aynı defter/kinetik estetik ama <b>yepyeni kolajlar</b>: harf çevirme, tablo açılışı, LİSTEDE damgası, seri alevi. Dikey <b>video</b> (20-31sn) + <b>görsel</b>. Üzerine gel → oynar.</p>
+      <p>Uygulamaya gelen <b>2 yeni günlük oyunun</b> tanıtımı. <b>v2 formatlar</b> (internet araştırmasına dayalı, şablon dışı): paylaşım grid'i, pause challenge, fail/rage-bait, göz testi, kilit ekranı POV, sohbet hikâyesi — artı defter kolajları. Dikey <b>video</b> (17-28sn) + <b>görsel</b>. Üzerine gel → oynar.</p>
       <div class="filters" id="filters">
         <button class="fbtn on" data-f="all" onclick="setFilter('all',this)">Hepsi</button>
         <button class="fbtn" data-f="video" onclick="setFilter('video',this)">🎬 Video</button>
@@ -287,6 +287,42 @@ function pcSlot(ctx,R,x,y,w,h,rank,ans,count,maxC,hidden,pulseT){
   ctx.restore();
 }
 
+/* ── v2 kolaj yardımcıları: telefon arayüzü taklidi (araştırma: ham/otantik
+   ekran görüntüsü hissi cilalı reklamı yener; Wordle'ın viral döngüsü emoji grid) ── */
+const WGC={g:"#57A85E",y:"#C9B458",x:"#3A3A3C"}; // klasik wordle paylaşım kareleri
+function uiText(P){return P.paper?"#16161c":"#F2F2F7";}
+function uiSub(P){return P.paper?"#6b6b74":"#9a9aa8";}
+function uiCard(ctx,R,x,y,w,h,r){const P=R.P;rr(ctx,x,y,w,h,r);ctx.fillStyle=P.paper?"rgba(255,255,255,.92)":"rgba(28,28,38,.94)";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();}
+function appIcon(ctx,x,y,s){ctx.save();rr(ctx,x,y,s,s,s*0.24);ctx.fillStyle="#7C5CFF";ctx.fill();ctx.fillStyle="#fff";ctx.font=`400 ${Math.round(s*0.5)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("İŞ",x+s/2,y+s/2+1);ctx.restore();}
+// iOS tarzı bildirim kartı — yüksekliği HER ZAMAN hesaplar (stabil dizilim), pop>0 iken çizer
+function notifCard(ctx,R,cx,y,w,title,body,when,pop){const P=R.P;
+  ctx.font="600 34px Inter, sans-serif";const wl=wrap(ctx,body,"600 34px Inter, sans-serif",w-150);
+  const h=84+wl.length*44;
+  if(pop>0){const e=eOutCubic(clamp01(pop));const x=cx-w/2;
+    ctx.save();ctx.globalAlpha=clamp01(pop*2);ctx.translate(0,(1-e)*-40);
+    uiCard(ctx,R,x,y,w,h,26);appIcon(ctx,x+22,y+20,52);
+    ctx.fillStyle=uiText(P);ctx.font="800 33px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillText(title,x+94,y+52);
+    ctx.fillStyle=uiSub(P);ctx.font="600 26px Inter, sans-serif";ctx.textAlign="right";ctx.fillText(when||"şimdi",x+w-24,y+50);
+    ctx.fillStyle=uiText(P);ctx.font="600 34px Inter, sans-serif";ctx.textAlign="left";wl.forEach((ln,k)=>ctx.fillText(ln,x+94,y+98+k*44));
+    ctx.restore();}
+  return h;}
+// sohbet balonu — mine=true sağa yaslı mor; yükseklik her zaman döner
+function chatBubble(ctx,R,x,y,maxW,text,mine,pop){const P=R.P;
+  ctx.font="600 38px Inter, sans-serif";const wl=wrap(ctx,text,"600 38px Inter, sans-serif",maxW-64);
+  const bw=Math.min(maxW,Math.max(...wl.map(l=>ctx.measureText(l).width))+64);const bh=wl.length*50+42;
+  if(pop>0){const bx=mine?x-bw:x;
+    ctx.save();ctx.globalAlpha=clamp01(pop*2);ctx.translate(0,(1-eOutCubic(clamp01(pop)))*20);
+    rr(ctx,bx,y,bw,bh,26);ctx.fillStyle=mine?"#7C5CFF":(P.paper?"rgba(255,255,255,.95)":"rgba(255,255,255,.1)");ctx.fill();
+    ctx.fillStyle=mine?"#fff":uiText(P);ctx.font="600 38px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+    wl.forEach((ln,k)=>ctx.fillText(ln,bx+32,y+52+k*50));
+    ctx.restore();}
+  return bh;}
+function typingDots(ctx,R,x,y,t){const P=R.P;ctx.save();rr(ctx,x,y,130,64,30);ctx.fillStyle=P.paper?"rgba(255,255,255,.95)":"rgba(255,255,255,.1)";ctx.fill();
+  for(let i=0;i<3;i++){const p=(Math.sin((t||0)/160+i*1.1)+1)/2;ctx.fillStyle=`rgba(150,150,165,${(0.4+p*0.6).toFixed(2)})`;ctx.beginPath();ctx.arc(x+35+i*30,y+32,9,0,7);ctx.fill();}ctx.restore();}
+// emoji-grid kareleri (spoiler'sız wordle paylaşımı) — upto: kaç satır görünür
+function gridSquares(ctx,cx,y,s,gap,rows,upto){rows.forEach((st,r)=>{if(r>=upto)return;const n=st.length,tw=n*s+(n-1)*gap;let x0=cx-tw/2;
+  for(let i=0;i<n;i++){rr(ctx,x0+i*(s+gap),y+r*(s+gap),s,s,8);ctx.fillStyle=WGC[st[i]]||WGC.x;ctx.fill();}});}
+
 /* ══════════════════ VIDEO scene renderers ══════════════════ */
 const SCENES={
   paperhook(ctx,R,sc,lp){const P=R.P;
@@ -470,6 +506,167 @@ const SCENES={
     if(lp>0.55){const e=eOutBack(inv(lp,0.55,0.3));ctx.save();ctx.translate(R.W/2,1360);ctx.scale(e,e);
       hlBox(ctx,-300,-52,600,76,P);ctx.fillStyle="#111";ctx.font="900 46px 'Archivo Black', sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(sc.badge||"HER GÜN YENİ",0,-13);ctx.restore();}
   },
+
+  /* ════ v2 SAHNELER — internet araştırması: UI-taklidi, tek-mekanik hikâye ════ */
+
+  // v2·A — PAYLAŞIM GRID'İ: Wordle'ın gerçek viral döngüsü (spoiler'sız emoji kareler)
+  sharegrid(ctx,R,sc,lp,t){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.12);markerTitle(ctx,sc.kicker||"bu kareleri bilen bilir",R.W/2,330,52,P.paper?P.red:(P.hi||"#F5C842"),-0.02);ctx.restore();
+    const x=90,w=R.W-180,y=430;
+    const d=eOutCubic(inv(lp,0.04,0.14));
+    ctx.save();ctx.translate(0,(1-d)*60);ctx.globalAlpha=d;
+    uiCard(ctx,R,x,y,w,940,34);
+    ctx.font="60px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText("🤓",x+36,y+80);
+    ctx.fillStyle=uiText(P);ctx.font="800 38px Inter, sans-serif";ctx.textBaseline="alphabetic";ctx.fillText("deniz",x+128,y+70);
+    ctx.fillStyle=uiSub(P);ctx.font="600 30px Inter, sans-serif";ctx.fillText("@kelimeci · 2dk",x+128,y+112);
+    ctx.fillStyle=uiText(P);ctx.font="700 46px Inter, sans-serif";ctx.fillText(sc.title||"Wordle — 3/6",x+36,y+200);
+    ctx.restore();
+    const rows=sc.rows||["xyxxg","gyxgg","ggggg"];
+    const upto=Math.floor(inv(lp,0.2,0.4)*(rows.length+0.99));
+    gridSquares(ctx,R.W/2,y+250,96,14,rows,upto);
+    if(lp>0.62){const cd=eOutCubic(inv(lp,0.62,0.3));
+      ctx.fillStyle=uiSub(P);ctx.font="700 36px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+      ctx.fillText("❤️ "+fmtN(Math.round(2417*cd)),x+36,y+660);
+      ctx.fillText("🔁 "+fmtN(Math.round(388*cd)),x+360,y+660);
+      ctx.fillText("💬 "+fmtN(Math.round(512*cd)),x+620,y+660);}
+    let yy=y+710;
+    [["hangi kelime söyle 😤",0.72],["ben 5/6 — son harf mahvetti",0.83]].forEach(pr=>{
+      const h=chatBubble(ctx,R,x+36,yy,w-120,pr[0],false,inv(lp,pr[1],0.12));yy+=h+18;});
+    if(sc.sub&&lp>0.9){ctx.save();ctx.globalAlpha=inv(lp,0.9,0.1);handText(ctx,sc.sub,R.W/2,y+1030,46,P.sub,"center");ctx.restore();}
+  },
+
+  // v2·B — PAUSE CHALLENGE: harf + kategori makarası döner, izleyici durdurup oynar
+  slotspin(ctx,R,sc,lp,t){const P=R.P;const el=lp*(sc.dur||16000);
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.1);markerTitle(ctx,sc.kicker||"EKRANI TAM ZAMANINDA DURDUR",R.W/2,420,54,P.red,-0.02);ctx.restore();
+    const letters="ABCÇDEFGHIİJKLMNOÖPRSŞTUÜVYZ";
+    const cats=sc.cats||["ŞEHİR","HAYVAN","İSİM","BİTKİ","EŞYA","MEYVE"];
+    // harf makarası
+    const rowH=300,wx=R.W/2-260,wy=600,ww=520,wh=380;const li=el/85;
+    ctx.save();uiCard(ctx,R,wx,wy,ww,wh,30);
+    ctx.beginPath();rr(ctx,wx+8,wy+8,ww-16,wh-16,24);ctx.clip();
+    for(let k=-1;k<=2;k++){const idx=(Math.floor(li)+k+letters.length*8)%letters.length;
+      const yy=wy+wh/2+(k-(li-Math.floor(li)))*rowH;
+      ctx.globalAlpha=Math.max(0.12,1-Math.abs(yy-(wy+wh/2))/rowH);
+      ctx.fillStyle=uiText(P);ctx.font="400 240px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText(letters[idx],R.W/2,yy);}
+    ctx.restore();
+    // kategori makarası (daha yavaş)
+    const ci=el/300,cy2=1120,ch2=200;
+    ctx.save();uiCard(ctx,R,R.W/2-330,cy2,660,ch2,26);
+    ctx.beginPath();rr(ctx,R.W/2-322,cy2+8,644,ch2-16,20);ctx.clip();
+    for(let k=-1;k<=2;k++){const idx=(Math.floor(ci)+k+cats.length*8)%cats.length;
+      const yy=cy2+ch2/2+(k-(ci-Math.floor(ci)))*160;
+      ctx.globalAlpha=Math.max(0.1,1-Math.abs(yy-(cy2+ch2/2))/160);
+      ctx.fillStyle=uiText(P);ctx.font="400 96px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(cats[idx],R.W/2,yy);}
+    ctx.restore();ctx.globalAlpha=1;
+    // hedef okları
+    ctx.fillStyle=P.red;ctx.font="400 70px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("▶",wx-64,wy+wh/2);ctx.fillText("◀",wx+ww+64,wy+wh/2);
+    ctx.save();handText(ctx,sc.sub||"denk gelen harf + kategori = senin sorun\ncevabını yorumla 👇",R.W/2,1460,48,P.sub,"center");ctx.restore();
+  },
+
+  // v2·C — FAIL / RAGE BAIT: 3 yanlış deneme, pes → 1 numarayı yorumla
+  failplay(ctx,R,sc,lp,t){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.1);markerTitle(ctx,sc.kicker||"4/5 buldum — sonuncu delirtti",R.W/2,330,50,P.red,-0.02);ctx.restore();
+    const slots=sc.slots||[{a:"???",n:0},{a:"Köpek",n:981},{a:"Kuş",n:736},{a:"Kaplan",n:512},{a:"Kanguru",n:347}];
+    const x=100,w=R.W-200,h=118,gap=14,y0=430,maxC=1000;
+    slots.forEach((sl,j)=>pcSlot(ctx,R,x,y0+j*(h+gap),w,h,j+1,sl.a,sl.n,maxC,sl.a==="???",t));
+    // deneme döngüsü: yaz → LİSTEDE YOK ✗ → sil → tekrar
+    const tries=sc.tries||["Kirpi","Katır","Karınca"];
+    const seg=0.62/tries.length,iy=y0+5*(h+gap)+44;
+    let cur=-1,ph=0;
+    for(let i=0;i<tries.length;i++){const s0=0.12+i*seg;if(lp>=s0&&lp<s0+seg){cur=i;ph=(lp-s0)/seg;}}
+    const bad=cur>=0&&ph>0.55;
+    const shake=bad?Math.sin(lp*200)*10:0;
+    ctx.save();ctx.translate(shake,0);
+    rr(ctx,x,iy,w,150,28);ctx.fillStyle=bad?hexA("#d6303a",P.paper?0.15:0.25):(P.paper?"rgba(255,255,255,.6)":"rgba(255,255,255,.07)");ctx.fill();
+    ctx.lineWidth=3;ctx.strokeStyle=bad?"#d6303a":(P.paper?P.fg:"rgba(255,255,255,.2)");ctx.stroke();
+    if(cur>=0){const word=tries[cur];const shown=Math.round(clamp01(ph/0.5)*word.length);
+      ctx.fillStyle=P.fg;ctx.font="400 76px 'Patrick Hand', cursive";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(word.slice(0,shown),x+40,iy+75);
+      if(bad){ctx.fillStyle="#d6303a";ctx.font="800 40px Inter, sans-serif";ctx.textAlign="right";ctx.fillText("LİSTEDE YOK ✗",x+w-36,iy+75);}}
+    else if(lp<0.12){ctx.fillStyle=uiSub(P);ctx.font="600 44px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText("tahminini yaz…",x+40,iy+75);}
+    ctx.restore();
+    if(lp>0.78){const e=eOutBack(inv(lp,0.78,0.14));ctx.save();ctx.translate(R.W/2,iy+330);ctx.rotate(-0.08);ctx.scale(e,e);
+      markerTitle(ctx,"PES ETTİM 😭",0,0,84,P.red,0);ctx.restore();
+      ctx.save();ctx.globalAlpha=inv(lp,0.86,0.14);handText(ctx,sc.sub||"1 numarayı sen bul — yorumla 👇",R.W/2,iy+440,50,P.sub,"center");ctx.restore();}
+  },
+
+  // v2·D — GÖZ TESTİ: gizli kelimeyi bul (kronometre + geç highlight = izlenme süresi)
+  wsearch(ctx,R,sc,lp,t){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.12);markerTitle(ctx,sc.kicker||"%98'i 10 saniyede bulamıyor",R.W/2,350,54,P.red,-0.02);
+    inkTitle(ctx,sc.title||"KALEM'İ BUL",R.W/2,470,84,P.fg,-0.01);ctx.restore();
+    const g=sc.grid||[["B","Y","Z","T","O","S"],["O","E","U","T","B","D"],["K","A","L","E","M","P"],["Ü","N","C","I","V","E"],["Ş","G","H","D","K","R"],["Y","R","T","U","N","B"]];
+    const n=6,s=136,gap=10,tw=n*s+(n-1)*gap,x0=R.W/2-tw/2,y0=560;
+    for(let r=0;r<n;r++)for(let c=0;c<n;c++){const xx=x0+c*(s+gap),yy=y0+r*(s+gap);
+      rr(ctx,xx,yy,s,s,14);ctx.fillStyle=P.paper?"rgba(255,255,255,.55)":"rgba(255,255,255,.06)";ctx.fill();
+      ctx.lineWidth=2;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.fillStyle=P.fg;ctx.font="400 76px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(g[r][c],xx+s/2,yy+s/2+2);}
+    // geç gelen highlight süpürmesi (satır 3, ilk 5 hücre)
+    if(sc.reveal!==false&&lp>0.68){const e=eOutCubic(inv(lp,0.68,0.18));
+      ctx.save();hlBox(ctx,x0-6,y0+2*(s+gap)-6,(5*(s+gap)-gap+12)*e,s+12,P);ctx.restore();
+      for(let c=0;c<5;c++){const xx=x0+c*(s+gap);if((c*(s+gap))<(5*(s+gap)-gap)*e){
+        ctx.fillStyle="#111";ctx.font="400 76px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(g[2][c],xx+s/2,y0+2*(s+gap)+s/2+2);}}}
+    // kronometre
+    const secs=lp*(sc.dur||16000)/1000;
+    ctx.fillStyle=P.fg;ctx.font="400 64px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText("⏱ "+secs.toFixed(1)+" sn",R.W/2,y0+tw+110);
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.3,0.3);handText(ctx,sc.sub,R.W/2,y0+tw+200,46,P.sub,"center");ctx.restore();}
+  },
+
+  // v2·E — KİLİT EKRANI: bildirimler üst üste yağar (POV format)
+  notif(ctx,R,sc,lp,t){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0.02,0.12);markerTitle(ctx,sc.kicker,R.W/2,300,50,P.paper?P.red:(P.hi||"#ffe14d"),-0.02);ctx.restore();}
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);
+    ctx.fillStyle=uiText(P);ctx.font="300 190px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText("09:41",R.W/2,560);
+    ctx.fillStyle=uiSub(P);ctx.font="600 42px Inter, sans-serif";ctx.fillText(sc.date||"Pazartesi, 6 Temmuz",R.W/2,640);ctx.restore();
+    const items=sc.items||[
+      ["İsim Şehir","🟩 Günün kelimesi hazır — 6 tahmin hakkın var","şimdi"],
+      ["İsim Şehir","🔥 Serin 6 gün oldu — bugün bozma!","şimdi"],
+      ["İsim Şehir","📊 Bugünün tablosu açıldı — çoğunluğu tahmin et","1dk"],
+      ["Masa Grubu 💬","Deniz: bugünkü 2/6 🔥 geçen varsa ss atsın","3dk"]];
+    let y=720;
+    items.forEach((it,i)=>{const pop=inv(lp,0.16+i*0.16,0.13);
+      const h=notifCard(ctx,R,R.W/2,y,R.W-160,it[0],it[1],it[2],pop);y+=h+26;});
+    if(sc.sub&&lp>0.85){ctx.save();ctx.globalAlpha=inv(lp,0.85,0.15);handText(ctx,sc.sub,R.W/2,y+80,48,P.sub,"center");ctx.restore();}
+  },
+
+  // v2·F — SOHBET HİKÂYESİ: masa grubu, yazıyor… → grid balonu → flex kavgası
+  chatplay(ctx,R,sc,lp,t){const P=R.P;
+    uiCard(ctx,R,70,330,R.W-140,110,26);
+    ctx.font="52px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText("💬",100,388);
+    ctx.fillStyle=uiText(P);ctx.font="800 40px Inter, sans-serif";ctx.textBaseline="alphabetic";ctx.fillText(sc.title||"Masa Grubu",176,380);
+    ctx.fillStyle=uiSub(P);ctx.font="600 28px Inter, sans-serif";ctx.fillText("4 kişi · çevrimiçi",176,418);
+    const msgs=sc.msgs||[];const nm=msgs.length;let y=510;
+    msgs.forEach((m,i)=>{const st=0.08+i*(0.76/nm);const pop=inv(lp,st,0.09);
+      if(m.side==="l"&&pop<=0&&lp>st-0.055)typingDots(ctx,R,100,y,t);
+      if(m.grid){const bw=420,bh=m.grid.length*70+52,bx=m.side==="r"?R.W-100-bw:100;
+        if(pop>0){ctx.save();ctx.globalAlpha=clamp01(pop*2);ctx.translate(0,(1-eOutCubic(clamp01(pop)))*20);
+          rr(ctx,bx,y,bw,bh,26);ctx.fillStyle=m.side==="r"?"#7C5CFF":(P.paper?"rgba(255,255,255,.95)":"rgba(255,255,255,.1)");ctx.fill();
+          gridSquares(ctx,bx+bw/2,y+26,60,10,m.grid,99);ctx.restore();}
+        y+=bh+22;}
+      else{const h=chatBubble(ctx,R,m.side==="r"?R.W-100:100,y,R.W-420,m.text,m.side==="r",pop);y+=h+22;}
+    });
+    if(sc.sub&&lp>0.9){ctx.save();ctx.globalAlpha=inv(lp,0.9,0.1);handText(ctx,sc.sub,R.W/2,y+70,46,P.sub,"center");ctx.restore();}
+  },
+
+  // v2·G — CTA: push bildirimi düşer + AÇ butonu + mağaza etiketi (şablon outro yerine)
+  ctanotif(ctx,R,sc,lp){const P=R.P;
+    const e=eOutBack(inv(lp,0.05,0.35));
+    const w=R.W-140,x=70,y=600;
+    ctx.font="600 40px Inter, sans-serif";
+    const wl=wrap(ctx,sc.text||"2 yeni günlük oyun seni bekliyor: Wordle & Popüler Cevap","600 40px Inter, sans-serif",w-170);
+    const h=150+wl.length*52;
+    ctx.save();ctx.translate(0,(1-e)*-560);
+    uiCard(ctx,R,x,y,w,h,30);appIcon(ctx,x+26,y+26,72);
+    ctx.fillStyle=uiText(P);ctx.font="800 42px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillText("İsim Şehir Online",x+122,y+70);
+    ctx.fillStyle=uiSub(P);ctx.font="600 30px Inter, sans-serif";ctx.textAlign="right";ctx.fillText("şimdi",x+w-26,y+66);
+    ctx.fillStyle=uiText(P);ctx.font="600 40px Inter, sans-serif";ctx.textAlign="left";wl.forEach((ln,k)=>ctx.fillText(ln,x+122,y+134+k*52));
+    ctx.restore();
+    if(lp>0.4){const e2=eOutBack(inv(lp,0.4,0.3));ctx.save();ctx.translate(R.W/2,y+h+150);ctx.scale(e2,e2);
+      rr(ctx,-160,-52,320,104,52);ctx.fillStyle="#7C5CFF";ctx.fill();
+      ctx.fillStyle="#fff";ctx.font="400 52px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("AÇ",0,2);ctx.restore();}
+    storeSticker(ctx,R,y+h+340,eOutBack(inv(lp,0.55,0.3)));
+    ctx.save();ctx.globalAlpha=inv(lp,0.7,0.3);handText(ctx,"ücretsiz · İsim Şehir Online",R.W/2,y+h+480,44,P.sub,"center");ctx.restore();
+  },
 };
 
 /* ══════════════════ IMAGE renderers ══════════════════ */
@@ -560,11 +757,91 @@ const IMAGES={
     handText(ctx,d.foot||"çoğunluk gibi düşünemedim 😭",R.W/2,R.H-180,50,P.sub,"center");
     brandChip(ctx,R);handleFoot(ctx,R);}
 ,
+  /* ── v2: paylaşım grid'i posteri (tweet-kart taklidi) ── */
+  sharegridimg(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"günün flexi",R.W/2,150,52,P.paper?P.red:(P.hi||"#F5C842"),-0.03);
+    const x=90,w=R.W-180,y=220;
+    uiCard(ctx,R,x,y,w,780,34);
+    ctx.font="60px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText("🤓",x+36,y+80);
+    ctx.fillStyle=uiText(P);ctx.font="800 36px Inter, sans-serif";ctx.textBaseline="alphabetic";ctx.fillText("deniz",x+124,y+70);
+    ctx.fillStyle=uiSub(P);ctx.font="600 28px Inter, sans-serif";ctx.fillText("@kelimeci",x+124,y+110);
+    ctx.fillStyle=uiText(P);ctx.font="700 44px Inter, sans-serif";ctx.fillText(d.title||"Wordle — 2/6 🔥",x+36,y+196);
+    gridSquares(ctx,R.W/2,y+240,92,12,d.rows||["xyyxg","ggggg"],99);
+    ctx.fillStyle=uiSub(P);ctx.font="700 34px Inter, sans-serif";ctx.textAlign="left";
+    ctx.fillText("❤️ 2.417    🔁 388    💬 512",x+36,y+720);
+    handText(ctx,d.foot||"grid'ini yoruma at — spoiler yok, sadece kareler 👇",R.W/2,R.H-180,48,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
+  /* ── v2: göz testi posteri (statik — cevap yorumlarda) ── */
+  wsearchimg(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"%98'i 10 saniyede bulamıyor",R.W/2,140,48,P.red,-0.02);
+    inkTitle(ctx,d.title||"KALEM'İ BUL",R.W/2,250,78,P.fg,-0.01);
+    const g=d.grid||[["B","Y","Z","T","O","S"],["O","E","U","T","B","D"],["K","A","L","E","M","P"],["Ü","N","C","I","V","E"],["Ş","G","H","D","K","R"],["Y","R","T","U","N","B"]];
+    const n=6,s=118,gap=10,tw=n*s+(n-1)*gap,x0=R.W/2-tw/2,y0=310;
+    for(let r=0;r<n;r++)for(let c=0;c<n;c++){const xx=x0+c*(s+gap),yy=y0+r*(s+gap);
+      rr(ctx,xx,yy,s,s,14);ctx.fillStyle=P.paper?"rgba(255,255,255,.55)":"rgba(255,255,255,.06)";ctx.fill();
+      ctx.lineWidth=2;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.fillStyle=P.fg;ctx.font="400 66px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(g[r][c],xx+s/2,yy+s/2+2);}
+    handText(ctx,d.foot||"kaç saniyede? süreni yoruma yaz 👇",R.W/2,R.H-170,48,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
 };
 
 /* ══════════════════ ITEMS (data) ══════════════════ */
 const CTA="\n📲 App Store & Google Play'de İsim Şehir Online — güncelle, yeni oyunlar seni bekliyor";
 const ITEMS=[
+  /* ═══ v2 VİDEOLAR — internet araştırmasına dayalı viral formatlar (şablon dışı):
+     paylaşım grid'i (Wordle'ın gerçek viral döngüsü), pause challenge, fail/rage-bait
+     (sahte-oyun reklamları 4-5x iyi performans — biz dürüst versiyonunu yapıyoruz),
+     göz testi (izlenme süresi), kilit ekranı POV, sohbet hikâyesi. ═══ */
+  {id:31,kind:"video",pal:"app",title:"Bu Kareler",sub:"v2 · paylaşım grid'i",
+   caption:"🟩🟨⬛ Bu kareleri timeline'da gördüysen bilirsin: spoiler yok, sadece flex.\nİsim Şehir'in Wordle'ında her gün 1 Türkçe kelime — sonucunu tek tuşla paylaş.\nBugünkü grid'in kaç/6? 👇"+CTA,
+   tags:"#isimşehir #wordle #türkçewordle #grid #keşfet",
+   scenes:[
+     {type:"sharegrid",kicker:"bu kareleri bilen bilir",title:"Wordle — 3/6",rows:["xyxxg","gyxgg","ggggg"],sub:"spoiler yok — sadece flex",dur:15000},
+     {type:"ctanotif",text:"Günün kelimesi hazır — grid'ini paylaş 🟩",dur:4500}]},
+
+  {id:32,kind:"video",pal:"night",title:"Durdur ve Oyna",sub:"v2 · pause challenge",
+   caption:"⏸️ VİDEOYU DURDUR! Denk gelen harf + kategori senin sorun.\nCevabını yorumlara yaz — Ğ'ye denk gelenler 💀\nGerçek oyunda harfi çark seçiyor, süre gerçek 👇"+CTA,
+   tags:"#isimşehir #pausechallenge #durdur #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"slotspin",kicker:"EKRANI TAM ZAMANINDA DURDUR",sub:"denk gelen harf + kategori = senin sorun\ncevabını yorumla 👇",dur:16000},
+     {type:"ctanotif",text:"Harfi çark seçer, gerisi sende — hemen oyna 🎯",dur:4000}]},
+
+  {id:33,kind:"video",pal:"app",title:"Pes Ettim",sub:"v2 · fail formatı",
+   caption:"😭 Popüler Cevap'ta 4/5 buldum, 1 numara için 3 hakkım gitti: Kirpi ✗ Katır ✗ Karınca ✗\n'K ile hayvan'ın 1 numarası ne? Bilene helal olsun 👇"+CTA,
+   tags:"#isimşehir #popülercevap #fail #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"failplay",kicker:"4/5 buldum — sonuncu delirtti",tries:["Kirpi","Katır","Karınca"],sub:"1 numarayı sen bul — yorumla 👇",dur:18000},
+     {type:"ctanotif",text:"Bugünün tablosu açık — 1 numarayı bul 📊",dur:4500}]},
+
+  {id:34,kind:"video",pal:"high",paperMode:"graph",title:"Kelimeyi Bul",sub:"v2 · göz testi",
+   caption:"👀 KALEM bu tabloda gizli — %98'i ilk 10 saniyede bulamıyor.\nKaç saniyede buldun? Süreni yaz 👇 (kelime gözün varsa Wordle'da 2/6 yaparsın)"+CTA,
+   tags:"#isimşehir #gözTesti #bulmaca #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"wsearch",kicker:"%98'i 10 saniyede bulamıyor",title:"KALEM'İ BUL",sub:"kaç saniyede buldun? yaz 👇",dur:16000},
+     {type:"ctanotif",text:"Gözün keskinse Wordle seni bekliyor 🟩",dur:4000}]},
+
+  {id:35,kind:"video",pal:"vhs",title:"Sabah 09:41",sub:"v2 · kilit ekranı POV",
+   caption:"📱 POV: sabah telefonu açtın ve İsim Şehir kapatmana izin vermiyor.\nGünün kelimesi + bugünün tablosu + seri uyarısı… önce hangisi? 👇"+CTA,
+   tags:"#isimşehir #pov #bildirim #günlükoyun #keşfet",
+   scenes:[
+     {type:"notif",kicker:"POV: sabah telefonu açtın",sub:"kapatmak yok 😌",dur:15000},
+     {type:"ctanotif",text:"Sen de gir aramıza — günlük oyunlar bekliyor",dur:4000}]},
+
+  {id:36,kind:"video",pal:"app",title:"Masa Grubu",sub:"v2 · sohbet hikâyesi",
+   caption:"💬 Her masa grubunda aynı sahne: biri grid atar, kimse inanmaz, ss istenir 😅\nSizin grupta en iyi Wordle'cı kim? Etiketle 👇"+CTA,
+   tags:"#isimşehir #wordle #arkadaşgrubu #komik #keşfet",
+   scenes:[
+     {type:"chatplay",title:"Masa Grubu",msgs:[
+       {side:"l",text:"bugünkü kelime zor muydu 😰"},
+       {side:"r",grid:["xyxxg","ggxgg","ggggg"]},
+       {side:"r",text:"3/6 😎"},
+       {side:"l",text:"yalan atma ss bu 😭"},
+       {side:"l",text:"ben 5/6 — son harfte çıldırdım"},
+       {side:"r",text:"yarın aynı yerde 🔥"}],sub:"tanıdık geldi mi? 😅",dur:18000},
+     {type:"ctanotif",text:"Grubu topla — günün kelimesi sizi bekliyor 💬",dur:4500}]},
+
   /* ═══════════════ VİDEOLAR (8 · 20-31sn · her biri FARKLI kolaj) ═══════════════ */
   {id:1,kind:"video",pal:"app",title:"Wordle Geldi",sub:"lansman · karo çevirme",
    caption:"🟩 İsim Şehir'e WORDLE geldi! Her gün 1 Türkçe kelime, 6 tahmin hakkı, seri (streak) sistemi.\nBugünün kelimesini kaç tahminde bulursun? Yaz 👇"+CTA,
@@ -649,6 +926,17 @@ const ITEMS=[
      {type:"kinetic",text:"bir gün kaçırırsan sıfırlanıyor gerginlik gerçek",hot:[3],size:72,dur:4000},
      {type:"punch",big:"🔥",sub:"serin kaç? yaz 👇",dur:3000},
      {type:"outro",title:"SERİNİ\nBAŞLAT",dur:3200}]},
+
+  /* ═══ v2 GÖRSELLER ═══ */
+  {id:37,kind:"image",pal:"app",render:"sharegridimg",title:"Grid Flex",sub:"v2 · paylaşım kültürü",
+   data:{kicker:"günün flexi",title:"Wordle — 2/6 🔥",rows:["xyyxg","ggggg"],foot:"grid'ini yoruma at — spoiler yok, sadece kareler 👇"},
+   caption:"🟩 2/6 — bugünkü kelimeyi ikinci tahminde bulmak…\nSen kaçta buldun? Grid'ini yoruma bırak (spoiler yok, sadece kareler) 👇"+CTA,
+   tags:"#isimşehir #wordle #grid #flex #keşfet"},
+
+  {id:38,kind:"image",pal:"high",render:"wsearchimg",title:"Göz Testi",sub:"v2 · bul-yorumla",
+   data:{kicker:"%98'i 10 saniyede bulamıyor",title:"KALEM'İ BUL",foot:"kaç saniyede? süreni yoruma yaz 👇"},
+   caption:"👀 KALEM bu tabloda gizli. Kaç saniyede buldun?\nSüreni yaz — 5 saniyenin altı efsane 👇"+CTA,
+   tags:"#isimşehir #gözTesti #bulmaca #keşfet"},
 
   /* ═══════════════ GÖRSELLER (8 · farklı kolajlar) ═══════════════ */
   {id:9,kind:"image",pal:"app",render:"wordleposter",title:"Wordle Posteri",sub:"lansman · grid",
