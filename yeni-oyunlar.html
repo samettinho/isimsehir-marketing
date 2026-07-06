@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · Yeni Oyunlar Stüdyosu — Wordle &amp; Popüler Cevap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Permanent+Marker&family=Patrick+Hand&family=Shantell+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+<script src="gif.js"></script>
+<script src="mp4-muxer.min.js"></script>
+<style>
+  :root{--bg:#0c0c10;--panel:#151519;--cream:#F4ECD8;--ink:#17307a;--red:#d6303a;--acid:#c8f000;--paper:#F6EEDB;--muted:#9a9aa8;--line:rgba(255,255,255,.08)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:#eceanf;background:var(--bg);min-height:100vh;padding-bottom:80px;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(60% 40% at 8% 0%,rgba(124,92,255,.07),transparent 60%),radial-gradient(50% 40% at 100% 6%,rgba(245,200,66,.06),transparent 60%)}
+  .wrap{max-width:1220px;margin:0 auto;padding:0 22px}
+  header.top{padding:52px 0 14px;text-align:center}
+  .kick{display:inline-block;font-family:'Permanent Marker',cursive;color:var(--acid);font-size:22px;transform:rotate(-3deg)}
+  header.top h1{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:.01em;font-size:clamp(40px,7vw,78px);line-height:.94;margin:10px 0 14px;text-transform:uppercase;color:#fff}
+  header.top h1 em{font-style:normal;color:var(--acid);-webkit-text-stroke:2px #0c0c10}
+  header.top p{color:#c9c9d4;font-size:15.5px;max-width:660px;margin:0 auto;line-height:1.6}
+  .filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 6px}
+  .fbtn{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:#d6d6df;border-radius:999px;padding:9px 18px;font-weight:700;font-size:13px;transition:.15s}
+  .fbtn.on{background:var(--acid);color:#101007;border-color:var(--acid)}
+  .banner{margin:20px auto 4px;max-width:900px;display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(200,240,0,.22);background:rgba(200,240,0,.05);border-radius:16px;padding:14px 18px}
+  .banner p{color:#c9c9d4;font-size:13px;line-height:1.6}
+  .banner b{color:#fff}
+  .links{margin:14px 0 26px;text-align:center;font-size:13px;color:var(--muted)}
+  .links a{color:var(--acid);text-decoration:none;border-bottom:1px solid rgba(200,240,0,.4)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px;margin-top:8px;align-items:start}
+  .card{border:1px solid var(--line);background:var(--panel);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .badge9,.badge4{align-self:flex-start;font-family:'Inter';font-weight:800;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .badge9{background:rgba(214,48,58,.16);color:#ff8f96;border:1px solid rgba(214,48,58,.35)}
+  .badge4{background:rgba(200,240,0,.14);color:var(--acid);border:1px solid rgba(200,240,0,.3)}
+  .stage{position:relative;border-radius:22px;overflow:hidden;background:#0c0920;box-shadow:0 26px 60px -28px rgba(0,0,0,.85);border:5px solid #22222a}
+  .stage.v{width:288px;height:512px}
+  .stage.i{width:300px;height:375px}
+  .stage canvas{width:100%;height:100%;display:block}
+  .stage .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
+  .stage .play span{width:70px;height:70px;border-radius:50%;background:rgba(10,8,22,.5);backdrop-filter:blur(6px);display:grid;place-items:center;font-size:28px;color:#fff;border:1.5px solid rgba(255,255,255,.3);opacity:0;transition:.2s}
+  .stage.v:hover .play span{opacity:1}
+  .rtitle{font-family:'Anton',sans-serif;font-weight:400;font-size:19px;text-align:center;letter-spacing:.02em;text-transform:uppercase;color:#fff}
+  .rtitle small{display:block;font-family:'Inter';font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  textarea.cap{width:100%;min-height:98px;resize:vertical;border-radius:13px;padding:11px 12px;border:1px solid var(--line);background:#0d0d12;color:#e7e7ee;font-family:'Inter';font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:rgba(200,240,0,.55)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:11px;padding:10px 13px;font-family:'Inter';font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+  .btn-vid{background:var(--acid);color:#0f0f08}
+  .btn-img{background:var(--acid);color:#0f0f08}
+  .btn-gif{background:#2f9e57;color:#fff}
+  .btn-copy{background:rgba(255,255,255,.08);color:#eceanf;border:1px solid var(--line)}
+  .btn-x{background:#000;color:#fff;border:1px solid rgba(255,255,255,.2)}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;background:#111;border:1px solid rgba(200,240,0,.5);color:#fff;padding:12px 22px;border-radius:13px;font-size:14px;font-weight:700;box-shadow:0 18px 40px -12px rgba(0,0,0,.7);transition:.25s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:#6d6d7d;font-size:12.5px;margin-top:44px;line-height:1.7}
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(4,4,7,.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:min(430px,94vw);background:#131318;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.8)}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:16px;cursor:pointer}
+  .mtitle{font-family:'Anton',sans-serif;font-size:22px;text-align:center;margin-bottom:14px;text-transform:uppercase;letter-spacing:.02em}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia video,.mmedia img{max-width:250px;max-height:445px;border-radius:16px;background:#0c0920;object-fit:contain;display:none}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="kick">— yeni oyunlar stüdyosu —</div>
+      <h1>Wordle <em>&amp;</em> Popüler Cevap</h1>
+      <p>Uygulamaya gelen <b>2 yeni günlük oyunun</b> tanıtımı. Aynı defter/kinetik estetik ama <b>yepyeni kolajlar</b>: harf çevirme, tablo açılışı, LİSTEDE damgası, seri alevi. Dikey <b>video</b> (20-31sn) + <b>görsel</b>. Üzerine gel → oynar.</p>
+      <div class="filters" id="filters">
+        <button class="fbtn on" data-f="all" onclick="setFilter('all',this)">Hepsi</button>
+        <button class="fbtn" data-f="video" onclick="setFilter('video',this)">🎬 Video</button>
+        <button class="fbtn" data-f="image" onclick="setFilter('image',this)">🖼️ Görsel</button>
+      </div>
+      <div class="banner"><div>🔥</div><div><p><b>Gerçek MP4 üretir</b> (WebCodecs) — Reels/TikTok'a direkt yüklenir. Görseller <b>PNG</b>. iPhone'da buton → önizleme → <b>Paylaş/Kaydet</b>. En iyi sonuç için http link üzerinden aç.</p></div></div>
+      <div class="links">Diğer stüdyolar → <a href="viral-3.0.html">Viral 3.0</a> · <a href="reels-2.0.html">Reels 2.0</a> · <a href="sosyal-medya-2.0.html">Sosyal Medya 2.0</a></div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer class="foot">İsim Şehir Online · @isimsehironline · App Store &amp; Google Play'de yayında<br/>Video 1080×1920 · Görsel 1080×1350 · ses yok (müziği uygulamada ekle)</footer>
+  </div>
+  <div class="toast" id="toast">Hazır ✓</div>
+
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <button class="mclose" onclick="closeModal()" aria-label="Kapat">✕</button>
+      <div class="mtitle" id="mtitle">Hazır</div>
+      <div class="mmedia"><video id="resVid" controls playsinline muted loop></video><img id="resImg" alt="" /></div>
+      <div class="mbtns">
+        <a class="btn btn-vid" id="resDl" download>⬇ İndir</a>
+        <button class="btn btn-gif" id="resShare" onclick="shareResult()">📲 Paylaş / Kaydet</button>
+      </div>
+      <p class="mhint" id="mhint"></p>
+    </div>
+  </div>
+
+<script>
+const APP_STORE="https://apps.apple.com/app/isim-sehir-online/id6766661912";
+const APP_URL=APP_STORE;
+
+/* ══════════════════ palettes (viral-3.0 ile aynı aile) ══════════════════ */
+const PAL={
+  ink:   {bg:"#F1E7CF", paper:true, fg:"#17307a", red:"#d6303a", accent:"#17307a", sub:"#5a5340", grid:"rgba(23,48,122,.10)", hi:"#FCE94F"},
+  high:  {bg:"#F4ECD8", paper:true, fg:"#1a1a1a", red:"#d6303a", accent:"#111", hi:"#FFE14D", sub:"#4a463a", grid:"rgba(0,0,0,.06)"},
+  brat:  {bg:"#c8f000", paper:false, light:true, fg:"#0c0c0c", red:"#0c0c0c", accent:"#0c0c0c", sub:"#2b2b0e", hi:"#FCE94F", chip:"#101007", chipText:"#c8f000"},
+  riso:  {bg:"#f3ebd6", paper:true, fg:"#e5372a", red:"#1a54ff", accent:"#e5372a", sub:"#7a5a2e", grid:"rgba(229,55,42,.10)", hi:"#FCE94F"},
+  vhs:   {bg:"#0a0a12", paper:false,fg:"#f4f4ff", red:"#ff3ea5", accent:"#31e6ff", sub:"#9aa0c0", hi:"#ffe14d", chip:"#31e6ff", chipText:"#06232a"},
+  night: {bg:"#101014", paper:false,fg:"#F4ECD8", red:"#ff6b3d", accent:"#c8f000", sub:"#9a9aa8", hi:"#ffe14d"},
+  app:   {bg:"#181334", paper:false,fg:"#FBF6EA", red:"#F5C842", accent:"#7C5CFF", sub:"#B7ADD8", hi:"#F5C842", grid:"rgba(159,135,255,.14)", chip:"#9F87FF", chipText:"#0d0a20"},
+};
+const TILEC={violet:["#9F87FF","#7C5CFF","#5237C0"],sky:["#7BB0FF","#5B8FFF","#4070E0"],leaf:["#7BE093","#51CF66","#2EB94F"],gold:["#FFE286","#F5C842","#B8870D"],coral:["#FF9CC0","#FF6B9D","#E03B73"],ink:["#3b62d6","#1f3fa8","#12266e"],red:["#ff7a80","#e0343d","#a11820"]};
+
+/* ══════════════════ util & easing ══════════════════ */
+const clamp01=t=>Math.max(0,Math.min(1,t));
+const inv=(lp,s,l)=>clamp01((lp-s)/l);
+const eOutCubic=t=>1-Math.pow(1-t,3);
+const eOutBack=t=>{const c=1.70158,c3=c+1;return 1+c3*Math.pow(t-1,3)+c*Math.pow(t-1,2);};
+const eInOut=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+function isEmoji(s){return /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/u.test(s);}
+function seeded(n){let s=Math.sin(n*99.13)*43758.5453;return s-Math.floor(s);}
+function fmtN(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".");}
+
+/* ══════════════════ canvas helpers ══════════════════ */
+function rr(ctx,x,y,w,h,r){r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+const APPLE_PATH="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z";
+const PLAY_PATH="M76.5 16.9C73 20.4 71 25.3 71 31v450c0 5.7 2 10.6 5.5 14.1l253.6-253.6L76.5 16.9zM104.6 13.4c-7-2.8-15-1.2-20.4 4.2l241.1 241.1 50.5-50.5L104.6 13.4zm344.6 216.7-71.2-41.1-55.9 55.9 55.9 55.9 71.2-41.1c20.6-12 20.6-43.7 0-55.8zM84.2 502.6c5.4 5.4 13.4 7 20.4 4.2l221-127.6-50.5-50.5L84.2 502.6z";
+function drawGlyph(ctx,d,vb,cx,cy,size,color){ctx.save();ctx.translate(cx-size/2,cy-size/2);const s=size/vb;ctx.scale(s,s);ctx.fillStyle=color;ctx.fill(new Path2D(d));ctx.restore();}
+function lines(txt){return String(txt).split("\n");}
+function wrap(ctx,txt,font,maxW){ctx.font=font;const words=String(txt).split(" ");const out=[];let cur="";
+  for(const w of words){const test=cur?cur+" "+w:w;if(ctx.measureText(test).width>maxW&&cur){out.push(cur);cur=w;}else cur=test;}
+  if(cur)out.push(cur);return out;}
+function drawTile(ctx,cx,cy,s,stops,letter,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=s*0.2;ctx.shadowOffsetY=s*0.12;const g=ctx.createLinearGradient(-s/2,-s/2,s/2,s/2);g.addColorStop(0,stops[0]);g.addColorStop(.5,stops[1]);g.addColorStop(1,stops[2]);ctx.fillStyle=g;rr(ctx,-s/2,-s*0.57,s,s*1.14,s*0.17);ctx.fill();ctx.shadowColor="transparent";ctx.fillStyle="#fff";ctx.font=`400 ${Math.round(s*0.62)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.04);ctx.restore();}
+
+function makeGrain(w,h,alpha){const c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");
+  const n=Math.round(w*h/900);for(let i=0;i<n;i++){const x=seeded(i*1.7)*w,y=seeded(i*2.3+7)*h,a=seeded(i*3.1)*alpha;g.fillStyle="rgba(0,0,0,"+a.toFixed(3)+")";g.fillRect(x,y,1.4,1.4);}
+  for(let i=0;i<n/2;i++){const x=seeded(i*4.4+1)*w,y=seeded(i*5.2+3)*h,a=seeded(i*6.1)*alpha*0.8;g.fillStyle="rgba(255,255,255,"+a.toFixed(3)+")";g.fillRect(x,y,1.4,1.4);}
+  return c;}
+function paperBG(ctx,R,P,mode){
+  const W=R.W,H=R.H;
+  const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,shade(P.bg,6));g.addColorStop(1,shade(P.bg,-8));ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  if(mode==="graph"){ctx.strokeStyle=P.grid||"rgba(0,0,0,.06)";ctx.lineWidth=1.4;const step=56;
+    for(let x=0;x<=W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<=H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+  else if(mode==="ruled"){ctx.strokeStyle=P.grid||"rgba(0,0,0,.07)";ctx.lineWidth=1.6;const step=96;
+    for(let y=170;y<=H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.strokeStyle="rgba(214,48,58,.5)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(150,0);ctx.lineTo(150,H);ctx.stroke();}
+  if(!R._grain)R._grain=makeGrain(W,H,0.05);ctx.globalAlpha=1;ctx.drawImage(R._grain,0,0);
+  const v=ctx.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,H*0.75);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(60,40,10,.10)");ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
+}
+function darkBG(ctx,R,P,t){
+  const W=R.W,H=R.H;ctx.fillStyle=P.bg;ctx.fillRect(0,0,W,H);
+  if(P.paper===false&&P!==PAL.brat){
+    const gx=W/2+Math.sin((t||0)/2600)*160,gy=H*0.42+Math.cos((t||0)/3100)*130;
+    const rg=ctx.createRadialGradient(gx,gy,0,gx,gy,W*0.9);rg.addColorStop(0,hexA(P.accent,.18));rg.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+  }
+  if(P===PAL.brat){
+    ctx.save();ctx.globalAlpha=.06;ctx.fillStyle="#0c0c0c";ctx.font="900 300px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    const L=["W","P"];for(let i=0;i<2;i++)ctx.fillText(L[i],W/2,H*0.32+i*H*0.42);ctx.restore();
+  }
+  if(!R._grain)R._grain=makeGrain(W,H,P.paper===false?0.045:0.05);ctx.globalAlpha=P===PAL.brat?0.5:1;ctx.drawImage(R._grain,0,0);ctx.globalAlpha=1;
+}
+function bgFor(ctx,R,t){const P=R.P;if(P.paper)paperBG(ctx,R,P,R.paperMode||"graph");else darkBG(ctx,R,P,t);}
+
+function hexA(hex,a){const h=hex.replace("#","");const n=parseInt(h.length===3?h.split("").map(c=>c+c).join(""):h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;}
+function shade(hex,amt){const h=hex.replace("#","");const n=parseInt(h.length===3?h.split("").map(c=>c+c).join(""):h,16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));return `rgb(${r},${g},${b})`;}
+
+function tape(ctx,cx,cy,w,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle="rgba(255,235,150,.55)";ctx.strokeStyle="rgba(180,150,40,.35)";ctx.lineWidth=1;rr(ctx,-w/2,-26,w,52,3);ctx.fill();ctx.stroke();ctx.restore();}
+function coffeeRing(ctx,cx,cy,r){ctx.save();ctx.strokeStyle="rgba(120,80,30,.16)";ctx.lineWidth=10;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();ctx.strokeStyle="rgba(120,80,30,.08)";ctx.lineWidth=22;ctx.beginPath();ctx.arc(cx,cy,r-4,0.3,5.6);ctx.stroke();ctx.restore();}
+function starDoodle(ctx,cx,cy,r,col){ctx.save();ctx.translate(cx,cy);ctx.strokeStyle=col;ctx.lineWidth=r*0.14;ctx.lineCap="round";ctx.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*Math.PI*4/5;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.stroke();ctx.restore();}
+function circleScribble(ctx,cx,cy,w,h,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=7;ctx.lineCap="round";for(let k=0;k<2;k++){ctx.beginPath();for(let a=0;a<=Math.PI*2+0.3;a+=0.25){const rr2=1+seeded(a*3+k)*0.06;ctx.lineTo(cx+Math.cos(a)*w/2*rr2+k*3,cy+Math.sin(a)*h/2*rr2);}ctx.stroke();}ctx.restore();}
+function underlineWavy(ctx,x,y,w,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=7;ctx.lineCap="round";ctx.beginPath();for(let i=0;i<=w;i+=12){ctx.lineTo(x+i,y+Math.sin(i/18)*5);}ctx.stroke();ctx.restore();}
+function hlBox(ctx,x,y,w,h,P){const light=P.paper||P.light;ctx.save();
+  if(light){ctx.globalCompositeOperation="multiply";ctx.globalAlpha=.9;ctx.fillStyle=P.hi||"#FCE94F";rr(ctx,x,y,w,h,4);ctx.fill();}
+  else{ctx.fillStyle=P.hi||"#FCE94F";rr(ctx,x,y,w,h,6);ctx.fill();}
+  ctx.restore();}
+
+function inkTitle(ctx,txt,cx,cy,size,col,rot,lh,align){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle=col;ctx.font=`400 ${size}px Anton, sans-serif`;ctx.textAlign=align||"center";ctx.textBaseline="alphabetic";
+  const L=lines(txt);L.forEach((ln,i)=>ctx.fillText(ln,0,i*(lh||size*1.02)));ctx.restore();}
+function markerTitle(ctx,txt,cx,cy,size,col,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle=col;ctx.font=`800 ${size}px 'Shantell Sans','Patrick Hand',cursive`;ctx.textAlign="center";ctx.textBaseline="alphabetic";const L=lines(txt);L.forEach((ln,i)=>ctx.fillText(ln,0,i*size*1.08));ctx.restore();}
+function handText(ctx,txt,x,y,size,col,align){ctx.save();ctx.fillStyle=col;ctx.font=`400 ${size}px 'Patrick Hand', cursive`;ctx.textAlign=align||"left";ctx.textBaseline="alphabetic";const L=lines(txt);L.forEach((ln,i)=>ctx.fillText(ln,x,y+i*size*1.15));ctx.restore();}
+
+function kineticCap(ctx,R,words,cy,lp,opt){
+  opt=opt||{};const W=R.W,fs=opt.size||64;ctx.font=`900 ${fs}px 'Archivo Black', sans-serif`;
+  const n=words.length;const shown=Math.min(n,Math.floor(lp*n*1.25)+1);
+  const maxW=W-160;let ln=[],all=[],lw=0;
+  words.forEach((w,i)=>{const ww=ctx.measureText(w+" ").width;if(lw+ww>maxW&&ln.length){all.push(ln);ln=[];lw=0;}ln.push({w,i});lw+=ww;});
+  if(ln.length)all.push(ln);
+  const lineH=fs*1.28;const totalH=all.length*lineH;let y=cy-totalH/2+fs;
+  all.forEach(row=>{
+    let rowW=0;row.forEach(o=>rowW+=ctx.measureText(o.w+" ").width);
+    let x=W/2-rowW/2;
+    row.forEach(o=>{
+      const ww=ctx.measureText(o.w+" ").width;const wOnly=ctx.measureText(o.w).width;
+      const vis=o.i<shown;const isCur=o.i===shown-1;
+      if(vis){
+        const pop=isCur?eOutBack(inv(lp,o.i/(n*1.25),0.18)):1;
+        ctx.save();ctx.translate(x+wOnly/2,y);ctx.scale(pop,pop);ctx.translate(-(x+wOnly/2),-y);
+        const hot=opt.hot&&opt.hot.includes(o.i);
+        if(hot){hlBox(ctx,x-6,y-fs*0.82,wOnly+12,fs*1.02,R.P);}
+        ctx.fillStyle=hot?"#111":(isCur&&opt.curCol?opt.curCol:(opt.col||"#111"));
+        ctx.font=`900 ${fs}px 'Archivo Black', sans-serif`;ctx.textAlign="left";ctx.textBaseline="alphabetic";
+        ctx.fillText(o.w,x,y);ctx.restore();
+      }
+      x+=ww;
+    });
+    y+=lineH;
+  });
+}
+
+function storeSticker(ctx,R,cy,scale){scale=scale||1;const W=R.W;ctx.save();ctx.translate(W/2,cy);ctx.scale(scale,scale);
+  rr(ctx,-360,-64,720,128,64);ctx.fillStyle="#111";ctx.fill();
+  drawGlyph(ctx,APPLE_PATH,24,-276,0,50,"#fff");drawGlyph(ctx,PLAY_PATH,512,-212,2,48,"#fff");
+  ctx.fillStyle="#fff";ctx.font="800 42px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText("App Store & Google Play",-176,2);ctx.restore();}
+
+function brandChip(ctx,R){const P=R.P;const dark=!P.paper;const x=54,y=58;
+  ctx.save();ctx.fillStyle=dark?(P.chip||"#c8f000"):P.fg;rr(ctx,x,y,64,64,16);ctx.fill();
+  ctx.fillStyle=dark?(P.chipText||"#101007"):P.bg;ctx.font="400 34px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("İŞ",x+32,y+35);
+  ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillStyle=dark?"#fff":P.fg;ctx.font="400 30px Anton, sans-serif";ctx.fillText("İSİM ŞEHİR",x+78,y+28);
+  ctx.fillStyle=dark?"#9a9aa8":P.sub;ctx.font="800 15px Inter, sans-serif";ctx.fillText("ONLINE",x+78,y+52);ctx.restore();}
+function handleFoot(ctx,R){const P=R.P;ctx.save();ctx.fillStyle=P.paper?P.fg:(P.chip||"#c8f000");ctx.font="700 40px 'Caveat', cursive";ctx.textAlign="center";ctx.fillText("@isimsehironline",R.W/2,R.H-70);ctx.restore();}
+function progress(ctx,R,t){const P=R.P;ctx.save();ctx.fillStyle=P.paper?"rgba(0,0,0,.10)":"rgba(255,255,255,.14)";rr(ctx,54,R.H-124,R.W-108,8,4);ctx.fill();ctx.fillStyle=P.paper?P.red:(P.chip||"#c8f000");rr(ctx,54,R.H-124,(R.W-108)*clamp01(t/R.total),8,4);ctx.fill();ctx.restore();}
+
+/* ══════════════════ oyun-özel yardımcılar ══════════════════ */
+// Wordle karo renkleri (klasik yeşil/sarı/gri — kağıt ve koyu zeminde okunur)
+function wTileC(P,st){
+  if(st==="g")return{bg:"#4E9F5B",fg:"#fff"};
+  if(st==="y")return{bg:"#D9A93C",fg:"#fff"};
+  return P.paper?{bg:"#b7b09c",fg:"#fffdf5"}:{bg:"#3E3E4A",fg:"#EDEDF4"};
+}
+// tek wordle karosu: flip 0→1 (0.5'te renk açılır — dikey squash ile çevirme hissi)
+function wTile(ctx,x,y,s,letter,st,P,flip){
+  ctx.save();ctx.translate(x+s/2,y+s/2);
+  const f=clamp01(flip);const sq=Math.abs(Math.cos(Math.PI*f));const revealed=f>=0.5;
+  ctx.scale(1,Math.max(0.04,sq));
+  if(!revealed){
+    ctx.fillStyle=P.paper?"rgba(255,255,255,.62)":"rgba(255,255,255,.07)";rr(ctx,-s/2,-s/2,s,s,12);ctx.fill();
+    ctx.lineWidth=3.5;ctx.strokeStyle=P.paper?"rgba(0,0,0,.28)":"rgba(255,255,255,.28)";ctx.stroke();
+    if(letter){ctx.fillStyle=P.fg;ctx.font=`400 ${Math.round(s*0.58)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.03);}
+  }else{
+    const c=wTileC(P,st);ctx.fillStyle=c.bg;rr(ctx,-s/2,-s/2,s,s,12);ctx.fill();
+    ctx.fillStyle=c.fg;ctx.font=`400 ${Math.round(s*0.58)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.03);
+  }
+  ctx.restore();
+}
+// bir tahmin satırı: harfler sırayla yazılır (typeD 0..1), sonra karolar sırayla döner (flipD 0..1)
+function wRow(ctx,R,word,states,cy,s,typeD,flipD){
+  const P=R.P;const n=word.length,gap=Math.round(s*0.12),tw=n*s+(n-1)*gap;let x0=R.W/2-tw/2;
+  for(let i=0;i<n;i++){
+    const typed=typeD>=(i+1)/n-0.001;
+    const fl=flipD<=0?0:clamp01((flipD-i/n)/(1.6/n));
+    if(!typed&&fl<=0){ // boş karo
+      ctx.save();ctx.fillStyle=P.paper?"rgba(255,255,255,.4)":"rgba(255,255,255,.04)";rr(ctx,x0+i*(s+gap),cy,s,s,12);ctx.fill();
+      ctx.lineWidth=3;ctx.strokeStyle=P.paper?"rgba(0,0,0,.18)":"rgba(255,255,255,.18)";ctx.stroke();ctx.restore();
+    }else{
+      wTile(ctx,x0+i*(s+gap),cy,s,word[i],states[i],P,fl);
+    }
+  }
+}
+// Popüler Cevap tablo slotu (statik): rank, cevap, sayı + bar; hidden → "???"
+function pcSlot(ctx,R,x,y,w,h,rank,ans,count,maxC,hidden,pulseT){
+  const P=R.P;ctx.save();
+  rr(ctx,x,y,w,h,20);ctx.fillStyle=P.paper?"rgba(255,255,255,.55)":"rgba(255,255,255,.06)";ctx.fill();
+  ctx.lineWidth=2.5;ctx.strokeStyle=P.paper?"rgba(0,0,0,.14)":"rgba(255,255,255,.14)";ctx.stroke();
+  // rank rozeti
+  const bs=Math.min(64,h-36);rr(ctx,x+22,y+(h-bs)/2,bs,bs,14);ctx.fillStyle=rank===1?(P.hi||"#F5C842"):(P.paper?P.fg:hexA(P.accent,.9));ctx.fill();
+  ctx.fillStyle=rank===1?"#111":(P.paper?P.bg:"#fff");ctx.font=`400 ${Math.round(bs*0.62)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(rank,x+22+bs/2,y+h/2+2);
+  if(hidden){
+    const p=1+Math.sin((pulseT||0)/240)*0.06;
+    ctx.save();ctx.translate(x+110+((w-260)/2),y+h/2);ctx.scale(p,p);ctx.fillStyle=P.sub;ctx.font="400 58px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("? ? ?",0,0);ctx.restore();
+    ctx.fillStyle=P.sub;ctx.font="600 30px Inter, sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText("···",x+w-30,y+h/2);
+  }else{
+    ctx.fillStyle=P.fg;ctx.font="400 54px Anton, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(ans,x+110,y+h/2-12);
+    ctx.fillStyle=P.sub;ctx.font="800 32px Inter, sans-serif";ctx.textAlign="right";ctx.fillText(fmtN(count),x+w-30,y+h/2-12);
+    // bar
+    const bw=(w-140)*(count/maxC);ctx.fillStyle=P.paper?"rgba(0,0,0,.10)":"rgba(255,255,255,.10)";rr(ctx,x+110,y+h-34,w-140,12,6);ctx.fill();
+    ctx.fillStyle=rank===1?(P.hi||"#F5C842"):(P.paper?P.red:P.accent);rr(ctx,x+110,y+h-34,Math.max(12,bw),12,6);ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* ══════════════════ VIDEO scene renderers ══════════════════ */
+const SCENES={
+  paperhook(ctx,R,sc,lp){const P=R.P;
+    const ts=sc.tiles||[["İ","ink"],["Ş","red"],["O","ink"]];const n=ts.length,S=190,gap=26,tw=n*S+(n-1)*gap;let x0=R.W/2-tw/2+S/2;
+    ts.forEach((tl,i)=>{const d=inv(lp,i*0.06,0.4),e=eOutBack(d);const y=560-(1-e)*560;drawTile(ctx,x0+i*(S+gap),y,S,TILEC[tl[1]]||TILEC.ink,tl[0],(i%2?1:-1)*0.05);});
+    const td=inv(lp,0.32,0.4);ctx.save();ctx.globalAlpha=td;inkTitle(ctx,sc.title,R.W/2,900,110,P.fg,-0.02,112);ctx.restore();
+    if(sc.sub){const sd=inv(lp,0.5,0.4);ctx.save();ctx.globalAlpha=sd;handText(ctx,sc.sub,R.W/2,1030,52,P.sub,"center");ctx.restore();}
+  },
+  kinetic(ctx,R,sc,lp){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0,0.2);markerTitle(ctx,sc.kicker,R.W/2,540,54,P.red,-0.03);ctx.restore();}
+    kineticCap(ctx,R,String(sc.text).split(" "),sc.cy||960,lp,{size:sc.size||76,col:P.fg,hot:sc.hot,curCol:sc.curCol});
+  },
+  punch(ctx,R,sc,lp){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0.04,0.25);markerTitle(ctx,sc.kicker,R.W/2,660,52,P.red,-0.02);ctx.restore();}
+    const e=eOutBack(inv(lp,0.08,0.4));ctx.save();ctx.globalAlpha=clamp01(inv(lp,0.08,0.3));ctx.translate(R.W/2,sc.kicker?980:920);ctx.scale(e,e);
+    if(isEmoji(sc.big)){ctx.font="340px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(sc.big,0,0);}
+    else{const L=lines(sc.big);const longest=L.reduce((a,b)=>a.length>b.length?a:b);const fs=longest.length<=4?280:longest.length<=8?190:130;
+      ctx.fillStyle=P.fg;ctx.font=`400 ${fs}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";L.forEach((ln,i)=>ctx.fillText(ln,0,(i-(L.length-1)/2)*fs*1.02));}
+    ctx.restore();
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.42,0.4);handText(ctx,sc.sub,R.W/2,sc.kicker?1230:1200,50,P.sub,"center");ctx.restore();}
+  },
+  list(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0.02,0.25);inkTitle(ctx,sc.title,R.W/2,470,84,P.fg,-0.02);ctx.restore();
+    const items=sc.items,y0=660,gap=(R.H-900)/items.length;
+    items.forEach((it,i)=>{const d=inv(lp,0.14+i*0.13,0.34),e=eOutCubic(d);const y=y0+i*gap+gap/2;
+      ctx.save();ctx.globalAlpha=d;ctx.translate((1-e)*-140,0);
+      ctx.fillStyle=P.red;ctx.font="400 108px Anton, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText((i+1),120,y);
+      ctx.fillStyle=P.fg;ctx.font="800 52px Inter, sans-serif";
+      const wl=wrap(ctx,it,"800 52px Inter, sans-serif",R.W-360);wl.forEach((ln,k)=>ctx.fillText(ln,300,y-(wl.length-1)*32+k*64));
+      ctx.restore();});
+  },
+  countdown(ctx,R,sc,lp){const P=R.P;const from=sc.from||5;const cur=Math.max(0,Math.ceil(from-lp*from));
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker||"SON SANİYELER",R.W/2,560,54,P.red,-0.03);ctx.restore();
+    const frac=(from-lp*from)-Math.floor(from-lp*from);const pop=1+(1-frac)*0.5;
+    ctx.save();ctx.translate(R.W/2,980);ctx.scale(pop,pop);ctx.fillStyle=cur<=2?P.red:P.fg;ctx.font="400 420px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(cur>0?cur:"0",0,0);ctx.restore();
+    ctx.save();ctx.globalAlpha=inv(lp,0.3,0.4);handText(ctx,sc.sub||"aklına gelen İLK kelime!",R.W/2,1330,52,P.sub,"center");ctx.restore();
+  },
+  outro(ctx,R,sc,lp){const P=R.P;
+    const e=eOutBack(inv(lp,0.05,0.4));ctx.save();ctx.globalAlpha=clamp01(inv(lp,0.05,0.3));ctx.translate(R.W/2,820);ctx.scale(e,e);
+    inkTitle(ctx,sc.title||"HEMEN\nİNDİR",0,0,120,P.fg,-0.02,124);ctx.restore();
+    storeSticker(ctx,R,1090,eOutBack(inv(lp,0.28,0.4)));
+    ctx.save();ctx.globalAlpha=inv(lp,0.45,0.4);handText(ctx,sc.sub||"ücretsiz · İsim Şehir Online",R.W/2,1260,46,P.sub,"center");ctx.restore();
+  },
+
+  /* ── YENİ KOLAJ 1: tek wordle satırı, karo karo çevirme ── */
+  wordlerow(ctx,R,sc,lp){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0,0.2);markerTitle(ctx,sc.kicker,R.W/2,560,54,P.red,-0.03);ctx.restore();}
+    const s=168;const cy=800;
+    const typeD=eOutCubic(inv(lp,0.06,0.3));
+    const flipD=inv(lp,0.4,0.42);
+    wRow(ctx,R,sc.word,sc.states,cy,s,typeD,flipD);
+    const win=sc.states.split("").every(c=>c==="g");
+    if(win&&lp>0.84){const e=eOutBack(inv(lp,0.84,0.16));
+      ctx.save();ctx.translate(R.W/2,cy+s+150);ctx.scale(e,e);ctx.rotate(-0.05);
+      markerTitle(ctx,"BULDUN! 🎉",0,0,72,P.paper?"#2f9e57":"#7BE093",0);ctx.restore();}
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.2,0.3);handText(ctx,sc.sub,R.W/2,cy+s+260,48,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── YENİ KOLAJ 2: çok satırlı çözüm (grid), son satır yeşil + seri ── */
+  wordlegrid(ctx,R,sc,lp){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker,R.W/2,480,52,P.red,-0.03);ctx.restore();}
+    const rows=sc.rows;const s=150,rh=s+26;const y0=620;
+    const seg=1/(rows.length+0.45); // her satıra eşit zaman + kutlama payı
+    rows.forEach((rw,r)=>{
+      const base=r*seg;
+      const typeD=eOutCubic(inv(lp,base,seg*0.38));
+      const flipD=inv(lp,base+seg*0.4,seg*0.5);
+      if(lp>base-0.001)wRow(ctx,R,rw.w,rw.s,y0+r*rh,s,typeD,flipD);
+    });
+    const last=rows[rows.length-1];const win=last&&last.s.split("").every(c=>c==="g");
+    const doneAt=rows.length*seg;
+    if(win&&lp>doneAt){const e=eOutBack(inv(lp,doneAt,0.3));
+      ctx.save();ctx.translate(R.W/2,y0+rows.length*rh+130);ctx.scale(e,e);
+      hlBox(ctx,-260,-58,520,84,P);
+      ctx.fillStyle="#111";ctx.font="900 56px 'Archivo Black', sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("SERİ +1 🔥",0,-14);ctx.restore();
+      starDoodle(ctx,R.W/2-330,y0+rows.length*rh+110,36,P.red);starDoodle(ctx,R.W/2+330,y0+rows.length*rh+140,30,P.paper?P.fg:P.accent);}
+  },
+
+  /* ── YENİ KOLAJ 3: seri alevi — sayı büyüyerek artar ── */
+  flame(ctx,R,sc,lp){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0,0.2);markerTitle(ctx,sc.kicker,R.W/2,520,54,P.red,-0.03);ctx.restore();}
+    const from=sc.from||0,to=sc.to||7;
+    const cur=Math.round(from+(to-from)*eOutCubic(inv(lp,0.12,0.6)));
+    const pulse=1+Math.sin(lp*Math.PI*10)*0.03;
+    ctx.save();ctx.translate(R.W/2,880);ctx.scale(pulse,pulse);
+    ctx.font="300px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("🔥",0,-40);ctx.restore();
+    const bump=1+((cur!==R._lastFlame)?0.12:0);R._lastFlame=cur;
+    ctx.save();ctx.translate(R.W/2,1220);ctx.scale(bump,bump);
+    ctx.fillStyle=P.fg;ctx.font="400 230px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(cur,0,0);ctx.restore();
+    ctx.fillStyle=P.sub;ctx.font="800 44px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";ctx.fillText("GÜN SERİ",R.W/2,1370);
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.5,0.4);handText(ctx,sc.sub,R.W/2,1460,46,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── YENİ KOLAJ 4: Popüler Cevap tablosu — alttan üste gerilimli açılış ── */
+  board(ctx,R,sc,lp,t){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.18);markerTitle(ctx,sc.kicker||"BUGÜNÜN TABLOSU",R.W/2,420,50,P.red,-0.02);
+    inkTitle(ctx,sc.cat,R.W/2,540,84,P.fg,-0.01);ctx.restore();
+    const slots=sc.slots;const n=slots.length;const maxC=Math.max(...slots.map(s=>s.n));
+    const x=90,w=R.W-180,h=170,gap=22,y0=640;
+    for(let j=0;j<n;j++){
+      const revealOrder=n-1-j; // en alttaki (en az popüler) önce açılır → 1 numara en sona
+      const d=inv(lp,0.1+revealOrder*(0.62/n),0.14);
+      const hidden=(sc.hide&&sc.hide.includes(j))||d<=0;
+      const e=eOutBack(clamp01(d));
+      ctx.save();if(d>0&&!(sc.hide&&sc.hide.includes(j))){ctx.translate(0,(1-e)*24);}
+      pcSlot(ctx,R,x,y0+j*(h+gap),w,h,j+1,slots[j].a,slots[j].n,maxC,hidden,t);
+      ctx.restore();
+    }
+    // 1 numara açıldıysa karala/vurgula
+    if(!(sc.hide&&sc.hide.includes(0))&&lp>0.82){
+      ctx.save();ctx.globalAlpha=inv(lp,0.82,0.18);circleScribble(ctx,R.W/2,y0+h/2,w+40,h+40,P.paper?P.red:(P.hi||"#F5C842"));ctx.restore();
+    }
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.6,0.3);handText(ctx,sc.sub,R.W/2,y0+n*(h+gap)+70,46,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── YENİ KOLAJ 5: cevap yaz → LİSTEDE!/YOK damgası ── */
+  anscheck(ctx,R,sc,lp){const P=R.P;const cx=R.W/2,cardY=760,cardH=280,cardW=880,x=cx-cardW/2;
+    ctx.save();ctx.globalAlpha=inv(lp,0.02,0.2);markerTitle(ctx,sc.cat,cx,650,52,P.red,-0.02);ctx.restore();
+    // giriş kartı — yanlışsa sonda kırmızıya yanar (uygulamadaki gibi)
+    const bad=sc.verdict==="out"&&lp>0.6;
+    const shake=bad?Math.sin(lp*90)*8*clamp01(1-inv(lp,0.6,0.3)):0;
+    ctx.save();ctx.translate(shake,0);
+    rr(ctx,x,cardY,cardW,cardH,34);ctx.fillStyle=bad?hexA("#d6303a",P.paper?0.12:0.2):(P.paper?"rgba(255,255,255,.55)":"rgba(255,255,255,.07)");ctx.fill();
+    ctx.lineWidth=3;ctx.strokeStyle=bad?"#d6303a":(P.paper?P.fg:"rgba(255,255,255,.18)");ctx.stroke();
+    const full=sc.word,shown=Math.round(clamp01(inv(lp,0.12,0.4))*full.length);const txt=full.slice(0,shown);
+    ctx.fillStyle=P.fg;ctx.font="400 110px 'Patrick Hand', cursive";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(txt,x+50,cardY+cardH/2);
+    if(shown<full.length&&Math.floor(lp*16)%2===0){const w2=ctx.measureText(txt).width;ctx.fillStyle=P.red;ctx.fillRect(x+50+w2+8,cardY+cardH/2-48,6,96);}
+    ctx.restore();
+    // damga
+    if(lp>0.6){const e=eOutBack(inv(lp,0.6,0.25));
+      ctx.save();ctx.translate(cx,cardY+cardH+180);ctx.rotate(-0.12);ctx.scale(e,e);
+      const ok=sc.verdict==="in";const col=ok?"#2f9e57":"#d6303a";
+      const label=ok?("LİSTEDE!  #"+(sc.rank||1)):"LİSTEDE YOK";
+      ctx.font="400 86px Anton, sans-serif";const tw2=ctx.measureText(label).width;
+      rr(ctx,-tw2/2-44,-84,tw2+88,150,18);ctx.lineWidth=10;ctx.strokeStyle=col;ctx.stroke();
+      ctx.fillStyle=col;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(label,0,-8);ctx.restore();}
+    if(sc.sub&&lp>0.75){ctx.save();ctx.globalAlpha=inv(lp,0.75,0.25);handText(ctx,sc.sub,cx,cardY+cardH+340,46,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── YENİ KOLAJ 6: split ekran — üstte Wordle, altta Popüler Cevap ── */
+  duo(ctx,R,sc,lp,t){const P=R.P;
+    const midY=R.H*0.52;
+    // üst yarı: wordle mini grid
+    const dTop=eOutCubic(inv(lp,0.04,0.3));
+    ctx.save();ctx.translate((1-dTop)*-R.W,0);ctx.globalAlpha=clamp01(dTop*1.4);
+    inkTitle(ctx,"WORDLE",R.W/2,400,86,P.fg,-0.02);
+    handText(ctx,"günün kelimesi · her gün 1 yeni",R.W/2,470,42,P.sub,"center");
+    const rows=[{w:"KOLEJ",s:"gxggx"},{w:"KALEM",s:"ggggg"}];const s=118,rh=s+20;
+    rows.forEach((rw,r)=>wRow(ctx,R,rw.w,rw.s,540+r*rh,s,1,1));
+    ctx.restore();
+    // ayraç
+    ctx.save();ctx.strokeStyle=P.paper?"rgba(0,0,0,.2)":"rgba(255,255,255,.2)";ctx.lineWidth=4;ctx.setLineDash([22,18]);
+    ctx.beginPath();ctx.moveTo(60,midY);ctx.lineTo(R.W-60,midY);ctx.stroke();ctx.restore();
+    // alt yarı: popüler cevap mini board
+    const dBot=eOutCubic(inv(lp,0.24,0.3));
+    ctx.save();ctx.translate((1-dBot)*R.W,0);ctx.globalAlpha=clamp01(dBot*1.4);
+    inkTitle(ctx,"POPÜLER CEVAP",R.W/2,midY+120,76,P.fg,-0.02);
+    handText(ctx,"çoğunluğu tahmin et · günlük tablo",R.W/2,midY+188,42,P.sub,"center");
+    const slots=[{a:"Kedi",n:1243},{a:"Köpek",n:981},{a:"???",n:0}];
+    const maxC=1243,x=110,w=R.W-220,h=132,gap=18;
+    slots.forEach((sl,j)=>pcSlot(ctx,R,x,midY+230+j*(h+gap),w,h,j+1,sl.a,sl.n,maxC,sl.a==="???",t));
+    ctx.restore();
+    // orta rozet
+    if(lp>0.5){const e=eOutBack(inv(lp,0.5,0.3));
+      ctx.save();ctx.translate(R.W/2,midY);ctx.rotate(-0.06);ctx.scale(e,e);
+      rr(ctx,-270,-64,540,128,64);ctx.fillStyle=P.paper?P.red:(P.hi||"#F5C842");ctx.fill();
+      ctx.fillStyle=P.paper?"#fff":"#111";ctx.font="400 64px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("2 YENİ OYUN",0,2);ctx.restore();}
+  },
+
+  /* ── YENİ KOLAJ 7: SONRAKİ TABLO geri sayımı (alışkanlık kancası) ── */
+  clock(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.2);markerTitle(ctx,sc.kicker||"SONRAKİ TABLO",R.W/2,600,56,P.red,-0.03);ctx.restore();
+    const startS=sc.fromSec||7*3600+42*60+9;
+    const cur=Math.max(0,startS-Math.floor(lp*(sc.tick||6)));
+    const p2=n=>String(n).padStart(2,"0");
+    const txt=p2(Math.floor(cur/3600))+":"+p2(Math.floor((cur%3600)/60))+":"+p2(cur%60);
+    const blink=Math.floor(lp*14)%2===0;
+    ctx.save();ctx.fillStyle=P.fg;ctx.font="400 190px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText(blink?txt:txt.replace(/:/g," "),R.W/2,960);ctx.restore();
+    ctx.save();ctx.globalAlpha=inv(lp,0.3,0.3);handText(ctx,sc.sub||"her gece yenilenir — kaçırma",R.W/2,1180,50,P.sub,"center");ctx.restore();
+    if(lp>0.55){const e=eOutBack(inv(lp,0.55,0.3));ctx.save();ctx.translate(R.W/2,1360);ctx.scale(e,e);
+      hlBox(ctx,-300,-52,600,76,P);ctx.fillStyle="#111";ctx.font="900 46px 'Archivo Black', sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(sc.badge||"HER GÜN YENİ",0,-13);ctx.restore();}
+  },
+};
+
+/* ══════════════════ IMAGE renderers ══════════════════ */
+const IMAGES={
+  // çözülmüş wordle posteri: grid + seri
+  wordleposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    tape(ctx,R.W/2,64,240,-0.04);if(P.paper)coffeeRing(ctx,R.W-150,240,84);
+    markerTitle(ctx,d.kicker||"YENİ OYUN",R.W/2,190,52,P.red,-0.03);
+    inkTitle(ctx,d.title||"GÜNÜN KELİMESİ",R.W/2,300,84,P.fg,-0.015);
+    const rows=d.rows;const s=140,rh=s+22;const y0=380;
+    rows.forEach((rw,r)=>wRow(ctx,R,rw.w,rw.s,y0+r*rh,s,1,1));
+    const gy=y0+rows.length*rh+60;
+    ctx.font="90px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("🔥",R.W/2-140,gy+10);
+    ctx.fillStyle=P.fg;ctx.font="400 96px Anton, sans-serif";ctx.fillText(String(d.streak||7),R.W/2+10,gy+10);
+    ctx.fillStyle=P.sub;ctx.font="800 34px Inter, sans-serif";ctx.textBaseline="alphabetic";ctx.fillText("GÜN SERİ",R.W/2+10,gy+90);
+    handText(ctx,d.foot||"bugünkünü çözdün mü? 👇",R.W/2,R.H-180,50,P.red==="#0c0c0c"?P.fg:P.red,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
+  // popüler cevap tablo posteri (1 numara gizlenebilir)
+  boardposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"BUGÜNÜN TABLOSU",R.W/2,150,48,P.red,-0.02);
+    inkTitle(ctx,d.cat,R.W/2,260,80,P.fg,-0.01);
+    const slots=d.slots;const maxC=Math.max(...slots.map(s=>s.n||1));
+    const x=80,w=R.W-160,h=142,gap=20,y0=330;
+    slots.forEach((sl,j)=>pcSlot(ctx,R,x,y0+j*(h+gap),w,h,j+1,sl.a,sl.n,maxC,(d.hide||[]).includes(j),0));
+    if((d.hide||[]).includes(0))circleScribble(ctx,R.W/2,y0+h/2,w+30,h+36,P.paper?P.red:(P.hi||"#F5C842"));
+    handText(ctx,d.foot||"1 numarayı yorumda bil 👇",R.W/2,R.H-170,50,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
+  // 2 yeni oyun duyuru posteri
+  duoposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    inkTitle(ctx,"2 YENİ OYUN",R.W/2,180,96,P.fg,-0.02);
+    handText(ctx,d.sub||"uygulamaya geldi — ikisi de günlük, ikisi de ücretsiz",R.W/2,250,42,P.sub,"center");
+    // wordle mini kart
+    const cw=R.W-160,ch=380;let y=310;
+    rr(ctx,80,y,cw,ch,28);ctx.fillStyle=P.paper?"rgba(255,255,255,.5)":"rgba(255,255,255,.05)";ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=P.paper?P.fg:hexA(P.accent,.5);ctx.stroke();
+    inkTitle(ctx,"WORDLE",R.W/2,y+80,56,P.fg,0);
+    handText(ctx,"günün kelimesi · seri tut",R.W/2,y+130,36,P.sub,"center");
+    [{w:"KALEM",s:"ggggg"}].forEach((rw,r)=>wRow(ctx,R,rw.w,rw.s,y+170,110+0*r,1,1));
+    // popüler cevap mini kart
+    y=310+ch+36;
+    rr(ctx,80,y,cw,ch,28);ctx.fillStyle=P.paper?"rgba(255,255,255,.5)":"rgba(255,255,255,.05)";ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=P.paper?P.fg:hexA(P.accent,.5);ctx.stroke();
+    inkTitle(ctx,"POPÜLER CEVAP",R.W/2,y+80,56,P.fg,0);
+    handText(ctx,"çoğunluğu tahmin et · günlük tablo",R.W/2,y+130,36,P.sub,"center");
+    const slots=[{a:"Kedi",n:1243},{a:"???",n:0}];slots.forEach((sl,j)=>pcSlot(ctx,R,140,y+160+j*106,cw-120,92,j+1,sl.a,sl.n,1243,sl.a==="???",0));
+    storeSticker(ctx,R,R.H-190,0.9);
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
+  // günün sorusu — hepsi gizli, etkileşim
+  dailyquiz(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"BUGÜNÜN SORUSU",R.W/2,160,52,P.red,-0.03);
+    ctx.save();ctx.translate(R.W/2,400);drawTile(ctx,0,0,220,TILEC[d.col||"gold"],d.letter,0);ctx.restore();
+    inkTitle(ctx,d.cat,R.W/2,640,84,P.fg,-0.02);
+    const x=110,w=R.W-220,h=104,gap=16;let y0=720;
+    for(let j=0;j<3;j++)pcSlot(ctx,R,x,y0+j*(h+gap),w,h,j+1,"",0,1,true,0);
+    handText(ctx,d.foot||"ilk cevabını yorumla — tablo uygulamada 👇",R.W/2,R.H-170,48,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
+  // seri posteri — dev alev + sayı
+  streakposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"GÜNLÜK RİTÜEL",R.W/2,170,54,P.red,-0.03);
+    ctx.font="330px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("🔥",R.W/2,470);
+    ctx.fillStyle=P.fg;ctx.font="400 250px Anton, sans-serif";ctx.fillText(String(d.n||14),R.W/2,800);
+    ctx.fillStyle=P.sub;ctx.font="800 46px Inter, sans-serif";ctx.textBaseline="alphabetic";ctx.fillText("GÜN SERİ",R.W/2,950);
+    // mini hafta çizelgesi
+    const days=7,s2=86,gap=18,tw=days*s2+(days-1)*gap;let x0=R.W/2-tw/2;
+    for(let i=0;i<days;i++){rr(ctx,x0+i*(s2+gap),1010,s2,s2,16);
+      ctx.fillStyle=i<6?"#4E9F5B":(P.paper?"rgba(255,255,255,.55)":"rgba(255,255,255,.08)");ctx.fill();
+      if(i<6){ctx.fillStyle="#fff";ctx.font="400 44px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("✓",x0+i*(s2+gap)+s2/2,1010+s2/2);}
+      else{ctx.strokeStyle=P.paper?"rgba(0,0,0,.2)":"rgba(255,255,255,.2)";ctx.lineWidth=3;ctx.stroke();}}
+    handText(ctx,d.foot||"bugünkünü oynadın mı? serin kaç? 👇",R.W/2,R.H-170,48,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
+  // LİSTEDE YOK meme damgası
+  stampposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"POV:",R.W/2,190,56,P.red,-0.03);
+    ctx.fillStyle=P.fg;ctx.font="400 84px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="alphabetic";
+    const wl=wrap(ctx,d.title,"400 84px Anton, sans-serif",R.W-160);wl.forEach((ln,k)=>ctx.fillText(ln,R.W/2,320+k*96));
+    // cevap kartı
+    const cw=760,chh=230,x=R.W/2-cw/2,y=560;
+    ctx.save();ctx.translate(0,0);rr(ctx,x,y,cw,chh,30);ctx.fillStyle=P.paper?"rgba(255,255,255,.6)":"rgba(255,255,255,.08)";ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=P.paper?P.fg:"rgba(255,255,255,.2)";ctx.stroke();
+    ctx.fillStyle=P.fg;ctx.font="400 100px 'Patrick Hand', cursive";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(d.word,R.W/2,y+chh/2);ctx.restore();
+    // damga
+    ctx.save();ctx.translate(R.W/2,y+chh+170);ctx.rotate(-0.12);
+    const label="LİSTEDE YOK";ctx.font="400 92px Anton, sans-serif";const tw2=ctx.measureText(label).width;
+    rr(ctx,-tw2/2-46,-88,tw2+92,158,18);ctx.lineWidth=11;ctx.strokeStyle="#d6303a";ctx.stroke();
+    ctx.fillStyle="#d6303a";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(label,0,-9);ctx.restore();
+    handText(ctx,d.foot||"çoğunluk gibi düşünemedim 😭",R.W/2,R.H-180,50,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);}
+,
+};
+
+/* ══════════════════ ITEMS (data) ══════════════════ */
+const CTA="\n📲 App Store & Google Play'de İsim Şehir Online — güncelle, yeni oyunlar seni bekliyor";
+const ITEMS=[
+  /* ═══════════════ VİDEOLAR (8 · 20-31sn · her biri FARKLI kolaj) ═══════════════ */
+  {id:1,kind:"video",pal:"app",title:"Wordle Geldi",sub:"lansman · karo çevirme",
+   caption:"🟩 İsim Şehir'e WORDLE geldi! Her gün 1 Türkçe kelime, 6 tahmin hakkı, seri (streak) sistemi.\nBugünün kelimesini kaç tahminde bulursun? Yaz 👇"+CTA,
+   tags:"#isimşehir #wordle #türkçewordle #kelimeoyunu #günlükoyun #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"YENİ OYUN",text:"İsim Şehir'e Wordle geldi ve bağımlılık yapıyor",hot:[3],size:72,dur:3800},
+     {type:"wordlerow",kicker:"GÜNÜN KELİMESİ",word:"KIRAZ",states:"gxxyx",sub:"yeşil = yerinde · sarı = kelimede var",dur:4800},
+     {type:"wordlegrid",kicker:"HADİ ÇÖZ",rows:[{w:"KIRAZ",s:"gxxyx"},{w:"KOLEJ",s:"gxggx"},{w:"KALEM",s:"ggggg"}],dur:7600},
+     {type:"flame",kicker:"HER GÜN 1 KELİME",from:0,to:7,sub:"serini büyüt, bozma",dur:4200},
+     {type:"punch",big:"🧠",sub:"bugünkünü çözdün mü?",dur:2800},
+     {type:"outro",title:"HEMEN\nÇÖZ",dur:3400}]},
+
+  {id:2,kind:"video",pal:"night",title:"Son Tahmin",sub:"gerilim · tek satır",
+   caption:"😮‍💨 Son tahmin hakkı, seri tehlikede… ve KALEM! Hepsi yeşil 🟩🟩🟩🟩🟩\nSen hiç son tahminde kurtardın mı? Anlat 👇"+CTA,
+   tags:"#isimşehir #wordle #gerilim #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"POV:",text:"son tahmin hakkın ve elin titriyor",hot:[1,2],dur:3400},
+     {type:"countdown",from:3,kicker:"SON ŞANS",sub:"ya tutarsa…",dur:3200},
+     {type:"wordlerow",kicker:"SON TAHMİN",word:"KALEM",states:"ggggg",sub:"",dur:5200},
+     {type:"punch",big:"🎉",sub:"seri kurtuldu!",dur:2800},
+     {type:"flame",kicker:"SERİ",from:11,to:12,sub:"bozulmadı 😮‍💨",dur:4200},
+     {type:"outro",title:"SEN DE\nÇÖZ",dur:3000}]},
+
+  {id:3,kind:"video",pal:"app",title:"Çoğunluğu Tahmin Et",sub:"lansman · tablo açılışı",
+   caption:"📊 YENİ OYUN: Popüler Cevap! Binlerce oyuncu cevapladı — sen çoğunluğun ne yazdığını tahmin et.\n'K ile hayvan' deyince aklına ilk ne geliyor? Yorumla, bakalım listede mi 👇"+CTA,
+   tags:"#isimşehir #popülercevap #aileleryarışıyor #kelimeoyunu #günlükoyun #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"YENİ OYUN",text:"binlerce oyuncu cevapladı sen çoğunluğu tahmin et",hot:[5],size:68,dur:4400},
+     {type:"punch",kicker:"BUGÜNÜN TABLOSU",big:"K ile\nHAYVAN",sub:"en popüler 5 cevap gizli",dur:3200},
+     {type:"anscheck",cat:"K ile Hayvan",word:"Kedi",verdict:"in",rank:1,sub:"çoğunluk gibi düşündün!",dur:4600},
+     {type:"board",kicker:"TABLO AÇILIYOR",cat:"K ile Hayvan",slots:[{a:"Kedi",n:1243},{a:"Köpek",n:981},{a:"Kuş",n:736},{a:"Kaplan",n:512},{a:"Kanguru",n:347}],sub:"1 numara: tabii ki Kedi 🐱",dur:9000},
+     {type:"clock",kicker:"SONRAKİ TABLO",sub:"her gece yenilenir — kaçırma",badge:"HER GÜN YENİ",dur:3600},
+     {type:"outro",title:"TABLOYU\nAÇ",dur:3200}]},
+
+  {id:4,kind:"video",pal:"high",paperMode:"graph",title:"1 Numarayı Bil",sub:"meydan okuma · gizli slot",
+   caption:"🤔 İDDİA: 'M ile isim' tablosunun 1 numarasını bilemezsin.\nİlk tahminini yorumda bırak — cevap uygulamada 👇"+CTA,
+   tags:"#isimşehir #popülercevap #meydanokuma #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"İDDİA",text:"1 numaralı cevabı asla bilemezsin",hot:[0,1],dur:3400},
+     {type:"anscheck",cat:"M ile İsim",word:"Melis",verdict:"in",rank:4,sub:"listede ama zirve değil",dur:4600},
+     {type:"anscheck",cat:"M ile İsim",word:"Miraç",verdict:"out",sub:"çoğunluk öyle dememiş 😅",dur:4200},
+     {type:"board",kicker:"TABLO",cat:"M ile İsim",hide:[0],slots:[{a:"Mehmet",n:1461},{a:"Merve",n:1120},{a:"Murat",n:894},{a:"Melis",n:566},{a:"Mert",n:431}],sub:"1 numara hâlâ gizli…",dur:7400},
+     {type:"punch",big:"🤔",sub:"1 numara ne? yorumla 👇",dur:3000},
+     {type:"outro",title:"KANITLA",dur:3000}]},
+
+  {id:5,kind:"video",pal:"ink",paperMode:"graph",title:"2 Yeni Oyun",sub:"lansman · split ekran",
+   caption:"🎉 Güncelleme geldi: İsim Şehir'de artık 2 günlük oyun daha var!\n🟩 Wordle — günün kelimesi · 📊 Popüler Cevap — çoğunluğu tahmin et.\nİkisi de her gün yenileniyor, ikisi de ücretsiz 👇"+CTA,
+   tags:"#isimşehir #yeniözellik #wordle #popülercevap #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"paperhook",tiles:[["İ","ink"],["Ş","red"],["O","ink"]],title:"MÜJDE!",sub:"uygulamaya 2 yeni oyun geldi",dur:3400},
+     {type:"duo",dur:6800},
+     {type:"list",title:"İKİSİ DE",items:["Her gün yenilenir","Tek başına oynanır","Seri (streak) tutar","Tamamen ücretsiz"],dur:5600},
+     {type:"flame",kicker:"GÜNLÜK RİTÜEL",from:0,to:30,sub:"kahve + 2 oyun = sabah",dur:4000},
+     {type:"outro",title:"GÜNCELLE\n& OYNA",dur:3400}]},
+
+  {id:6,kind:"video",pal:"riso",title:"Çoğunluk Haklı mı?",sub:"tartışma · tablo",
+   caption:"😤 'Benim cevabım daha iyiydi' — Popüler Cevap'ta herkesin dediği cümle.\nÇoğunluk her zaman haklı mı? Listeye giremeyen en iyi cevabını yaz 👇"+CTA,
+   tags:"#isimşehir #popülercevap #tartışma #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"TARTIŞMA",text:"çoğunluk her zaman haklı mı?",hot:[1],dur:3400},
+     {type:"board",kicker:"HALK BÖYLE DEDİ",cat:"M ile İsim",slots:[{a:"Mehmet",n:1461},{a:"Merve",n:1120},{a:"Murat",n:894},{a:"Melis",n:566},{a:"Mert",n:431}],sub:"",dur:8400},
+     {type:"kinetic",text:"cevabın listede yoksa üzülme sıradışısın 😎",hot:[5],size:72,dur:4000},
+     {type:"punch",big:"😤",sub:"'benim cevabım daha iyiydi'",dur:3000},
+     {type:"outro",title:"SEN DE\nDENE",dur:3000}]},
+
+  {id:7,kind:"video",pal:"brat",title:"Sabah Ritüeli",sub:"alışkanlık · hızlı çözüm",
+   caption:"☕ Yeni sabah ritüeli: kahve + günün kelimesi + bugünün tablosu.\n5 dakikada iki oyun, gün resmen başlar. Sen sabah mı akşam mı oynuyorsun? 👇"+CTA,
+   tags:"#isimşehir #wordle #popülercevap #ritüel #günlükoyun #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"YENİ SABAH RİTÜELİ",text:"kahve çay ve günün kelimesi",hot:[3,4],dur:3600},
+     {type:"wordlegrid",kicker:"2 DAKİKADA",rows:[{w:"KIRAZ",s:"gxxyx"},{w:"KALEM",s:"ggggg"}],dur:6600},
+     {type:"clock",kicker:"SONRAKİ TABLO",sub:"yarın yenisi hazır",badge:"HER SABAH TAZE",dur:4200},
+     {type:"punch",big:"☕",sub:"güne 1 kelimeyle başla",dur:3000},
+     {type:"outro",title:"RİTÜELE\nBAŞLA",dur:3000}]},
+
+  {id:8,kind:"video",pal:"vhs",title:"Seri Yarışı",sub:"rekabet · alev",
+   caption:"🔥 Arkadaşım 14 günlük seride, ben 2'deyim ve uyku düzenim bozuldu.\nSeri bozulunca hissedilen boşluğu bilen bilir. Serin kaç? Yaz 👇"+CTA,
+   tags:"#isimşehir #wordle #seri #streak #rekabet #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"DURUM:",text:"arkadaşım 14 günlük seride bende 2",hot:[1,4],dur:4200},
+     {type:"flame",kicker:"O NASIL YAPIYOR?",from:2,to:14,sub:"her gün tek kelime — hepsi bu",dur:5600},
+     {type:"kinetic",text:"bir gün kaçırırsan sıfırlanıyor gerginlik gerçek",hot:[3],size:72,dur:4000},
+     {type:"punch",big:"🔥",sub:"serin kaç? yaz 👇",dur:3000},
+     {type:"outro",title:"SERİNİ\nBAŞLAT",dur:3200}]},
+
+  /* ═══════════════ GÖRSELLER (8 · farklı kolajlar) ═══════════════ */
+  {id:9,kind:"image",pal:"app",render:"wordleposter",title:"Wordle Posteri",sub:"lansman · grid",
+   data:{kicker:"YENİ OYUN",title:"GÜNÜN KELİMESİ",rows:[{w:"KIRAZ",s:"gxxyx"},{w:"KOLEJ",s:"gxggx"},{w:"KALEM",s:"ggggg"}],streak:7,foot:"bugünkünü çözdün mü? 👇"},
+   caption:"🟩 İsim Şehir'e Wordle geldi! Her gün 1 Türkçe kelime, seri sistemi, istatistikler.\nBugünkünü kaç tahminde bulursun? 👇"+CTA,
+   tags:"#isimşehir #wordle #türkçewordle #kelimeoyunu #keşfet"},
+
+  {id:10,kind:"image",pal:"ink",render:"wordleposter",title:"Wordle Defter",sub:"defter varyantı",
+   data:{kicker:"günün kelimesi",title:"3 TAHMİNDE BİTTİ",rows:[{w:"VİRAJ",s:"gxyyx"},{w:"VAPUR",s:"ggggg"}],streak:12,foot:"sen kaç tahminde bulurdun? 👇"},
+   caption:"✏️ Defter kokulu Wordle: bugün 2 tahminde bitti, seri 12 günde 🔥\nEn iyi skorun kaç tahmin? Yaz 👇"+CTA,
+   tags:"#isimşehir #wordle #kelimeoyunu #günlükoyun #keşfet"},
+
+  {id:11,kind:"image",pal:"app",render:"boardposter",title:"Tablo: 1 Numara Gizli",sub:"etkileşim · tahmin",
+   data:{kicker:"BUGÜNÜN TABLOSU",cat:"K ile HAYVAN",hide:[0],slots:[{a:"Kedi",n:1243},{a:"Köpek",n:981},{a:"Kuş",n:736},{a:"Kaplan",n:512},{a:"Kanguru",n:347}],foot:"1 numarayı yorumda bil 👇"},
+   caption:"📊 Popüler Cevap: binlerce oyuncunun cevabından oluşan günlük tablo.\n'K ile hayvan'ın 1 numarası ne? Yorumda bil, uygulamada doğrula 👇"+CTA,
+   tags:"#isimşehir #popülercevap #tahmin #kelimeoyunu #keşfet"},
+
+  {id:12,kind:"image",pal:"high",render:"boardposter",title:"Tablo: Tam Liste",sub:"tartışma",
+   data:{kicker:"HALK BÖYLE DEDİ",cat:"M ile İSİM",slots:[{a:"Mehmet",n:1461},{a:"Merve",n:1120},{a:"Murat",n:894},{a:"Melis",n:566},{a:"Mert",n:431}],foot:"senin cevabın kaçıncı sırada? 👇"},
+   caption:"🗳️ 'M ile isim' — çoğunluk böyle dedi. Senin ilk aklına gelen kaçıncı sırada?\nListede olmayan daha iyi bir cevabın varsa savun 👇"+CTA,
+   tags:"#isimşehir #popülercevap #tartışma #kelimeoyunu #keşfet"},
+
+  {id:13,kind:"image",pal:"ink",render:"duoposter",title:"2 Yeni Oyun",sub:"lansman duyurusu",
+   data:{sub:"uygulamaya geldi — ikisi de günlük, ikisi de ücretsiz"},
+   caption:"🎉 Güncelleme: İsim Şehir'de artık 2 günlük oyun daha!\n🟩 Wordle — günün kelimesi · 📊 Popüler Cevap — çoğunluğu tahmin et.\nGüncelle ve serini başlat 👇"+CTA,
+   tags:"#isimşehir #yeniözellik #wordle #popülercevap #keşfet"},
+
+  {id:14,kind:"image",pal:"riso",render:"dailyquiz",title:"Günün Sorusu",sub:"etkileşim · quiz",
+   data:{kicker:"BUGÜNÜN SORUSU",letter:"Ş",col:"red",cat:"Ş ile ŞEHİR",foot:"ilk cevabını yorumla — tablo uygulamada 👇"},
+   caption:"⚡ 'Ş ile şehir' deyince aklına İLK ne geliyor?\nÇoğunlukla aynı mı düşünüyorsun? Yorumla, tabloyu uygulamada aç 👇"+CTA,
+   tags:"#isimşehir #popülercevap #quiz #kelimeoyunu #keşfet"},
+
+  {id:15,kind:"image",pal:"night",render:"streakposter",title:"Seri Posteri",sub:"alışkanlık · flex",
+   data:{kicker:"GÜNLÜK RİTÜEL",n:14,foot:"bugünkünü oynadın mı? serin kaç? 👇"},
+   caption:"🔥 14 gün, 14 kelime, 14 tablo. Seri bozulursa yemin ederim telefonu bırakırım (yalan).\nSerin kaç? Ekran görüntüsüyle kanıtla 👇"+CTA,
+   tags:"#isimşehir #seri #streak #wordle #popülercevap #keşfet"},
+
+  {id:16,kind:"image",pal:"brat",render:"stampposter",title:"Listede Yok",sub:"meme · relatable",
+   data:{kicker:"POV:",title:"en özgün cevabı ben buldum sandım",word:"Miraç",foot:"çoğunluk gibi düşünemedim 😭"},
+   caption:"😭 'Kesin listededir' dediğim cevap: LİSTEDE YOK.\nPopüler Cevap'ta özgünlük cezalandırılıyor ve ben buna bayılıyorum. Sen de dene 👇"+CTA,
+   tags:"#isimşehir #popülercevap #komik #relatable #keşfet"},
+];
+
+/* ══════════════════ engine ══════════════════ */
+function drawItemAt(R,t){const ctx=R.ctx;
+  if(R.kind==="image"){IMAGES[R.render](ctx,R,R.data||{});return;}
+  bgFor(ctx,R,t);
+  let acc=0,sc=null,lp=1;
+  for(const s of R.scenes){if(t<acc+s.dur){sc=s;lp=(t-acc)/s.dur;break;}acc+=s.dur;}
+  if(!sc){sc=R.scenes[R.scenes.length-1];lp=1;}
+  const a=clamp01(Math.min(lp/0.1,(1-lp)/0.1,1));
+  ctx.save();ctx.globalAlpha=a;(SCENES[sc.type]||SCENES.punch)(ctx,R,sc,lp,t);ctx.restore();
+  brandChip(ctx,R);handleFoot(ctx,R);progress(ctx,R,t);
+}
+
+const toastEl=document.getElementById("toast");
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(window._tt);window._tt=setTimeout(()=>toastEl.classList.remove("show"),2200);}
+
+let curFilter="all";
+function setFilter(f,btn){curFilter=f;document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("on"));btn.classList.add("on");
+  document.querySelectorAll(".gcard").forEach(el=>{const k=el.dataset.kind;el.style.display=(f==="all"||f===k)?"":"none";});}
+
+function build(){
+  const root=document.getElementById("grid");
+  root.innerHTML=ITEMS.map(R=>{
+    const isV=R.kind==="video";
+    return `<div class="card gcard" data-kind="${R.kind}">
+      <div class="${isV?"badge9":"badge4"}">${isV?"🎬 VİDEO · 9:16":"🖼️ GÖRSEL · 4:5"}</div>
+      <div class="stage ${isV?"v":"i"}">
+        <canvas id="c${R.id}" width="1080" height="${isV?1920:1350}"></canvas>
+        ${isV?`<button class="play" onclick="restart(${R.id})" title="Baştan oynat"><span>▶</span></button>`:""}
+      </div>
+      <div class="rtitle">${R.title}<small>${R.sub}</small></div>
+      <textarea class="cap" id="cap${R.id}">${R.caption}\n\n${R.tags}</textarea>
+      <div class="btns">
+        ${isV
+          ?`<button class="btn btn-vid" onclick="exportVideo(${R.id})">🎬 Video İndir</button><button class="btn btn-gif" onclick="exportGif(${R.id})">🟢 GIF</button>`
+          :`<button class="btn btn-img" onclick="exportImage(${R.id})">🖼️ Görsel İndir</button>`}
+        <button class="btn btn-copy" onclick="copyCap(${R.id})">📋 Kopyala</button>
+        <button class="btn btn-x" onclick="shareX(${R.id})">𝕏</button>
+      </div>
+    </div>`;}).join("");
+  ITEMS.forEach(R=>{
+    R.P=PAL[R.pal]||PAL.ink;R.W=1080;R.H=R.kind==="video"?1920:1350;
+    R.canvas=document.getElementById("c"+R.id);R.ctx=R.canvas.getContext("2d");
+    if(R.kind==="video"){R.total=R.scenes.reduce((a,s)=>a+s.dur,0);R.base=performance.now();R.visible=true;R.active=false;}
+    try{drawItemAt(R,R.kind==="video"?Math.min(1200,R.total*0.3):0);}catch(e){console.error("ilk çizim #"+R.id,e);}
+  });
+  const io=new IntersectionObserver(es=>es.forEach(e=>{const R=ITEMS.find(r=>r.canvas===e.target);if(R&&R.kind==="video")R.visible=e.isIntersecting;}),{threshold:0.2});
+  ITEMS.forEach(R=>{if(R.kind==="video")io.observe(R.canvas);});
+  requestAnimationFrame(loop);
+}
+function loop(now){ITEMS.forEach(R=>{if(R.kind==="video"&&(R.visible||R.active)&&!R._encoding){try{const t=(now-R.base)%R.total;drawItemAt(R,t);}catch(e){console.error("frame #"+R.id,e);}}});requestAnimationFrame(loop);}
+function getR(id){return ITEMS.find(r=>r.id===id);}
+function restart(id){const R=getR(id);if(R.kind==="video"){R.base=performance.now();R.visible=true;}}
+
+/* ── share/copy ── */
+function capText(id){return document.getElementById("cap"+id).value.trim();}
+async function copyCap(id){try{await navigator.clipboard.writeText(capText(id));toast("Başlık + hashtag kopyalandı ✓");}catch(e){toast("Kopyalanamadı — elle seç");}}
+function shareX(id){window.open("https://twitter.com/intent/tweet?text="+encodeURIComponent(capText(id)+"\n"+APP_URL),"_blank","noopener");}
+
+/* ── result modal ── */
+let curFile=null,curUrl=null;
+function showResult(blob,ext,id,kind){
+  if(curUrl)URL.revokeObjectURL(curUrl);curUrl=URL.createObjectURL(blob);
+  const fname=`isimsehir-yenioyunlar-${kind==="video"?"reel":"post"}-${id}.${ext}`;
+  try{curFile=new File([blob],fname,{type:blob.type});}catch(e){curFile=null;}
+  const vid=document.getElementById("resVid"),img=document.getElementById("resImg");
+  if(kind==="video"){vid.src=curUrl;vid.style.display="block";img.style.display="none";vid.play().catch(()=>{});}
+  else{img.src=curUrl;img.style.display="block";vid.style.display="none";try{vid.pause();vid.removeAttribute("src");vid.load();}catch(e){}}
+  const a=document.getElementById("resDl");a.href=curUrl;a.download=fname;
+  document.getElementById("mtitle").textContent=ext.toUpperCase()+" hazır ✓";
+  const canShare=!!(curFile&&navigator.canShare&&navigator.canShare({files:[curFile]}));
+  document.getElementById("resShare").style.display=canShare?"inline-flex":"none";
+  document.getElementById("mhint").textContent=canShare?'iPhone: "Paylaş/Kaydet" → Fotoğraflar. Bilgisayar: "İndir".':'İndir\'e bas. Açılmazsa tarayıcıya sürükle.';
+  document.getElementById("modal").classList.add("show");toast(ext.toUpperCase()+" hazır ✓");
+}
+function closeModal(){document.getElementById("modal").classList.remove("show");const v=document.getElementById("resVid");try{v.pause();}catch(e){}}
+async function shareResult(){if(!curFile){toast("Paylaşım desteklenmiyor — İndir'i kullan");return;}try{await navigator.share({files:[curFile],title:curFile.name});}catch(e){if(e&&e.name!=="AbortError")toast("Paylaşım başarısız — İndir'i dene");}}
+
+/* ── export: image PNG ── */
+function exportImage(id){const R=getR(id);try{drawItemAt(R,0);R.canvas.toBlob(b=>{if(b)showResult(b,"png",id,"image");else toast("PNG üretilemedi");},"image/png");}catch(e){console.error(e);toast("Görsel hatası");}}
+
+/* ── export: MP4 (WebCodecs) ── */
+async function pickAvc(W,H){const cands=["avc1.640028","avc1.4d0028","avc1.420028","avc1.640032","avc1.42e028"];
+  for(const c of cands){try{const s=await VideoEncoder.isConfigSupported({codec:c,width:W,height:H,bitrate:8e6,framerate:30});if(s&&s.supported)return c;}catch(e){}}return null;}
+async function encodeMP4(R){
+  if(!("VideoEncoder" in window)||!("VideoFrame" in window)||!window.Mp4Muxer)return null;
+  const W=R.W,H=R.H,codec=await pickAvc(W,H);if(!codec)return null;
+  const fps=30,frames=Math.max(1,Math.round(R.total/1000*fps));
+  const target=new Mp4Muxer.ArrayBufferTarget();
+  const muxer=new Mp4Muxer.Muxer({target,video:{codec:"avc",width:W,height:H},fastStart:"in-memory"});
+  let err=null;const enc=new VideoEncoder({output:(chunk,meta)=>muxer.addVideoChunk(chunk,meta),error:e=>{err=e;console.error("enc",e);}});
+  enc.configure({codec,width:W,height:H,bitrate:8000000,framerate:fps});R._encoding=true;
+  try{for(let i=0;i<frames;i++){if(err)break;const t=i/frames*R.total;drawItemAt(R,t);
+    const vf=new VideoFrame(R.canvas,{timestamp:Math.round(i*1e6/fps),duration:Math.round(1e6/fps)});enc.encode(vf,{keyFrame:i%fps===0});vf.close();
+    if(i%14===0)toast("🎬 MP4… %"+Math.round(i/frames*100));if(enc.encodeQueueSize>6)await new Promise(r=>setTimeout(r));}
+    await enc.flush();muxer.finalize();}finally{R._encoding=false;try{enc.close();}catch(e){}}
+  if(err)return null;return new Blob([target.buffer],{type:"video/mp4"});
+}
+function pickMime(){const c=["video/mp4;codecs=h264","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"];for(const m of c){try{if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;}catch(e){}}return"";}
+function recordWebM(R){return new Promise(res=>{const mime=pickMime();if(!mime||!window.MediaRecorder)return res(null);
+  let stream;try{stream=R.canvas.captureStream(30);}catch(e){return res(null);}
+  let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});}catch(e){return res(null);}
+  const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  rec.onstop=()=>{R.active=false;res({blob:new Blob(chunks,{type:mime}),ext:mime.indexOf("mp4")>-1?"mp4":"webm"});};
+  R.active=true;R.base=performance.now();rec.start();setTimeout(()=>{try{rec.stop();}catch(e){R.active=false;res(null);}},R.total+150);});}
+async function exportVideo(id){const R=getR(id);toast("🎬 Video hazırlanıyor (MP4)… ⏳");
+  try{const blob=await encodeMP4(R);if(blob){showResult(blob,"mp4",id,"video");return;}}catch(e){console.error(e);}
+  toast("MP4 motoru yok — WebM deneniyor");
+  try{const r=await recordWebM(R);if(r&&r.blob.size>0){showResult(r.blob,r.ext,id,"video");return;}}catch(e){console.error(e);}
+  toast("Bu cihaz video üretemiyor — 🟢 GIF'i kullan");}
+
+/* ── export: GIF ── */
+async function exportGif(id){if(typeof GIF==="undefined"){toast("GIF motoru yüklenemedi — http link üzerinden aç");return;}
+  const R=getR(id);const fps=12,frames=Math.max(8,Math.round(R.total/1000*fps));const gw=540,gh=960;
+  const tmp=document.createElement("canvas");tmp.width=gw;tmp.height=gh;const tctx=tmp.getContext("2d");
+  toast("🟢 GIF hazırlanıyor… "+frames+" kare ⏳");R._encoding=true;
+  try{const gif=new GIF({workers:2,quality:12,width:gw,height:gh,workerScript:"gif.worker.js",background:"#0b0820"});
+    for(let i=0;i<frames;i++){const t=i/frames*R.total;drawItemAt(R,t);tctx.drawImage(R.canvas,0,0,gw,gh);gif.addFrame(tctx,{copy:true,delay:Math.round(1000/fps)});}
+    gif.on("finished",b=>{R._encoding=false;showResult(b,"gif",id,"image");});
+    gif.on("abort",()=>{R._encoding=false;toast("GIF iptal");});gif.render();
+  }catch(e){R._encoding=false;console.error(e);toast("GIF başarısız (http link dene)");}}
+
+/* ── boot ── */
+(function boot(){const go=()=>build();
+  if(document.fonts&&document.fonts.ready){Promise.all([
+    document.fonts.load("400 100px Anton"),document.fonts.load("800 60px 'Shantell Sans'"),
+    document.fonts.load("400 60px 'Patrick Hand'"),document.fonts.load("900 60px 'Archivo Black'"),
+    document.fonts.load("800 40px Inter"),document.fonts.load("700 40px Caveat")
+  ]).then(()=>document.fonts.ready).then(go).catch(go);}else{go();}})();
+</script>
+</body>
+</html>

@@ -80,7 +80,7 @@
         <button class="fbtn" data-f="image" onclick="setFilter('image',this)">🖼️ Görsel</button>
       </div>
       <div class="banner"><div>🔥</div><div><p><b>Gerçek MP4 üretir</b> (WebCodecs) — Reels/TikTok'a direkt yüklenir. Görseller <b>PNG</b>. iPhone'da buton → önizleme → <b>Paylaş/Kaydet</b>. En iyi sonuç için http link üzerinden aç.</p></div></div>
-      <div class="links">Diğer stüdyolar → <a href="reels-2.0.html">Reels 2.0</a> · <a href="sosyal-medya-2.0.html">Sosyal Medya 2.0</a></div>
+      <div class="links">Diğer stüdyolar → <a href="yeni-oyunlar.html">🆕 Yeni Oyunlar (Wordle &amp; Popüler Cevap)</a> · <a href="reels-2.0.html">Reels 2.0</a> · <a href="sosyal-medya-2.0.html">Sosyal Medya 2.0</a></div>
     </header>
 
     <div class="grid" id="grid"></div>
@@ -135,6 +135,10 @@ const APPLE_PATH="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1
 const PLAY_PATH="M76.5 16.9C73 20.4 71 25.3 71 31v450c0 5.7 2 10.6 5.5 14.1l253.6-253.6L76.5 16.9zM104.6 13.4c-7-2.8-15-1.2-20.4 4.2l241.1 241.1 50.5-50.5L104.6 13.4zm344.6 216.7-71.2-41.1-55.9 55.9 55.9 55.9 71.2-41.1c20.6-12 20.6-43.7 0-55.8zM84.2 502.6c5.4 5.4 13.4 7 20.4 4.2l221-127.6-50.5-50.5L84.2 502.6z";
 function drawGlyph(ctx,d,vb,cx,cy,size,color){ctx.save();ctx.translate(cx-size/2,cy-size/2);const s=size/vb;ctx.scale(s,s);ctx.fillStyle=color;ctx.fill(new Path2D(d));ctx.restore();}
 function lines(txt){return String(txt).split("\n");}
+
+// harf karosu — paperhook/reveal/quizcard bunu kullanıyor ama tanımı reels-2.0'da
+// kalmıştı (bu dosyada eksikti → o kartlar sessizce çizilmiyordu). Font: Anton.
+function drawTile(ctx,cx,cy,s,stops,letter,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=s*0.2;ctx.shadowOffsetY=s*0.12;const g=ctx.createLinearGradient(-s/2,-s/2,s/2,s/2);g.addColorStop(0,stops[0]);g.addColorStop(.5,stops[1]);g.addColorStop(1,stops[2]);ctx.fillStyle=g;rr(ctx,-s/2,-s*0.57,s,s*1.14,s*0.17);ctx.fill();ctx.shadowColor="transparent";ctx.fillStyle="#fff";ctx.font=`400 ${Math.round(s*0.62)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.04);ctx.restore();}
 
 // wrap text to width (returns array of lines)
 function wrap(ctx,txt,font,maxW){ctx.font=font;const words=String(txt).split(" ");const out=[];let cur="";
