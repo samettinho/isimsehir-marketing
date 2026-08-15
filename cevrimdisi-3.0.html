@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · Çevrimdışı Stüdyo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="gif.js"></script>
+<script src="mp4-muxer.min.js"></script>
+<style>
+  /* ------------------------------------------------------------------
+     ÇEVRİMDIŞI STÜDYO — görsel dil
+     Diğer stüdyolar (viral-3.0, reels-2.0) defter estetiği: düz, çizgisel,
+     asit yeşili. Burası kasten BAŞKA bir yer: derin uzay zemini, uygulamanın
+     kendi moru, sinyal kaybının kehribarı ve gerçek perspektif projeksiyonuyla
+     çizilen 3B sahneler. Konu "şebeke yokken bile oyun var" olduğu için
+     tipografi de teknik: telemetri satırları mono, başlıklar Space Grotesk.
+  ------------------------------------------------------------------ */
+  :root{
+    --void:#05060F; --deep:#0B1030; --panel:#0E1330; --line:rgba(124,92,255,.18);
+    --violet:#7C5CFF; --cyan:#4DC3FF; --amber:#FFB347; --white:#EEF1FF; --muted:#8A90C8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif;color:var(--white);background:var(--void);
+    min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(70% 45% at 50% -5%,rgba(124,92,255,.16),transparent 65%),
+      radial-gradient(45% 30% at 100% 12%,rgba(77,195,255,.08),transparent 60%);
+  }
+  .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+
+  header.top{padding:56px 0 10px}
+  .tele{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;letter-spacing:.14em;
+    color:var(--amber);display:flex;align-items:center;gap:9px}
+  .tele .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber);
+    animation:blip 1.6s infinite}
+  @keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
+  header.top h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(38px,6.4vw,72px);
+    line-height:.98;letter-spacing:-.02em;margin:14px 0 12px}
+  header.top h1 em{font-style:normal;color:var(--violet)}
+  header.top p{color:#B9BFEA;font-size:15.5px;max-width:640px;line-height:1.65}
+  .rule{height:1px;background:linear-gradient(90deg,var(--violet),rgba(124,92,255,0));margin:26px 0 6px}
+
+  .note{display:flex;gap:12px;align-items:flex-start;margin:22px 0 0;padding:14px 16px;
+    border:1px solid var(--line);border-radius:14px;background:rgba(124,92,255,.06)}
+  .note p{color:#B9BFEA;font-size:13px;line-height:1.6}
+  .note b{color:var(--white)}
+
+  h2.sec{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);margin:44px 0 16px;display:flex;align-items:center;gap:12px}
+  h2.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:26px;align-items:start}
+  .card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),#0A0E24);
+    border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .stage{position:relative;border-radius:20px;overflow:hidden;background:#05060F;
+    box-shadow:0 30px 70px -34px rgba(0,0,0,.9),0 0 0 1px rgba(124,92,255,.16) inset}
+  .stage.v{width:290px;height:516px}
+  .stage.p{width:300px;height:375px}
+  .stage.sq{width:300px;height:300px}
+  .stage.l{width:320px;height:180px}
+  .stage canvas{width:100%;height:100%;display:block}
+  .stage .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
+  .stage .play span{width:66px;height:66px;border-radius:50%;background:rgba(6,8,20,.55);backdrop-filter:blur(6px);
+    display:grid;place-items:center;font-size:24px;color:#fff;border:1px solid rgba(238,241,255,.28);opacity:0;transition:.18s}
+  .stage:hover .play span{opacity:1}
+
+  .rtitle{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;text-align:center;letter-spacing:-.01em}
+  .rtitle small{display:block;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10.5px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+  textarea.cap{width:100%;min-height:96px;resize:vertical;border-radius:12px;padding:11px 12px;
+    border:1px solid var(--line);background:#080B1C;color:#DDE1FF;font-family:'Inter';font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:rgba(124,92,255,.6)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:11px;
+    padding:10px 13px;font-family:'Inter';font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+  .btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .btn-vid{background:var(--violet);color:#fff}
+  .btn-img{background:var(--cyan);color:#04121E}
+  .btn-gif{background:#2F9E57;color:#fff}
+  .btn-copy{background:rgba(238,241,255,.08);color:var(--white);border:1px solid var(--line)}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:#0A0E24;border:1px solid rgba(124,92,255,.55);color:#fff;padding:12px 22px;border-radius:13px;
+    font-size:14px;font-weight:700;box-shadow:0 18px 40px -12px rgba(0,0,0,.8);transition:.25s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(3,4,10,.88);backdrop-filter:blur(7px);
+    display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .modal .box{background:#0A0E24;border:1px solid var(--line);border-radius:20px;padding:18px;max-width:420px;width:100%;
+    display:flex;flex-direction:column;gap:12px;align-items:center}
+  .modal video,.modal img{max-width:100%;max-height:56vh;border-radius:12px;display:none;background:#05060F}
+  .modal h3{font-family:'Space Grotesk';font-size:16px}
+  .modal p{color:var(--muted);font-size:12.5px;text-align:center;line-height:1.55}
+  footer.foot{text-align:center;color:#5F659B;font-size:12.5px;margin-top:48px;line-height:1.7}
+  @media (prefers-reduced-motion:reduce){.tele .dot{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="tele"><span class="dot"></span>SİNYAL: YOK · RAKİP: BOT · OYUN: AÇIK</div>
+    <h1>Rakip her zaman hazır.<br /><em>İnternet gerekmez.</em></h1>
+    <p>
+      <b>Bota karşı oynama</b> ve çevrimdışı mod için hazır reels/TikTok
+      videoları ve sosyal medya görselleri: 8 video, 6 gönderi görseli.
+      Videolar tarayıcıda MP4'e dönüşür — kayıt programı gerekmez.
+    </p>
+    <div class="rule"></div>
+    <div class="note">
+      <span style="font-size:18px">📡</span>
+      <p>
+        <b>Videolar 9:16, 1080×1920, 30 fps.</b> "Video İndir" tuşu MP4 üretir
+        (Instagram Reels ve TikTok'a doğrudan yüklenir). Telefonda açtıysan
+        modaldaki <b>Paylaş</b> ile Fotoğraflar'a kaydedebilirsin.
+      </p>
+    </div>
+  </header>
+
+  <h2 class="sec">Reels &amp; TikTok</h2>
+  <div class="grid" id="reels"></div>
+
+  <h2 class="sec">Gönderi görselleri</h2>
+  <div class="grid" id="posts"></div>
+
+  <footer class="foot">
+    İsim Şehir · Çevrimdışı Stüdyo<br />
+    Metinler uygulamadaki gerçek özelliklere göre yazıldı — olmayan bir şey vaat edilmiyor.
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="box">
+    <h3 id="mtitle">Hazır ✓</h3>
+    <video id="resVid" controls playsinline loop></video>
+    <img id="resImg" alt="Üretilen görsel" />
+    <p id="mhint"></p>
+    <div class="btns">
+      <a class="btn btn-vid" id="resDl" download href="#">⬇︎ İndir</a>
+      <button class="btn btn-img" id="resShare" onclick="shareResult()">📤 Paylaş / Kaydet</button>
+      <button class="btn btn-copy" onclick="closeModal()">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================================================================
+   0) Sabitler
+   =================================================================== */
+const W = 1080, H = 1920;                    // reels / TikTok
+const APP_URL = "https://isimsehir.app";
+const C = {
+  void:"#05060F", deep:"#0B1030", violet:"#7C5CFF", violetDim:"#4B37A8",
+  cyan:"#4DC3FF", amber:"#FFB347", white:"#EEF1FF", muted:"#8A90C8",
+  green:"#37D399", red:"#FF6B6B",
+  // Jeton sahneleri için ALTIN malzeme. Mor/camgöbeği uzaydan ayrışsın diye
+  // ayrı bir malzeme: jeton konusu geldiğinde ekran gözle görülür şekilde
+  // ısınıyor, izleyici "burada başka bir şey anlatılıyor" diye anlıyor.
+  gold:"#F0C24B", goldDeep:"#A9741B", goldLite:"#FFE9A8",
+};
+
+/**
+ * 3B madeni para. Ön yüz elips (dönüşe göre daralır), arkasında kalınlık
+ * veren koyu bir elips. Kenar-üstü görünümde ikisi üst üste binerek ince bir
+ * dilime dönüşüyor — dönen jeton hissi buradan geliyor.
+ */
+function drawCoin(ctx, {x, y, r, spin=0, alpha=1, label="🪙"}){
+  const w = Math.max(1.5, Math.abs(Math.cos(spin)) * r);
+  const depth = 0.16 * r * Math.sign(Math.cos(spin) || 1);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  // kalınlık
+  ctx.beginPath();
+  ctx.ellipse(x + depth, y, w, r, 0, 0, 7);
+  ctx.fillStyle = C.goldDeep; ctx.fill();
+
+  // ön yüz
+  const g = ctx.createLinearGradient(x - w, y - r, x + w, y + r);
+  g.addColorStop(0, C.goldLite);
+  g.addColorStop(0.45, C.gold);
+  g.addColorStop(1, C.goldDeep);
+  ctx.beginPath();
+  ctx.ellipse(x, y, w, r, 0, 0, 7);
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = C.goldLite; ctx.lineWidth = Math.max(1, r*0.06); ctx.stroke();
+
+  // yüzdeki işaret yalnızca yeterince genişken okunur
+  if(w > r*0.45){
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(x, y, w*0.98, r*0.98, 0, 0, 7); ctx.clip();
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.font = `700 ${Math.round(r*0.95)}px 'Space Grotesk', sans-serif`;
+    ctx.fillStyle = "rgba(90,55,0,.55)";
+    ctx.fillText(label, x, y + r*0.04);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+/** Jeton yağmuru — hediye sahnesinde ekrana dökülen paralar. */
+const RAIN = Array.from({length:26}, (_,i)=>({
+  x: 90 + (i*137) % (W-180),
+  delay: (i%13) * 130,
+  r: 34 + (i%5)*9,
+  sp: 0.9 + (i%7)*0.12,
+}));
+function drawCoinRain(ctx, t, until){
+  for(const c of RAIN){
+    const lt = t - c.delay;
+    if(lt < 0) continue;
+    const p = Math.min(1, lt/1500);
+    const y = -80 + p*(H*0.62) + Math.sin(lt/300)*8;
+    const a = t > until ? Math.max(0, 1 - (t-until)/500) : 1;
+    drawCoin(ctx, {x:c.x, y, r:c.r, spin: lt/220*c.sp, alpha: a*0.95});
+  }
+}
+
+/* ===================================================================
+   1) Küçük 3B motoru
+   -------------------------------------------------------------------
+   Canvas 2D'nin 3B'si yok; burada gerçek projeksiyon matematiği var:
+   nokta döndürülür, perspektifle düzleme düşürülür. Telefon ekranı gibi
+   dokulu yüzeyler DİLİM EŞLEMESİYLE çizilir — yüzey dikey şeritlere
+   bölünüp her şerit kendi derinliğine göre ölçeklenir, böylece dönen
+   telefon gerçekten dönüyormuş gibi görünür (kesme/skew taklidi değil).
+   =================================================================== */
+const CAM = { f: 1500, dist: 1500 };
+
+function rotY(p, a){ const c=Math.cos(a), s=Math.sin(a); return { x:p.x*c + p.z*s, y:p.y, z:-p.x*s + p.z*c }; }
+function rotX(p, a){ const c=Math.cos(a), s=Math.sin(a); return { x:p.x, y:p.y*c - p.z*s, z:p.y*s + p.z*c }; }
+function rotZ(p, a){ const c=Math.cos(a), s=Math.sin(a); return { x:p.x*c - p.y*s, y:p.x*s + p.y*c, z:p.z }; }
+function add(p, q){ return { x:p.x+q.x, y:p.y+q.y, z:p.z+q.z }; }
+
+/** 3B noktayı ekrana düşürür. `s` ölçek (uzaktaki küçük görünür). */
+function proj(p, cx=W/2, cy=H/2){
+  const s = CAM.f / Math.max(120, CAM.f + CAM.dist + p.z);
+  return { x: cx + p.x*s, y: cy + p.y*s, s };
+}
+
+/**
+ * Dokulu düzlem (telefon ekranı, poster) — dilim eşlemeli perspektif.
+ * `quad`: ekrana düşürülmüş 4 köşe [SolÜst, SağÜst, SağAlt, SolAlt].
+ */
+function drawTexturedQuad(ctx, tex, quad, slices=64){
+  const [tl,tr,br,bl] = quad;
+  const w = tex.width, h = tex.height;
+  ctx.save();
+  for(let i=0;i<slices;i++){
+    const u0=i/slices, u1=(i+1)/slices;
+    const ax = tl.x+(tr.x-tl.x)*u0, ay = tl.y+(tr.y-tl.y)*u0;
+    const bx = bl.x+(br.x-bl.x)*u0, by = bl.y+(br.y-bl.y)*u0;
+    const cx = tl.x+(tr.x-tl.x)*u1, cy2 = tl.y+(tr.y-tl.y)*u1;
+    const sliceW = Math.hypot(cx-ax, cy2-ay) + 1.0;   // +1: şeritler arası dikiş olmasın
+    const sliceH = Math.hypot(bx-ax, by-ay);
+    const ang = Math.atan2(by-ay, bx-ax) - Math.PI/2;
+    ctx.save();
+    ctx.translate(ax, ay);
+    ctx.rotate(ang);
+    ctx.drawImage(tex, u0*w, 0, Math.max(1,(u1-u0)*w), h, 0, 0, sliceW, sliceH);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+/** Yuvarlatılmış dikdörtgen yolu (her yerde lazım). */
+function rr(ctx, x, y, w, h, r){
+  const k = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+k, y);
+  ctx.arcTo(x+w, y, x+w, y+h, k);
+  ctx.arcTo(x+w, y+h, x, y+h, k);
+  ctx.arcTo(x, y+h, x, y, k);
+  ctx.arcTo(x, y, x+w, y, k);
+  ctx.closePath();
+}
+
+/**
+ * 3B kutu (harf küpü). Yüzler derinliğe göre sıralanıp boyanır; ön yüze
+ * harf yazılır. Kenar ışığı mor, gövde koyu — sahnedeki tek "katı" nesne
+ * bu olduğu için ağırlık merkezi o.
+ */
+function drawCube(ctx, {pos, size, rot, letter, hue}){
+  const s = size/2;
+  const verts = [
+    {x:-s,y:-s,z:-s},{x:s,y:-s,z:-s},{x:s,y:s,z:-s},{x:-s,y:s,z:-s},
+    {x:-s,y:-s,z:s},{x:s,y:-s,z:s},{x:s,y:s,z:s},{x:-s,y:s,z:s},
+  ].map(v=>{
+    let p = rotX(v, rot.x); p = rotY(p, rot.y); p = rotZ(p, rot.z);
+    return add(p, pos);
+  });
+  const faces = [
+    {idx:[0,1,2,3], shade:1.00},   // ön
+    {idx:[5,4,7,6], shade:0.42},   // arka
+    {idx:[4,0,3,7], shade:0.62},   // sol
+    {idx:[1,5,6,2], shade:0.72},   // sağ
+    {idx:[4,5,1,0], shade:0.88},   // üst
+    {idx:[3,2,6,7], shade:0.5 },   // alt
+  ].map(f=>{
+    const z = f.idx.reduce((a,i)=>a+verts[i].z,0)/4;
+    return {...f, z, pts:f.idx.map(i=>proj(verts[i]))};
+  }).sort((a,b)=>b.z-a.z);
+
+  for(const f of faces){
+    const g = f.shade;
+    ctx.beginPath();
+    ctx.moveTo(f.pts[0].x, f.pts[0].y);
+    for(let i=1;i<4;i++) ctx.lineTo(f.pts[i].x, f.pts[i].y);
+    ctx.closePath();
+    ctx.fillStyle = `hsl(${hue} 78% ${9 + g*26}%)`;
+    ctx.fill();
+    ctx.strokeStyle = `hsla(${hue} 100% 78% / ${0.12 + g*0.35})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  // Harf: en öndeki yüzün merkezine, yüzün ölçeğiyle.
+  const front = faces[faces.length-1];
+  if(letter){
+    const cx = front.pts.reduce((a,p)=>a+p.x,0)/4;
+    const cy = front.pts.reduce((a,p)=>a+p.y,0)/4;
+    const scale = Math.hypot(front.pts[1].x-front.pts[0].x, front.pts[1].y-front.pts[0].y);
+    ctx.save();
+    ctx.fillStyle = "#fff";
+    ctx.font = `700 ${Math.round(scale*0.56)}px 'Space Grotesk', sans-serif`;
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.shadowColor = `hsl(${hue} 100% 70%)`; ctx.shadowBlur = scale*0.35;
+    ctx.fillText(letter, cx, cy);
+    ctx.restore();
+  }
+}
+
+/* Derinlikli parçacık alanı: kamera içeri doğru süzülüyormuş hissi. */
+const DUST = Array.from({length:150}, (_,i)=>({
+  x:(Math.random()*2-1)*1400, y:(Math.random()*2-1)*2200,
+  z:Math.random()*2600, r:Math.random()*2.6+0.7, hue: Math.random()<0.25 ? 196 : 254,
+}));
+function drawDust(ctx, t){
+  for(const d of DUST){
+    const z = (d.z - (t*0.09)) % 2600;
+    const zz = z < 0 ? z + 2600 : z;
+    const p = proj({x:d.x, y:d.y, z:zz - 900});
+    const a = Math.max(0, 0.5 - zz/5200);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, Math.max(0.4, d.r*p.s*1.6), 0, 7);
+    ctx.fillStyle = `hsla(${d.hue} 100% 78% / ${a})`;
+    ctx.fill();
+  }
+}
+
+/* Zemin: uzayan mor ufuk + hafif vinyet. Her sahnenin altlığı. */
+function drawSpace(ctx, t, tint){
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, "#05060F");
+  g.addColorStop(0.55, tint || "#0B1030");
+  g.addColorStop(1, "#05060F");
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+
+  const glow = ctx.createRadialGradient(W/2, H*0.46, 40, W/2, H*0.46, W*0.95);
+  glow.addColorStop(0, "rgba(124,92,255,.22)");
+  glow.addColorStop(1, "rgba(124,92,255,0)");
+  ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
+
+  drawDust(ctx, t);
+
+  // Perspektif ızgara — "derinlik" hissinin omurgası.
+  ctx.save();
+  ctx.strokeStyle = "rgba(124,92,255,.16)"; ctx.lineWidth = 2;
+  for(let i=-9;i<=9;i++){
+    const a = proj({x:i*300, y:520, z:-700});
+    const b = proj({x:i*300, y:520, z:2600});
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+  for(let k=0;k<14;k++){
+    const z = ((k*260) + (t*0.12)%260) - 700;
+    const l = proj({x:-2700, y:520, z}), r2 = proj({x:2700, y:520, z});
+    ctx.globalAlpha = Math.max(0, 0.5 - z/3000);
+    ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(r2.x,r2.y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ===================================================================
+   2) Telefon dokusu — ekranın içeriği ayrı bir tuvale çizilir, sonra
+      3B düzleme kaplanır.
+   =================================================================== */
+const TEX_W = 540, TEX_H = 1100;
+function makeTex(){
+  const c = document.createElement("canvas");
+  c.width = TEX_W; c.height = TEX_H;
+  return c;
+}
+
+/** Oyun tahtası: kategori satırları, yazılan kelimeler, harf rozeti. */
+function paintBoard(tex, {letter, rows, typed, mode, botLevel}){
+  const x = tex.getContext("2d");
+  x.fillStyle = "#0B1030"; x.fillRect(0,0,TEX_W,TEX_H);
+
+  // Üst bar
+  x.fillStyle = "#151B3F"; x.fillRect(0,0,TEX_W,120);
+  x.fillStyle = C.muted;
+  x.font = "700 20px 'JetBrains Mono', monospace";
+  x.fillText(mode || "ÇEVRİMDIŞI", 28, 52);
+  x.fillStyle = C.white;
+  x.font = "700 30px 'Space Grotesk', sans-serif";
+  x.fillText("Bota karşı", 28, 92);
+
+  // Harf rozeti
+  x.save();
+  const bx = TEX_W-118, by = 22;
+  rr(x, bx, by, 92, 92, 24);
+  const bg = x.createLinearGradient(bx,by,bx+92,by+92);
+  bg.addColorStop(0, C.violet); bg.addColorStop(1, "#5B3FE0");
+  x.fillStyle = bg; x.fill();
+  x.fillStyle = "#fff"; x.textAlign="center"; x.textBaseline="middle";
+  x.font = "700 56px 'Space Grotesk', sans-serif";
+  x.fillText(letter, bx+46, by+50);
+  x.restore();
+
+  // RAKİP ŞERİDİ — botun kim olduğu her karede görünür olmalı; videonun
+  // konusu "bota karşı oynamak", bunu yalnızca başlıkta söylemek yetmiyor.
+  const oy = 138;
+  rr(x, 24, oy, TEX_W-48, 86, 20);
+  x.fillStyle = "#151B3F"; x.fill();
+  x.strokeStyle = "rgba(124,92,255,.45)"; x.lineWidth = 2; x.stroke();
+  // Bot avatarı: mor daire + göz + anten
+  x.save();
+  x.beginPath(); x.arc(76, oy+43, 28, 0, 7);
+  x.fillStyle = C.violet; x.fill();
+  x.strokeStyle = "rgba(238,241,255,.35)"; x.lineWidth = 3; x.stroke();
+  x.fillStyle = "#0B1030";
+  x.beginPath(); x.arc(66, oy+40, 6, 0, 7); x.fill();
+  x.beginPath(); x.arc(86, oy+40, 6, 0, 7); x.fill();
+  x.strokeStyle = C.cyan; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(76, oy+15); x.lineTo(76, oy+4); x.stroke();
+  x.beginPath(); x.arc(76, oy+2, 4, 0, 7); x.fillStyle = C.cyan; x.fill();
+  x.restore();
+  x.fillStyle = C.white;
+  x.font = "700 26px 'Space Grotesk', sans-serif";
+  x.fillText("BOT · " + (botLevel || "İyi"), 120, oy+38);
+  x.fillStyle = C.green;
+  x.font = "700 19px 'JetBrains Mono', monospace";
+  x.fillText("hazır · yazıyor…", 120, oy+68);
+  x.textAlign = "right";
+  x.fillStyle = C.muted;
+  x.font = "700 19px 'JetBrains Mono', monospace";
+  x.fillText("RAKİP", TEX_W-46, oy+38);
+  x.textAlign = "left";
+
+  // Kategori satırları
+  let y = 250;
+  rows.forEach((r, i)=>{
+    const filled = i < typed;
+    rr(x, 24, y, TEX_W-48, 104, 20);
+    x.fillStyle = filled ? "rgba(124,92,255,.14)" : "#111740";
+    x.fill();
+    x.strokeStyle = filled ? "rgba(124,92,255,.55)" : "rgba(238,241,255,.08)";
+    x.lineWidth = 2; x.stroke();
+
+    x.textAlign = "left"; x.textBaseline = "alphabetic";
+    x.fillStyle = C.muted;
+    x.font = "700 19px 'JetBrains Mono', monospace";
+    x.fillText(r.cat.toLocaleUpperCase("tr-TR"), 46, y+36);
+
+    x.fillStyle = filled ? C.white : "rgba(238,241,255,.18)";
+    x.font = "600 34px 'Inter', sans-serif";
+    x.fillText(filled ? r.word : "—", 46, y+80);
+
+    if(filled){
+      x.fillStyle = C.green;
+      x.font = "700 22px 'JetBrains Mono', monospace";
+      x.textAlign = "right";
+      x.fillText("+10", TEX_W-46, y+80);
+      x.textAlign = "left";
+    }
+    y += 116;
+  });
+}
+
+/** Kilit ekranı görünümü: sinyal çubukları + saat. */
+function paintSignal(tex, {bars, label, sub}){
+  const x = tex.getContext("2d");
+  const g = x.createLinearGradient(0,0,0,TEX_H);
+  g.addColorStop(0,"#0A0F2E"); g.addColorStop(1,"#05060F");
+  x.fillStyle = g; x.fillRect(0,0,TEX_W,TEX_H);
+
+  // Sinyal çubukları
+  const bx = TEX_W/2 - 130, by = 380;
+  for(let i=0;i<4;i++){
+    const h = 44 + i*38, on = i < bars;
+    rr(x, bx + i*70, by + (152-h), 46, h, 12);
+    x.fillStyle = on ? C.white : "rgba(238,241,255,.12)";
+    x.fill();
+  }
+  // Çarpı (sinyal yok)
+  if(bars === 0){
+    x.strokeStyle = C.amber; x.lineWidth = 14; x.lineCap = "round";
+    x.beginPath();
+    x.moveTo(bx-10, by+10); x.lineTo(bx+300, by+165);
+    x.moveTo(bx+300, by+10); x.lineTo(bx-10, by+165);
+    x.stroke();
+  }
+  x.textAlign="center";
+  x.fillStyle = bars===0 ? C.amber : C.white;
+  x.font = "700 46px 'JetBrains Mono', monospace";
+  x.fillText(label, TEX_W/2, 660);
+  if(sub){
+    x.fillStyle = C.muted;
+    x.font = "600 28px 'Inter', sans-serif";
+    x.fillText(sub, TEX_W/2, 712);
+  }
+  x.textAlign="left";
+}
+
+/**
+ * Telefonu 3B çizer: gövde (yuvarlatılmış kasa) + ekran dokusu.
+ * `rotYv` dönüş açısı, `lift` yukarı süzülme, `z` derinlik.
+ */
+function drawPhone3D(ctx, tex, {rotYv=0, rotXv=-0.06, z=0, y=0, scale=1, glow=true}){
+  const w = 300*scale, h = 610*scale, d = 22*scale;
+  const corners = [
+    {x:-w/2,y:-h/2,z:-d},{x:w/2,y:-h/2,z:-d},{x:w/2,y:h/2,z:-d},{x:-w/2,y:h/2,z:-d},
+  ].map(p=>{
+    let q = rotX(p, rotXv); q = rotY(q, rotYv);
+    return proj({x:q.x, y:q.y + y, z:q.z + z});
+  });
+
+  // Kasa: ekranın biraz dışına taşan koyu gövde
+  const body = [
+    {x:-w/2-14,y:-h/2-14,z:d},{x:w/2+14,y:-h/2-14,z:d},{x:w/2+14,y:h/2+14,z:d},{x:-w/2-14,y:h/2+14,z:d},
+  ].map(p=>{
+    let q = rotX(p, rotXv); q = rotY(q, rotYv);
+    return proj({x:q.x, y:q.y + y, z:q.z + z});
+  });
+
+  ctx.save();
+  if(glow){
+    ctx.shadowColor = "rgba(124,92,255,.55)";
+    ctx.shadowBlur = 90;
+  }
+  ctx.beginPath();
+  ctx.moveTo(body[0].x, body[0].y);
+  for(let i=1;i<4;i++) ctx.lineTo(body[i].x, body[i].y);
+  ctx.closePath();
+  ctx.fillStyle = "#0A0C1C"; ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = "rgba(238,241,255,.22)"; ctx.lineWidth = 3; ctx.stroke();
+  ctx.restore();
+
+  drawTexturedQuad(ctx, tex, corners, 72);
+
+  // Cam yansıması: köşeden geçen ince aydınlık bant
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(corners[0].x, corners[0].y);
+  for(let i=1;i<4;i++) ctx.lineTo(corners[i].x, corners[i].y);
+  ctx.closePath();
+  ctx.clip();
+  const gg = ctx.createLinearGradient(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
+  gg.addColorStop(0, "rgba(255,255,255,.16)");
+  gg.addColorStop(.35, "rgba(255,255,255,.02)");
+  gg.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = gg; ctx.fillRect(0,0,W,H);
+  ctx.restore();
+}
+
+/* ===================================================================
+   3) Metin yardımcıları
+   =================================================================== */
+function fitText(ctx, text, max, weight, family, start){
+  let size = start;
+  do{
+    ctx.font = `${weight} ${size}px ${family}`;
+    if(ctx.measureText(text).width <= max) break;
+    size -= 4;
+  } while(size > 20);
+  return size;
+}
+/** Kinetik başlık: satırlar aşağıdan gelir, hafif 3B eğim. */
+function kinetic(ctx, lines, {y, t, color=C.white, size=104, gap=118, delay=90}){
+  lines.forEach((ln, i)=>{
+    const k = Math.max(0, Math.min(1, (t - i*delay)/420));
+    const e = 1 - Math.pow(1-k, 3);
+    if(k <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = e;
+    ctx.translate(W/2, y + i*gap + (1-e)*70);
+    ctx.scale(0.86 + e*0.14, 0.86 + e*0.14);
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const s = fitText(ctx, ln.t, W-140, 700, "'Space Grotesk', sans-serif", ln.size || size);
+    ctx.font = `700 ${s}px 'Space Grotesk', sans-serif`;
+    ctx.fillStyle = ln.c || color;
+    if(ln.glow){ ctx.shadowColor = ln.c || color; ctx.shadowBlur = 40; }
+    ctx.fillText(ln.t, 0, 0);
+    ctx.restore();
+  });
+}
+/** Telemetri satırı — sahnenin "gerçek" bilgisi burada. */
+function telemetry(ctx, text, y, color=C.amber){
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.font = "700 30px 'JetBrains Mono', monospace";
+  ctx.fillStyle = color;
+  ctx.fillText(text, W/2, y);
+  ctx.restore();
+}
+/** Alt marka bandı: her videonun sonunda aynı yerde. */
+function brandBar(ctx, t){
+  const k = Math.min(1, t/500);
+  ctx.save();
+  ctx.globalAlpha = k;
+  ctx.textAlign = "center";
+  ctx.fillStyle = C.white;
+  ctx.font = "700 62px 'Space Grotesk', sans-serif";
+  ctx.fillText("İSİM ŞEHİR", W/2, H-300);
+  ctx.fillStyle = C.muted;
+  ctx.font = "600 34px 'Inter', sans-serif";
+  ctx.fillText("App Store ve Google Play'de", W/2, H-238);
+  ctx.restore();
+}
+
+/* ===================================================================
+   4) Sahneler
+   =================================================================== */
+const BOARD_ROWS = [
+  {cat:"İsim",   word:"Kerem"},
+  {cat:"Şehir",  word:"Kars"},
+  {cat:"Hayvan", word:"Kaplan"},
+  {cat:"Bitki",  word:"Kekik"},
+  {cat:"Eşya",   word:"Kalem"},
+];
+
+const texSignal = null; // tembel kurulur
+const TEX = {};
+function tex(key, painter){
+  if(!TEX[key]) TEX[key] = makeTex();
+  painter(TEX[key]);
+  return TEX[key];
+}
+
+const SCENES = {
+  /* Sinyal ölüyor: çubuklar 4→0, telefon yavaşça dönüyor. */
+  signalDrop(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0B1030");
+    const k = t/dur;
+    const bars = k < .18 ? 4 : k < .34 ? 3 : k < .5 ? 2 : k < .66 ? 1 : 0;
+    const shake = bars === 0 ? Math.sin(t/40)*3 : 0;
+    const tx = tex("sig", tt=>paintSignal(tt, {
+      bars,
+      label: bars===0 ? "SİNYAL YOK" : `${bars} ÇUBUK`,
+      sub: bars===0 ? "metro · tünel · asansör" : "bağlantı zayıflıyor",
+    }));
+    ctx.save(); ctx.translate(shake, 0);
+    drawPhone3D(ctx, tx, { rotYv: Math.sin(t/1400)*0.28, y: -60, z: 120, scale: 1.05, glow: bars>0 });
+    ctx.restore();
+    telemetry(ctx, bars===0 ? "PING: —" : `PING: ${Math.round(300 - bars*40)} ms`, H*0.80, bars===0?C.amber:C.muted);
+    kinetic(ctx, [{t:"Sinyal gitti."}], {y:H*0.13, t});
+  },
+
+  /* Karanlıktan tahta doğuyor: telefon öne gelir, kelimeler yazılır. */
+  boardWrite(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#101744");
+    const typed = Math.min(BOARD_ROWS.length, Math.floor(t/620));
+    const tx = tex("board", tt=>paintBoard(tt, {
+      letter:"K", rows:BOARD_ROWS, typed, mode:"ÇEVRİMDIŞI", botLevel:"İyi",
+    }));
+    const intro = Math.min(1, t/700);
+    drawPhone3D(ctx, tx, {
+      rotYv: (1-intro)*0.9 + Math.sin(t/1800)*0.06,
+      y: -40 + (1-intro)*260,
+      z: 900*(1-intro),
+      scale: 1.06,
+    });
+    telemetry(ctx, "MOD: ÇEVRİMDIŞI · RAKİP: BOT", H*0.80);
+    kinetic(ctx, [{t:"İnternetsiz.", c:C.cyan, glow:true}], {y:H*0.13, t});
+  },
+
+  /* Uçuş modu: 3B anahtar döner, sahne kararır, tahta yanar. */
+  airplane(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0A0E2A");
+    const k = Math.min(1, t/900);
+    // Anahtar: yatay kapsül + kayan topuz
+    const cw = 460, ch = 210;
+    ctx.save();
+    ctx.translate(W/2, H*0.38);
+    ctx.rotate(-0.06 + (1-k)*0.25);
+    ctx.scale(0.8 + k*0.2, 0.8 + k*0.2);
+    rr(ctx, -cw/2, -ch/2, cw, ch, ch/2);
+    ctx.fillStyle = k > .5 ? "rgba(124,92,255,.35)" : "rgba(238,241,255,.08)";
+    ctx.fill();
+    ctx.strokeStyle = k > .5 ? C.violet : "rgba(238,241,255,.25)";
+    ctx.lineWidth = 5; ctx.stroke();
+    const knob = -cw/2 + ch/2 + (cw-ch) * (k>.5 ? Math.min(1,(k-.5)*3) : 0);
+    ctx.beginPath(); ctx.arc(knob, 0, ch/2 - 16, 0, 7);
+    ctx.fillStyle = k > .5 ? C.violet : "#3B4270";
+    ctx.shadowColor = C.violet; ctx.shadowBlur = k>.5 ? 50 : 0;
+    ctx.fill();
+    ctx.restore();
+    ctx.save();
+    ctx.textAlign="center"; ctx.font="700 40px 'JetBrains Mono', monospace";
+    ctx.fillStyle = k>.5 ? C.violet : C.muted;
+    ctx.fillText("UÇUŞ MODU", W/2, H*0.38 + 190);
+    ctx.restore();
+    kinetic(ctx, [{t:"Uçakta mısın?", size:96}], {y:H*0.13, t});
+    if(t > 1400) kinetic(ctx, [{t:"Oyun yine açılıyor.", c:C.cyan, size:74}], {y:H*0.62, t:t-1400});
+  },
+
+  /* Harf küpleri: 5 küp yörüngede döner, ortada kelime belirir. */
+  cubes(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0D1338");
+    const letters = ["K","A","R","S","!"];
+    letters.forEach((L,i)=>{
+      const a = (t/1600) + i*(Math.PI*2/letters.length);
+      const R = 430;
+      const pos = { x: Math.cos(a)*R, y: Math.sin(a*0.7)*120 - 40, z: Math.sin(a)*R };
+      drawCube(ctx, {
+        pos, size: 190,
+        rot: { x: t/2600 + i, y: a*1.4, z: Math.sin(t/2000+i)*0.15 },
+        letter: L, hue: i%2 ? 196 : 254,
+      });
+    });
+    kinetic(ctx, [
+      {t:"5 kategori.", size:88},
+      {t:"Tek harf.", c:C.cyan, size:88},
+    ], {y:H*0.12, t});
+    telemetry(ctx, "SÜRE: 90 sn · RAKİP HAZIR", H*0.84);
+  },
+
+  /* Zorluk halkası: 1→5 dolan yay, ortada seviye adı. */
+  difficulty(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0B1030");
+    const names = ["Çaylak","Acemi","Orta","İyi","Usta"];
+    const lvl = Math.min(4, Math.floor(t/900));
+    const p = Math.min(1, (t - lvl*900)/700);
+    const cx = W/2, cy = H*0.42, R = 300;
+
+    ctx.save();
+    ctx.lineWidth = 34; ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(238,241,255,.07)";
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+
+    const frac = (lvl + p)/5;
+    const grad = ctx.createLinearGradient(cx-R, cy-R, cx+R, cy+R);
+    grad.addColorStop(0, C.cyan); grad.addColorStop(1, C.violet);
+    ctx.strokeStyle = grad;
+    ctx.shadowColor = C.violet; ctx.shadowBlur = 40;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, -Math.PI/2, -Math.PI/2 + Math.PI*2*frac);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillStyle = C.white;
+    ctx.font = "700 150px 'Space Grotesk', sans-serif";
+    ctx.fillText(String(lvl+1), cx, cy-24);
+    ctx.fillStyle = C.cyan;
+    ctx.font = "700 46px 'JetBrains Mono', monospace";
+    ctx.fillText(names[lvl].toLocaleUpperCase("tr-TR"), cx, cy+82);
+    ctx.restore();
+
+    kinetic(ctx, [{t:"Zorluğu sen seç.", size:92}], {y:H*0.13, t});
+    telemetry(ctx, "5 ZORLUK · GÜNDE 1 MAÇ ÜCRETSİZ", H*0.80);
+  },
+
+  /* Kafa kafaya: sen vs bot, iki sütun ve yükselen puanlar. */
+  duel(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0C1236");
+    const k = Math.min(1, t/900);
+    const mine = Math.round(Math.min(1, t/3400) * 45);
+    const bots = Math.round(Math.min(1, t/3400) * 40);
+
+    const col = (cx, name, score, isBot, hue) => {
+      ctx.save();
+      ctx.translate(cx, H*0.44);
+      ctx.scale(k, k);
+      // Kaide
+      rr(ctx, -260, -300, 520, 620, 40);
+      ctx.fillStyle = isBot ? "rgba(124,92,255,.10)" : "rgba(77,195,255,.10)";
+      ctx.fill();
+      ctx.strokeStyle = isBot ? "rgba(124,92,255,.5)" : "rgba(77,195,255,.5)";
+      ctx.lineWidth = 4; ctx.stroke();
+      // Avatar
+      ctx.beginPath(); ctx.arc(0, -170, 84, 0, 7);
+      ctx.fillStyle = `hsl(${hue} 80% 60%)`; ctx.fill();
+      if(isBot){
+        ctx.fillStyle = "#0B1030";
+        ctx.beginPath(); ctx.arc(-28, -180, 15, 0, 7); ctx.fill();
+        ctx.beginPath(); ctx.arc(28, -180, 15, 0, 7); ctx.fill();
+        ctx.strokeStyle = C.cyan; ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(0, -254); ctx.lineTo(0, -290); ctx.stroke();
+        ctx.beginPath(); ctx.arc(0, -298, 12, 0, 7); ctx.fillStyle = C.cyan; ctx.fill();
+      } else {
+        ctx.fillStyle = "#0B1030";
+        ctx.font = "700 76px 'Space Grotesk', sans-serif";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("S", 0, -168);
+      }
+      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = C.white;
+      ctx.font = "700 44px 'Space Grotesk', sans-serif";
+      ctx.fillText(name, 0, -40);
+      ctx.fillStyle = isBot ? C.violet : C.cyan;
+      ctx.font = "700 150px 'Space Grotesk', sans-serif";
+      ctx.fillText(String(score), 0, 130);
+      ctx.fillStyle = C.muted;
+      ctx.font = "700 28px 'JetBrains Mono', monospace";
+      ctx.fillText("PUAN", 0, 190);
+      ctx.restore();
+    };
+    col(W*0.27, "SEN", mine, false, 196);
+    col(W*0.73, "BOT", bots, true, 254);
+
+    // Ortadaki şimşek
+    ctx.save();
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = "700 90px 'Space Grotesk', sans-serif";
+    ctx.fillStyle = C.amber;
+    ctx.shadowColor = C.amber; ctx.shadowBlur = 40;
+    ctx.fillText("VS", W/2, H*0.44);
+    ctx.restore();
+
+    kinetic(ctx, [{t:"Bota karşı oyna.", size:84}], {y:H*0.12, t});
+    telemetry(ctx, "5 ZORLUK · İNTERNETSİZ", H*0.84);
+  },
+
+  /* Rakip bekleme: boş oda sayacı vs anında hazır bot. */
+  noWait(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0A0E2A");
+    const waited = Math.floor(t/1000);
+    const flip = t > 3000;
+
+    ctx.save();
+    ctx.textAlign = "center";
+    // Üst: "oyuncu bekleniyor" sayacı
+    ctx.globalAlpha = flip ? Math.max(0, 1 - (t-3000)/500) : 1;
+    ctx.fillStyle = C.muted;
+    ctx.font = "700 34px 'JetBrains Mono', monospace";
+    ctx.fillText("ODA BEKLİYOR", W/2, H*0.40);
+    ctx.fillStyle = C.amber;
+    ctx.font = "700 190px 'Space Grotesk', sans-serif";
+    ctx.fillText(`00:${String(Math.min(59, waited*7)).padStart(2,"0")}`, W/2, H*0.52);
+    ctx.restore();
+
+    if(flip){
+      const k = Math.min(1, (t-3000)/600);
+      ctx.save();
+      ctx.globalAlpha = k;
+      ctx.translate(W/2, H*0.46);
+      ctx.scale(0.6 + k*0.4, 0.6 + k*0.4);
+      ctx.beginPath(); ctx.arc(0, -60, 120, 0, 7);
+      ctx.fillStyle = C.violet;
+      ctx.shadowColor = C.violet; ctx.shadowBlur = 70;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#0B1030";
+      ctx.beginPath(); ctx.arc(-40, -74, 21, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(40, -74, 21, 0, 7); ctx.fill();
+      ctx.strokeStyle = C.cyan; ctx.lineWidth = 11;
+      ctx.beginPath(); ctx.moveTo(0, -180); ctx.lineTo(0, -220); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, -228, 16, 0, 7); ctx.fillStyle = C.cyan; ctx.fill();
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.white;
+      ctx.font = "700 62px 'Space Grotesk', sans-serif";
+      ctx.fillText("BOT HAZIR", 0, 130);
+      ctx.fillStyle = C.green;
+      ctx.font = "700 30px 'JetBrains Mono', monospace";
+      ctx.fillText("BEKLEME: 00:00", 0, 186);
+      ctx.restore();
+    }
+
+    kinetic(ctx, [{t: flip ? "Rakip zaten burada." : "Rakip bekliyorsun.", size:80}],
+      {y:H*0.14, t: flip ? t-3000 : t});
+  },
+
+  /* Hoş geldin hediyesi: jetonlar dökülür, sayaç 0 → 100. */
+  giftRain(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#141026");
+    drawCoinRain(ctx, t, dur - 900);
+
+    const k = Math.min(1, Math.max(0, (t-700)/2200));
+    const n = Math.round(k * 100);
+    ctx.save();
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    // Sayaç
+    ctx.fillStyle = C.gold;
+    ctx.shadowColor = C.gold; ctx.shadowBlur = 50;
+    ctx.font = "700 250px 'Space Grotesk', sans-serif";
+    ctx.fillText(String(n), W/2, H*0.56);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = C.goldLite;
+    ctx.font = "700 54px 'JetBrains Mono', monospace";
+    ctx.fillText("JETON", W/2, H*0.56 + 170);
+    ctx.restore();
+
+    kinetic(ctx, [
+      {t:"Hoş geldin hediyesi", size:74, c:C.white},
+    ], {y:H*0.16, t});
+    if(t > 2600) telemetry(ctx, "HESABINA YÜKLENDİ", H*0.80, C.green);
+  },
+
+  /* Takıldın mı: boş kategori → Harf Al → harfler açılır. */
+  hintBuy(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#100D22");
+    const word = "KEKİK";
+    const shown = Math.max(0, Math.min(word.length, Math.floor((t-1800)/420)));
+
+    // Kategori kartı
+    ctx.save();
+    ctx.translate(W/2, H*0.42);
+    rr(ctx, -400, -150, 800, 300, 36);
+    ctx.fillStyle = "rgba(240,194,75,.08)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(240,194,75,.45)"; ctx.lineWidth = 4; ctx.stroke();
+    ctx.textAlign = "left";
+    ctx.fillStyle = C.muted;
+    ctx.font = "700 30px 'JetBrains Mono', monospace";
+    ctx.fillText("BİTKİ", -340, -70);
+    // Harf kutuları
+    for(let i=0;i<word.length;i++){
+      const bx = -340 + i*136;
+      rr(ctx, bx, -10, 116, 116, 22);
+      ctx.fillStyle = i < shown ? "rgba(240,194,75,.20)" : "rgba(238,241,255,.05)";
+      ctx.fill();
+      ctx.strokeStyle = i < shown ? C.gold : "rgba(238,241,255,.14)";
+      ctx.lineWidth = 3; ctx.stroke();
+      if(i < shown){
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillStyle = C.goldLite;
+        ctx.font = "700 62px 'Space Grotesk', sans-serif";
+        ctx.fillText(word[i], bx+58, 50);
+        ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      }
+    }
+    ctx.restore();
+
+    // "Harf Al · 15" düğmesi ve basılma anı
+    const pressed = t > 1500 && t < 2100;
+    ctx.save();
+    ctx.translate(W/2, H*0.66);
+    ctx.scale(pressed ? 0.94 : 1, pressed ? 0.94 : 1);
+    rr(ctx, -260, -60, 520, 120, 34);
+    ctx.fillStyle = pressed ? C.gold : "rgba(240,194,75,.16)";
+    ctx.fill();
+    ctx.strokeStyle = C.gold; ctx.lineWidth = 4; ctx.stroke();
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = pressed ? "#2A1D00" : C.gold;
+    ctx.font = "700 46px 'Space Grotesk', sans-serif";
+    ctx.fillText("Harf Al", -40, 0);
+    ctx.restore();
+    drawCoin(ctx, {x: W/2 + 120, y: H*0.66, r: 40, spin: t/300});
+    ctx.save();
+    ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    ctx.fillStyle = C.goldLite;
+    ctx.font = "700 44px 'Space Grotesk', sans-serif";
+    ctx.fillText("15", W/2 + 168, H*0.66);
+    ctx.restore();
+
+    kinetic(ctx, [{t:"Kelime gelmiyor mu?", size:80}], {y:H*0.15, t});
+    if(shown >= word.length) telemetry(ctx, "PUANIN DÜŞMEZ", H*0.84, C.green);
+  },
+
+  /* Wordle ipucu: 5×5 tahta, bir harf jetonla altına dönüyor. */
+  wordleHint(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0E1030");
+    const cell = 150, gap = 16, cols = 5, rows = 4;
+    const bw = cols*cell + (cols-1)*gap;
+    const x0 = W/2 - bw/2, y0 = H*0.24;
+    const guesses = [
+      ["K","A","L","E","M"],
+      ["K","E","M","İ","K"],
+    ];
+    const state = [
+      ["correct","absent","absent","present","absent"],
+      ["correct","present","absent","absent","correct"],
+    ];
+    const reveal = t > 2200;
+
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const x = x0 + c*(cell+gap), y = y0 + r*(cell+gap);
+        rr(ctx, x, y, cell, cell, 20);
+        let fill = "rgba(238,241,255,.04)", stroke = "rgba(238,241,255,.14)", ch = "";
+        if(r < guesses.length){
+          ch = guesses[r][c];
+          const st = state[r][c];
+          fill = st === "correct" ? "rgba(55,211,153,.85)"
+               : st === "present" ? "rgba(255,179,71,.85)" : "rgba(238,241,255,.10)";
+          stroke = fill;
+        }
+        // Jetonla açılan konum: 3. satır, 3. hücre
+        const isHinted = reveal && r === 2 && c === 2;
+        if(isHinted){ fill = "rgba(240,194,75,.22)"; stroke = C.gold; ch = "K"; }
+        ctx.fillStyle = fill; ctx.fill();
+        ctx.strokeStyle = stroke; ctx.lineWidth = 3; ctx.stroke();
+        if(ch){
+          ctx.save();
+          ctx.textAlign="center"; ctx.textBaseline="middle";
+          ctx.fillStyle = isHinted ? C.goldLite : "#fff";
+          ctx.font = "700 78px 'Space Grotesk', sans-serif";
+          ctx.fillText(ch, x+cell/2, y+cell/2+4);
+          ctx.restore();
+        }
+      }
+    }
+
+    // İpucu düğmesi
+    ctx.save();
+    ctx.translate(W/2, H*0.78);
+    rr(ctx, -330, -58, 660, 116, 32);
+    ctx.fillStyle = reveal ? "rgba(240,194,75,.2)" : "rgba(238,241,255,.06)";
+    ctx.fill();
+    ctx.strokeStyle = reveal ? C.gold : "rgba(238,241,255,.2)"; ctx.lineWidth = 4; ctx.stroke();
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillStyle = reveal ? C.gold : C.muted;
+    ctx.font = "700 40px 'Space Grotesk', sans-serif";
+    ctx.fillText("💡 Harfin yeri · 50 jeton", 0, 0);
+    ctx.restore();
+
+    kinetic(ctx, [{t:"Wordle'da tıkandın.", size:78}], {y:H*0.13, t});
+  },
+
+  /* Kapanış: telefon merkeze oturur, marka bandı. */
+  outro(ctx, sc, t, dur){
+    drawSpace(ctx, t, "#0C1236");
+    const tx = tex("board", tt=>paintBoard(tt, {
+      letter:"K", rows:BOARD_ROWS, typed:5, mode:"ÇEVRİMDIŞI", botLevel:"Usta",
+    }));
+    const k = Math.min(1, t/800);
+    drawPhone3D(ctx, tx, {
+      rotYv: (1-k)*0.5, y: -90, z: 300*(1-k), scale: 0.95 + k*0.05,
+    });
+    kinetic(ctx, [
+      {t: sc.line1 || "İnternet yokken bile", size:76},
+      {t: sc.line2 || "oyun cebinde.", c:C.violet, size:76, glow:true},
+    ], {y:H*0.12, t});
+    brandBar(ctx, t-600);
+  },
+};
+
+/* ===================================================================
+   5) Reels tanımları
+   =================================================================== */
+const REELS = [
+  {
+    id:1, title:"Tünel", sub:"16 sn · sinyal ölür, oyun açılır",
+    scenes:[
+      {type:"signalDrop", dur:5200},
+      {type:"boardWrite", dur:6200},
+      {type:"outro", dur:4600, line1:"Şebeke bitti.", line2:"Oyun bitmedi."},
+    ],
+    caption:"Metroda sinyal yok, oyun var 🚇\nBota karşı çevrimdışı oyna — İsim Şehir.",
+    tags:"#isimşehir #kelimeoyunu #çevrimdışı #metro #mobiloyun",
+  },
+  {
+    id:2, title:"Uçuş modu", sub:"15 sn · uçakta da oynanır",
+    scenes:[
+      {type:"airplane", dur:5000},
+      {type:"boardWrite", dur:6000},
+      {type:"outro", dur:4400, line1:"Uçuş modunda bile", line2:"5 kategori, tek harf."},
+    ],
+    caption:"Uçuş modu açık, oyun açık ✈️\nİsim Şehir'i internetsiz oyna.",
+    tags:"#isimşehir #uçuşmodu #çevrimdışı #kelimeoyunu #seyahat",
+  },
+  {
+    id:4, title:"Sen vs Bot", sub:"14 sn · kafa kafaya",
+    scenes:[
+      {type:"duel", dur:5200},
+      {type:"boardWrite", dur:5200},
+      {type:"outro", dur:4200, line1:"Rakip her zaman hazır.", line2:"İnternet gerekmez."},
+    ],
+    caption:"Sen mi bot mu? 🤖\n5 zorluk, internetsiz oynanır — İsim Şehir.",
+    tags:"#isimşehir #botakarşı #kelimeoyunu #mobiloyun #çevrimdışı",
+  },
+  {
+    id:5, title:"Bekleme yok", sub:"13 sn · oda dolmasını bekleme",
+    scenes:[
+      {type:"noWait", dur:5000},
+      {type:"boardWrite", dur:4600},
+      {type:"outro", dur:4000, line1:"Oda dolsun diye", line2:"beklemek yok."},
+    ],
+    caption:"Oda dolmasını bekleme ⏳\nBota karşı bas oyna — istediğin an, internetsiz.",
+    tags:"#isimşehir #botakarşı #kelimeoyunu #hemenoyna",
+  },
+  {
+    id:6, title:"100 jeton hediye", sub:"13 sn · yeni sürüm hediyesi",
+    scenes:[
+      {type:"giftRain", dur:5200},
+      {type:"hintBuy", dur:4600},
+      {type:"outro", dur:3600, line1:"Başlangıç bizden.", line2:"100 jeton hediye."},
+    ],
+    caption:"Yeni sürümde herkese 100 jeton hediye 🪙\nHarf al, ipucu aç, bota karşı maç yap.",
+    tags:"#isimşehir #hediye #kelimeoyunu #mobiloyun",
+  },
+  {
+    id:7, title:"Takıldın mı?", sub:"13 sn · Harf Al / Kelime Al",
+    scenes:[
+      {type:"hintBuy", dur:5400},
+      {type:"boardWrite", dur:4200},
+      {type:"outro", dur:3600, line1:"Jeton puanını düşürmez.", line2:"Sadece yardım eder."},
+    ],
+    caption:"Kelime aklına gelmiyorsa harf al 🪙\nHarf Al 15, Kelime Al 50 jeton — puanın düşmez.",
+    tags:"#isimşehir #kelimeoyunu #ipucu #mobiloyun",
+  },
+  {
+    id:8, title:"Wordle ipucu", sub:"12 sn · günün kelimesi",
+    scenes:[
+      {type:"wordleHint", dur:5200},
+      {type:"giftRain", dur:3400},
+      {type:"outro", dur:3400, line1:"Günün kelimesinde", line2:"tıkanmak yok."},
+    ],
+    caption:"Günün kelimesinde tıkandıysan ipucu var 💡\nHarf 25, harfin yeri 50 jeton.",
+    tags:"#isimşehir #wordle #gününkelimesi #kelimeoyunu",
+  },
+  {
+    id:3, title:"Rakip hazır", sub:"14 sn · 5 zorluk seviyesi",
+    scenes:[
+      {type:"cubes", dur:4800},
+      {type:"difficulty", dur:5000},
+      {type:"outro", dur:4400, line1:"Rakip beklemek yok.", line2:"Bot hep hazır."},
+    ],
+    caption:"Oda dolsun diye beklemek yok 🤖\n5 zorluk, internetsiz oynanır.",
+    tags:"#isimşehir #bot #kelimeoyunu #mobiloyun #çevrimdışı",
+  },
+];
+
+/* ===================================================================
+   6) Gönderi görselleri (statik)
+   =================================================================== */
+const POSTS = [
+  {
+    id:101, w:1080, h:1350, cls:"p", title:"Instagram · dikey",
+    caption:"İnternet yokken de oyun var. İsim Şehir'i çevrimdışı, bota karşı oyna.",
+    tags:"#isimşehir #çevrimdışı #kelimeoyunu",
+    draw(ctx, w, h){
+      const t = 1200;
+      const sc = h/H;
+      ctx.save(); ctx.scale(w/W, w/W);
+      drawSpace(ctx, t, "#0B1030");
+      ctx.restore();
+      // Telefon
+      ctx.save();
+      ctx.translate(w/2 - W/2*(w/W), h*0.50 - H/2*(w/W));
+      ctx.scale(w/W, w/W);
+      const tx = tex("board", tt=>paintBoard(tt, {letter:"K", rows:BOARD_ROWS, typed:5, mode:"ÇEVRİMDIŞI"}));
+      drawPhone3D(ctx, tx, { rotYv:-0.34, rotXv:-0.05, y:120, z:60, scale:1.0 });
+      ctx.restore();
+      // Başlık
+      ctx.save();
+      ctx.textAlign="center";
+      ctx.fillStyle = C.amber;
+      ctx.font = "700 30px 'JetBrains Mono', monospace";
+      ctx.fillText("SİNYAL: YOK", w/2, 130);
+      ctx.fillStyle = C.white;
+      let s = fitText(ctx, "Şebeke bitti.", w-140, 700, "'Space Grotesk', sans-serif", 96);
+      ctx.font = `700 ${s}px 'Space Grotesk', sans-serif`;
+      ctx.fillText("Şebeke bitti.", w/2, 232);
+      ctx.fillStyle = C.violet;
+      ctx.font = `700 ${s}px 'Space Grotesk', sans-serif`;
+      ctx.fillText("Oyun bitmedi.", w/2, 232 + s*1.05);
+      ctx.fillStyle = C.muted;
+      ctx.font = "600 30px 'Inter', sans-serif";
+      ctx.fillText("Bota karşı çevrimdışı oyna · 5 zorluk", w/2, h-96);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 40px 'Space Grotesk', sans-serif";
+      ctx.fillText("İSİM ŞEHİR", w/2, h-146);
+      ctx.restore();
+    },
+  },
+  {
+    id:103, w:1080, h:1080, cls:"sq", title:"Instagram · kare",
+    caption:"Rakip beklemek yok: bota karşı, istediğin an, internetsiz oyna.",
+    tags:"#isimşehir #botakarşı #kelimeoyunu",
+    draw(ctx, w, h){
+      ctx.save(); ctx.scale(w/W, w/W); drawSpace(ctx, 1400, "#0C1236"); ctx.restore();
+      const cx = w/2;
+      // Sen vs Bot rozetleri
+      const badge = (x, label, sub, isBot) => {
+        ctx.save();
+        ctx.translate(x, h*0.46);
+        ctx.beginPath(); ctx.arc(0, -40, 96, 0, 7);
+        ctx.fillStyle = isBot ? C.violet : C.cyan;
+        ctx.shadowColor = isBot ? C.violet : C.cyan; ctx.shadowBlur = 50;
+        ctx.fill(); ctx.shadowBlur = 0;
+        ctx.fillStyle = "#0B1030";
+        if(isBot){
+          ctx.beginPath(); ctx.arc(-32, -52, 17, 0, 7); ctx.fill();
+          ctx.beginPath(); ctx.arc(32, -52, 17, 0, 7); ctx.fill();
+          ctx.strokeStyle = "#0B1030"; ctx.lineWidth = 9;
+          ctx.beginPath(); ctx.moveTo(0, -136); ctx.lineTo(0, -172); ctx.stroke();
+        } else {
+          ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.font = "700 88px 'Space Grotesk', sans-serif";
+          ctx.fillText("S", 0, -38);
+        }
+        ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = C.white;
+        ctx.font = "700 44px 'Space Grotesk', sans-serif";
+        ctx.fillText(label, 0, 110);
+        ctx.fillStyle = C.muted;
+        ctx.font = "700 24px 'JetBrains Mono', monospace";
+        ctx.fillText(sub, 0, 152);
+        ctx.restore();
+      };
+      badge(cx - 220, "SEN", "her an", false);
+      badge(cx + 220, "BOT", "5 zorluk", true);
+
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.amber;
+      ctx.font = "700 62px 'Space Grotesk', sans-serif";
+      ctx.fillText("VS", cx, h*0.46 - 20);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 76px 'Space Grotesk', sans-serif";
+      ctx.fillText("Bota karşı oyna.", cx, 190);
+      ctx.fillStyle = C.violet;
+      ctx.font = "700 42px 'JetBrains Mono', monospace";
+      ctx.fillText("İNTERNET GEREKMEZ", cx, 258);
+      ctx.fillStyle = C.muted;
+      ctx.font = "600 32px 'Inter', sans-serif";
+      ctx.fillText("Oda dolsun diye beklemek yok", cx, h-140);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 44px 'Space Grotesk', sans-serif";
+      ctx.fillText("İSİM ŞEHİR", cx, h-80);
+      ctx.restore();
+    },
+  },
+  {
+    id:104, w:1080, h:1920, cls:"v", title:"Story / TikTok kapak",
+    caption:"Metroda, uçakta, sinyalsiz köyde — bota karşı oynamaya devam.",
+    tags:"#isimşehir #çevrimdışı #botakarşı",
+    draw(ctx, w, h){
+      drawSpace(ctx, 2100, "#0B1030");
+      const tx = tex("board", tt=>paintBoard(tt, {
+        letter:"K", rows:BOARD_ROWS, typed:4, mode:"ÇEVRİMDIŞI", botLevel:"İyi",
+      }));
+      drawPhone3D(ctx, tx, { rotYv:-0.30, rotXv:-0.05, y:150, z:80, scale:1.02 });
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.amber;
+      ctx.font = "700 34px 'JetBrains Mono', monospace";
+      ctx.fillText("SİNYAL: YOK · RAKİP: BOT", w/2, 200);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 104px 'Space Grotesk', sans-serif";
+      ctx.fillText("Şebeke bitti.", w/2, 320);
+      ctx.fillStyle = C.violet;
+      ctx.font = "700 104px 'Space Grotesk', sans-serif";
+      ctx.fillText("Oyun bitmedi.", w/2, 430);
+      ctx.fillStyle = C.muted;
+      ctx.font = "600 36px 'Inter', sans-serif";
+      ctx.fillText("Bota karşı · 5 zorluk · internetsiz", w/2, h-190);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 58px 'Space Grotesk', sans-serif";
+      ctx.fillText("İSİM ŞEHİR", w/2, h-120);
+      ctx.restore();
+    },
+  },
+  {
+    id:105, w:1080, h:1350, cls:"p", title:"Jeton ekonomisi · dikey",
+    caption:"Jeton nasıl kazanılır, nereye harcanır? Hepsi tek karede.",
+    tags:"#isimşehir #jeton #kelimeoyunu",
+    draw(ctx, w, h){
+      ctx.save(); ctx.scale(w/W, w/W); drawSpace(ctx, 600, "#141026"); ctx.restore();
+
+      // Fiş/defter dili: mono sayılar, ince ayraçlar. Diğer görsellerdeki
+      // ortalanmış kinetik başlıktan bilerek farklı — bu bir tarife.
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.gold;
+      ctx.font = "700 30px 'JetBrains Mono', monospace";
+      ctx.fillText("JETON · NASIL ÇALIŞIR", w/2, 120);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 82px 'Space Grotesk', sans-serif";
+      ctx.fillText("Kazan, harca.", w/2, 210);
+      ctx.restore();
+
+      drawCoin(ctx, {x: w/2, y: 320, r: 74, spin: 0.5});
+
+      const line = (y, label, val, tint) => {
+        ctx.save();
+        ctx.strokeStyle = "rgba(238,241,255,.10)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(90, y+26); ctx.lineTo(w-90, y+26); ctx.stroke();
+        ctx.textAlign = "left";
+        ctx.fillStyle = C.white;
+        ctx.font = "600 34px 'Inter', sans-serif";
+        ctx.fillText(label, 90, y);
+        ctx.textAlign = "right";
+        ctx.fillStyle = tint || C.gold;
+        ctx.font = "700 34px 'JetBrains Mono', monospace";
+        ctx.fillText(val, w-90, y);
+        ctx.restore();
+      };
+
+      ctx.save();
+      ctx.textAlign="left"; ctx.fillStyle = C.green;
+      ctx.font = "700 26px 'JetBrains Mono', monospace";
+      ctx.fillText("KAZAN", 90, 470); ctx.restore();
+      line(530, "Hoş geldin hediyesi", "+100", C.green);
+      line(600, "Reklam izle (günde 10)", "+5", C.green);
+      line(670, "Reklamsız · her gün", "+25", C.green);
+
+      ctx.save();
+      ctx.textAlign="left"; ctx.fillStyle = C.amber;
+      ctx.font = "700 26px 'JetBrains Mono', monospace";
+      ctx.fillText("HARCA", 90, 790); ctx.restore();
+      line(850, "Harf Al", "−15");
+      line(920, "Kelime Al", "−50");
+      line(990, "Wordle · harf", "−25");
+      line(1060, "Wordle · harfin yeri", "−50");
+      line(1130, "Bot maçı (günde 1 bedava)", "−25");
+
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.muted;
+      ctx.font = "600 26px 'Inter', sans-serif";
+      ctx.fillText("Jeton puanını düşürmez — sadece yardım eder.", w/2, h-96);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 40px 'Space Grotesk', sans-serif";
+      ctx.fillText("İSİM ŞEHİR", w/2, h-46);
+      ctx.restore();
+    },
+  },
+  {
+    id:106, w:1080, h:1080, cls:"sq", title:"100 jeton hediye · kare",
+    caption:"Yeni sürümde herkese 100 jeton hediye. Denemek bizden.",
+    tags:"#isimşehir #hediye #jeton",
+    draw(ctx, w, h){
+      ctx.save(); ctx.scale(w/W, w/W); drawSpace(ctx, 300, "#141026"); ctx.restore();
+      for(let i=0;i<7;i++){
+        drawCoin(ctx, {
+          x: 120 + (i*143) % (w-240), y: 150 + ((i*211) % (h-380)),
+          r: 26 + (i%3)*10, spin: i*0.9, alpha: 0.35,
+        });
+      }
+      drawCoin(ctx, {x: w/2, y: h*0.44, r: 190, spin: 0.35, label:"100"});
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.fillStyle = C.gold;
+      ctx.font = "700 30px 'JetBrains Mono', monospace";
+      ctx.fillText("YENİ SÜRÜM HEDİYESİ", w/2, 130);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 78px 'Space Grotesk', sans-serif";
+      ctx.fillText("100 jeton hediye", w/2, h-210);
+      ctx.fillStyle = C.muted;
+      ctx.font = "600 32px 'Inter', sans-serif";
+      ctx.fillText("Harf al · Wordle ipucu · bota karşı maç", w/2, h-150);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 42px 'Space Grotesk', sans-serif";
+      ctx.fillText("İSİM ŞEHİR", w/2, h-70);
+      ctx.restore();
+    },
+  },
+  {
+    id:102, w:1600, h:900, cls:"l", title:"X (Twitter) · yatay",
+    caption:"Metroda, uçakta, sinyalsiz köyde: İsim Şehir çevrimdışı oynanır.",
+    tags:"#isimşehir #çevrimdışı #kelimeoyunu",
+    draw(ctx, w, h){
+      ctx.save(); ctx.scale(w/W, h/H); drawSpace(ctx, 900, "#0B1030"); ctx.restore();
+      // Sağda telefon, solda metin — yatayda okuma yönü bunu ister.
+      ctx.save();
+      ctx.translate(w*0.72 - W/2*0.52, h/2 - H/2*0.52);
+      ctx.scale(0.52, 0.52);
+      const tx = tex("board", tt=>paintBoard(tt, {letter:"K", rows:BOARD_ROWS, typed:4, mode:"ÇEVRİMDIŞI"}));
+      drawPhone3D(ctx, tx, { rotYv:0.42, rotXv:-0.04, y:0, z:0, scale:1.35 });
+      ctx.restore();
+
+      ctx.save();
+      ctx.textAlign="left";
+      ctx.fillStyle = C.amber;
+      ctx.font = "700 26px 'JetBrains Mono', monospace";
+      ctx.fillText("MOD: ÇEVRİMDIŞI", 92, 250);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 86px 'Space Grotesk', sans-serif";
+      ctx.fillText("Sinyal yok.", 92, 356);
+      ctx.fillStyle = C.violet;
+      ctx.font = "700 86px 'Space Grotesk', sans-serif";
+      ctx.fillText("Oyun var.", 92, 452);
+      ctx.fillStyle = C.muted;
+      ctx.font = "600 30px 'Inter', sans-serif";
+      ctx.fillText("Bota karşı 5 zorluk · rakip beklemeden başla", 92, 528);
+      ctx.fillStyle = C.white;
+      ctx.font = "700 34px 'Space Grotesk', sans-serif";
+      ctx.fillText("İSİM ŞEHİR", 92, h-92);
+      ctx.restore();
+    },
+  },
+];
+
+/* ===================================================================
+   7) Çizim döngüsü
+   =================================================================== */
+function drawReelAt(R, t){
+  const ctx = R.ctx;
+  let acc = 0, sc = R.scenes[0], local = t;
+  for(const s of R.scenes){
+    if(t < acc + s.dur){ sc = s; local = t - acc; break; }
+    acc += s.dur;
+  }
+  ctx.clearRect(0,0,W,H);
+  (SCENES[sc.type] || SCENES.outro)(ctx, sc, local, sc.dur);
+  // Sahne geçişlerinde kısa karartma — kesme yerine nefes.
+  const fade = Math.min(local, sc.dur - local);
+  if(fade < 260){
+    ctx.fillStyle = `rgba(5,6,15,${(1 - fade/260) * 0.85})`;
+    ctx.fillRect(0,0,W,H);
+  }
+}
+
+const toastEl = document.getElementById("toast");
+function toast(m){
+  toastEl.textContent = m; toastEl.classList.add("show");
+  clearTimeout(window._tt); window._tt = setTimeout(()=>toastEl.classList.remove("show"), 2300);
+}
+
+function buildAll(){
+  document.getElementById("reels").innerHTML = REELS.map(R=>`
+    <div class="card">
+      <div class="stage v">
+        <canvas id="rc${R.id}" width="${W}" height="${H}"></canvas>
+        <button class="play" onclick="restart(${R.id})" title="Baştan oynat"><span>▶</span></button>
+      </div>
+      <div class="rtitle">${R.title}<small>${R.sub}</small></div>
+      <textarea class="cap" id="rcap${R.id}">${R.caption}\n\n${R.tags}</textarea>
+      <div class="btns">
+        <button class="btn btn-vid" onclick="recordVideo(${R.id})">🎬 Video İndir</button>
+        <button class="btn btn-gif" onclick="recordGif(${R.id})">GIF</button>
+        <button class="btn btn-copy" onclick="copyCap(${R.id})">📋 Kopyala</button>
+      </div>
+    </div>`).join("");
+
+  document.getElementById("posts").innerHTML = POSTS.map(P=>`
+    <div class="card">
+      <div class="stage ${P.cls}">
+        <canvas id="pc${P.id}" width="${P.w}" height="${P.h}"></canvas>
+      </div>
+      <div class="rtitle">${P.title}<small>${P.w}×${P.h}</small></div>
+      <textarea class="cap" id="rcap${P.id}">${P.caption}\n\n${P.tags}</textarea>
+      <div class="btns">
+        <button class="btn btn-img" onclick="savePost(${P.id})">🖼 PNG İndir</button>
+        <button class="btn btn-copy" onclick="copyCap(${P.id})">📋 Kopyala</button>
+      </div>
+    </div>`).join("");
+
+  REELS.forEach(R=>{
+    R.canvas = document.getElementById("rc"+R.id);
+    R.ctx = R.canvas.getContext("2d");
+    R.total = R.scenes.reduce((a,s)=>a+s.dur, 0);
+    R.base = performance.now(); R.visible = true;
+    try{ drawReelAt(R, 400); }catch(e){ console.error("ilk çizim", e); }
+  });
+  POSTS.forEach(P=>{
+    P.canvas = document.getElementById("pc"+P.id);
+    P.ctx = P.canvas.getContext("2d");
+    try{ P.draw(P.ctx, P.w, P.h); }catch(e){ console.error("post çizim", e); }
+  });
+
+  const io = new IntersectionObserver(es=>es.forEach(e=>{
+    const R = REELS.find(r=>r.canvas === e.target); if(R) R.visible = e.isIntersecting;
+  }), {threshold:0.2});
+  REELS.forEach(R=>io.observe(R.canvas));
+  requestAnimationFrame(loop);
+}
+
+function loop(now){
+  REELS.forEach(R=>{
+    if(R.visible && !R._encoding){
+      try{ drawReelAt(R, (now - R.base) % R.total); }catch(e){ console.error("kare", e); }
+    }
+  });
+  requestAnimationFrame(loop);
+}
+function getR(id){ return REELS.find(r=>r.id === id); }
+function getP(id){ return POSTS.find(p=>p.id === id); }
+function restart(id){ const R = getR(id); R.base = performance.now(); R.visible = true; }
+
+/* ---- kopyalama ---- */
+function capText(id){ return document.getElementById("rcap"+id).value.trim(); }
+async function copyCap(id){
+  try{ await navigator.clipboard.writeText(capText(id)); toast("Başlık + etiketler kopyalandı ✓"); }
+  catch(e){ toast("Kopyalanamadı — elle seç"); }
+}
+
+/* ---- sonuç modalı ---- */
+let curFile = null, curUrl = null;
+function showResult(blob, ext, id, kind){
+  if(curUrl) URL.revokeObjectURL(curUrl);
+  curUrl = URL.createObjectURL(blob);
+  const fname = `isimsehir-cevrimdisi-${id}.${ext}`;
+  try{ curFile = new File([blob], fname, {type:blob.type}); }catch(e){ curFile = null; }
+  const vid = document.getElementById("resVid"), img = document.getElementById("resImg");
+  if(kind === "video"){
+    vid.src = curUrl; vid.style.display = "block"; img.style.display = "none";
+    vid.play().catch(()=>{});
+  } else {
+    img.src = curUrl; img.style.display = "block"; vid.style.display = "none";
+    try{ vid.pause(); vid.removeAttribute("src"); vid.load(); }catch(e){}
+  }
+  const a = document.getElementById("resDl"); a.href = curUrl; a.download = fname;
+  document.getElementById("mtitle").textContent = ext.toUpperCase() + " hazır ✓";
+  const canShare = !!(curFile && navigator.canShare && navigator.canShare({files:[curFile]}));
+  document.getElementById("resShare").style.display = canShare ? "inline-flex" : "none";
+  document.getElementById("mhint").textContent = canShare
+    ? 'iPhone: "Paylaş / Kaydet" → "Videoyu Kaydet". Bilgisayarda "İndir".'
+    : 'İndir\'e bas. Dosya açılmazsa VLC ile aç.';
+  document.getElementById("modal").classList.add("show");
+  toast(ext.toUpperCase() + " hazır ✓");
+}
+function closeModal(){
+  document.getElementById("modal").classList.remove("show");
+  try{ document.getElementById("resVid").pause(); }catch(e){}
+}
+async function shareResult(){
+  if(!curFile){ toast("Paylaşım desteklenmiyor — İndir'i kullan"); return; }
+  try{ await navigator.share({files:[curFile], title:curFile.name}); }
+  catch(e){ if(e && e.name !== "AbortError") toast("Paylaşım başarısız — İndir'i dene"); }
+}
+
+/* ---- PNG ---- */
+function savePost(id){
+  const P = getP(id);
+  try{ P.draw(P.ctx, P.w, P.h); }catch(e){ console.error(e); }
+  P.canvas.toBlob(b=>{ if(b) showResult(b, "png", id, "image"); else toast("PNG üretilemedi"); }, "image/png");
+}
+
+/* ---- MP4 (WebCodecs + mp4-muxer) ---- */
+async function pickAvc(){
+  const cands = ["avc1.640028","avc1.4d0028","avc1.420028","avc1.640032","avc1.42e028"];
+  for(const c of cands){
+    try{
+      const s = await VideoEncoder.isConfigSupported({codec:c, width:W, height:H, bitrate:8e6, framerate:30});
+      if(s && s.supported) return c;
+    }catch(e){}
+  }
+  return null;
+}
+async function encodeMP4(R){
+  if(!("VideoEncoder" in window) || !("VideoFrame" in window) || !window.Mp4Muxer) return null;
+  const codec = await pickAvc(); if(!codec) return null;
+  const fps = 30, frames = Math.max(1, Math.round(R.total/1000*fps));
+  const target = new Mp4Muxer.ArrayBufferTarget();
+  const muxer = new Mp4Muxer.Muxer({target, video:{codec:"avc", width:W, height:H}, fastStart:"in-memory"});
+  let err = null;
+  const enc = new VideoEncoder({
+    output:(chunk, meta)=>muxer.addVideoChunk(chunk, meta),
+    error:e=>{ err = e; console.error("enc", e); },
+  });
+  enc.configure({codec, width:W, height:H, bitrate:8e6, framerate:fps});
+  for(let i=0;i<frames;i++){
+    drawReelAt(R, i/frames * R.total);
+    const vf = new VideoFrame(R.canvas, {timestamp: Math.round(i*1e6/fps), duration: Math.round(1e6/fps)});
+    enc.encode(vf, {keyFrame: i % 60 === 0});
+    vf.close();
+    if(i % 20 === 0) await new Promise(r=>setTimeout(r, 0));
+    if(err) break;
+  }
+  if(err) return null;
+  await enc.flush(); muxer.finalize(); enc.close();
+  return new Blob([target.buffer], {type:"video/mp4"});
+}
+function pickMime(){
+  const c = ["video/mp4;codecs=h264","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"];
+  for(const m of c){ try{ if(window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m; }catch(e){} }
+  return "";
+}
+function recordWebM(R){
+  return new Promise(res=>{
+    const mime = pickMime(); if(!mime || !window.MediaRecorder) return res(null);
+    let stream; try{ stream = R.canvas.captureStream(30); }catch(e){ return res(null); }
+    let rec; try{ rec = new MediaRecorder(stream, {mimeType:mime, videoBitsPerSecond:9e6}); }catch(e){ return res(null); }
+    const parts = [];
+    rec.ondataavailable = e=>{ if(e.data.size) parts.push(e.data); };
+    rec.onstop = ()=>res({blob:new Blob(parts, {type:mime}), ext: mime.includes("mp4") ? "mp4" : "webm"});
+    R.base = performance.now(); R.visible = true;
+    rec.start();
+    setTimeout(()=>{ try{ rec.stop(); }catch(e){} }, R.total + 200);
+  });
+}
+async function recordVideo(id){
+  const R = getR(id);
+  toast("🎬 MP4 hazırlanıyor… " + Math.round(R.total/1000) + " sn ⏳");
+  R._encoding = true;
+  try{
+    const blob = await encodeMP4(R);
+    R._encoding = false;
+    if(blob && blob.size > 0){ showResult(blob, "mp4", id, "video"); return; }
+  }catch(e){ R._encoding = false; console.error(e); }
+  toast("MP4 motoru yok — WebM deneniyor");
+  try{
+    const r = await recordWebM(R);
+    if(r && r.blob.size > 0){ showResult(r.blob, r.ext, id, "video"); return; }
+  }catch(e){ console.error(e); }
+  toast("Bu tarayıcı video üretemiyor — GIF'i dene");
+}
+
+/* ---- GIF (yedek) ---- */
+async function recordGif(id){
+  if(typeof GIF === "undefined"){ toast("GIF motoru yüklenemedi — http üzerinden aç"); return; }
+  const R = getR(id);
+  const fps = 12, frames = Math.max(8, Math.round(R.total/1000*fps));
+  const gw = 540, gh = 960;
+  const tmp = document.createElement("canvas"); tmp.width = gw; tmp.height = gh;
+  const tctx = tmp.getContext("2d");
+  toast("GIF hazırlanıyor… " + frames + " kare ⏳");
+  R._encoding = true;
+  try{
+    const gif = new GIF({workers:2, quality:12, width:gw, height:gh, workerScript:"gif.worker.js", background:"#05060F"});
+    for(let i=0;i<frames;i++){
+      drawReelAt(R, i/frames * R.total);
+      tctx.drawImage(R.canvas, 0, 0, gw, gh);
+      gif.addFrame(tctx, {copy:true, delay: Math.round(1000/fps)});
+    }
+    gif.on("finished", b=>{ R._encoding = false; showResult(b, "gif", id, "image"); });
+    gif.on("abort", ()=>{ R._encoding = false; toast("GIF iptal"); });
+    gif.render();
+  }catch(e){ R._encoding = false; console.error(e); toast("GIF başarısız — http üzerinden aç"); }
+}
+
+/* ---- açılış: yazı tipleri önce, yoksa canvas metni yanlış ölçülür ---- */
+(function boot(){
+  const go = ()=>{ try{ buildAll(); }catch(e){ console.error("kurulum", e); } };
+  if(document.fonts && document.fonts.load){
+    Promise.all([
+      document.fonts.load("700 100px 'Space Grotesk'"),
+      document.fonts.load("700 40px 'JetBrains Mono'"),
+      document.fonts.load("600 40px Inter"),
+      document.fonts.load("900 40px Inter"),
+    ]).then(()=>document.fonts.ready).then(go).catch(go);
+  } else go();
+})();
+</script>
+</body>
+</html>
