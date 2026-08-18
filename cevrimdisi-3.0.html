@@ -3,1633 +3,1091 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>İsim Şehir · Çevrimdışı Stüdyo</title>
+<title>İsim Şehir · Çevrimdışı &amp; Jeton Stüdyosu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Permanent+Marker&family=Patrick+Hand&family=Shantell+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
 <script src="gif.js"></script>
 <script src="mp4-muxer.min.js"></script>
 <style>
-  /* ------------------------------------------------------------------
-     ÇEVRİMDIŞI STÜDYO — görsel dil
-     Diğer stüdyolar (viral-3.0, reels-2.0) defter estetiği: düz, çizgisel,
-     asit yeşili. Burası kasten BAŞKA bir yer: derin uzay zemini, uygulamanın
-     kendi moru, sinyal kaybının kehribarı ve gerçek perspektif projeksiyonuyla
-     çizilen 3B sahneler. Konu "şebeke yokken bile oyun var" olduğu için
-     tipografi de teknik: telemetri satırları mono, başlıklar Space Grotesk.
-  ------------------------------------------------------------------ */
-  :root{
-    --void:#05060F; --deep:#0B1030; --panel:#0E1330; --line:rgba(124,92,255,.18);
-    --violet:#7C5CFF; --cyan:#4DC3FF; --amber:#FFB347; --white:#EEF1FF; --muted:#8A90C8;
-  }
+  /* Görsel dil: viral-3.0 / yeni-oyunlar ile AYNI aile (defter + kinetik tipografi
+     + gerçek arayüz taklidi). Tek fark: jeton içeriğinde altın malzeme, çevrimdışı
+     içeriğinde "sinyal yok" mavisi. Kasten başka bir gezegen kurmuyoruz — bu
+     stüdyonun çıktısı diğerlerinin yanında aynı hesabın postu gibi durmalı. */
+  :root{--bg:#0c0c10;--panel:#151519;--acid:#c8f000;--gold:#F0C24B;--sky:#5AC8FA;--muted:#9a9aa8;--line:rgba(255,255,255,.08)}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    font-family:'Inter',system-ui,sans-serif;color:var(--white);background:var(--void);
-    min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased;
-    background-image:
-      radial-gradient(70% 45% at 50% -5%,rgba(124,92,255,.16),transparent 65%),
-      radial-gradient(45% 30% at 100% 12%,rgba(77,195,255,.08),transparent 60%);
-  }
-  .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+  body{font-family:'Inter',system-ui,sans-serif;color:#eceanf;background:var(--bg);min-height:100vh;padding-bottom:80px;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(60% 40% at 8% 0%,rgba(240,194,75,.07),transparent 60%),radial-gradient(50% 40% at 100% 6%,rgba(90,200,250,.07),transparent 60%)}
+  .wrap{max-width:1220px;margin:0 auto;padding:0 22px}
+  header.top{padding:52px 0 14px;text-align:center}
+  .kick{display:inline-block;font-family:'Permanent Marker',cursive;color:var(--gold);font-size:22px;transform:rotate(-3deg)}
+  header.top h1{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:.01em;font-size:clamp(38px,6.6vw,74px);line-height:.94;margin:10px 0 14px;text-transform:uppercase;color:#fff}
+  header.top h1 em{font-style:normal;color:var(--gold);-webkit-text-stroke:2px #0c0c10}
+  header.top p{color:#c9c9d4;font-size:15.5px;max-width:680px;margin:0 auto;line-height:1.6}
+  .filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 6px}
+  .fbtn{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:#d6d6df;border-radius:999px;padding:9px 18px;font-weight:700;font-size:13px;transition:.15s}
+  .fbtn.on{background:var(--gold);color:#241a03;border-color:var(--gold)}
+  .banner{margin:20px auto 4px;max-width:900px;display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(240,194,75,.22);background:rgba(240,194,75,.05);border-radius:16px;padding:14px 18px}
+  .banner p{color:#c9c9d4;font-size:13px;line-height:1.6}
+  .banner b{color:#fff}
+  .links{margin:14px 0 26px;text-align:center;font-size:13px;color:var(--muted)}
+  .links a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(240,194,75,.4)}
 
-  header.top{padding:56px 0 10px}
-  .tele{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;letter-spacing:.14em;
-    color:var(--amber);display:flex;align-items:center;gap:9px}
-  .tele .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber);
-    animation:blip 1.6s infinite}
-  @keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
-  header.top h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(38px,6.4vw,72px);
-    line-height:.98;letter-spacing:-.02em;margin:14px 0 12px}
-  header.top h1 em{font-style:normal;color:var(--violet)}
-  header.top p{color:#B9BFEA;font-size:15.5px;max-width:640px;line-height:1.65}
-  .rule{height:1px;background:linear-gradient(90deg,var(--violet),rgba(124,92,255,0));margin:26px 0 6px}
-
-  .note{display:flex;gap:12px;align-items:flex-start;margin:22px 0 0;padding:14px 16px;
-    border:1px solid var(--line);border-radius:14px;background:rgba(124,92,255,.06)}
-  .note p{color:#B9BFEA;font-size:13px;line-height:1.6}
-  .note b{color:var(--white)}
-
-  h2.sec{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;
-    text-transform:uppercase;color:var(--muted);margin:44px 0 16px;display:flex;align-items:center;gap:12px}
-  h2.sec::after{content:"";flex:1;height:1px;background:var(--line)}
-
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:26px;align-items:start}
-  .card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),#0A0E24);
-    border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
-  .stage{position:relative;border-radius:20px;overflow:hidden;background:#05060F;
-    box-shadow:0 30px 70px -34px rgba(0,0,0,.9),0 0 0 1px rgba(124,92,255,.16) inset}
-  .stage.v{width:290px;height:516px}
-  .stage.p{width:300px;height:375px}
-  .stage.sq{width:300px;height:300px}
-  .stage.l{width:320px;height:180px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px;margin-top:8px;align-items:start}
+  .card{border:1px solid var(--line);background:var(--panel);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .badge9,.badge4{align-self:flex-start;font-family:'Inter';font-weight:800;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .badge9{background:rgba(90,200,250,.14);color:#8fd9ff;border:1px solid rgba(90,200,250,.32)}
+  .badge4{background:rgba(240,194,75,.14);color:var(--gold);border:1px solid rgba(240,194,75,.3)}
+  .stage{position:relative;border-radius:22px;overflow:hidden;background:#0c0920;box-shadow:0 26px 60px -28px rgba(0,0,0,.85);border:5px solid #22222a}
+  .stage.v{width:288px;height:512px}
+  .stage.i{width:300px;height:375px}
   .stage canvas{width:100%;height:100%;display:block}
   .stage .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
-  .stage .play span{width:66px;height:66px;border-radius:50%;background:rgba(6,8,20,.55);backdrop-filter:blur(6px);
-    display:grid;place-items:center;font-size:24px;color:#fff;border:1px solid rgba(238,241,255,.28);opacity:0;transition:.18s}
-  .stage:hover .play span{opacity:1}
-
-  .rtitle{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;text-align:center;letter-spacing:-.01em}
-  .rtitle small{display:block;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10.5px;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:5px}
-  textarea.cap{width:100%;min-height:96px;resize:vertical;border-radius:12px;padding:11px 12px;
-    border:1px solid var(--line);background:#080B1C;color:#DDE1FF;font-family:'Inter';font-size:12.5px;line-height:1.55}
-  textarea.cap:focus{outline:none;border-color:rgba(124,92,255,.6)}
+  .stage .play span{width:70px;height:70px;border-radius:50%;background:rgba(10,8,22,.5);backdrop-filter:blur(6px);display:grid;place-items:center;font-size:28px;color:#fff;border:1.5px solid rgba(255,255,255,.3);opacity:0;transition:.2s}
+  .stage.v:hover .play span{opacity:1}
+  .rtitle{font-family:'Anton',sans-serif;font-weight:400;font-size:19px;text-align:center;letter-spacing:.02em;text-transform:uppercase;color:#fff}
+  .rtitle small{display:block;font-family:'Inter';font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  textarea.cap{width:100%;min-height:98px;resize:vertical;border-radius:13px;padding:11px 12px;border:1px solid var(--line);background:#0d0d12;color:#e7e7ee;font-family:'Inter';font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:rgba(240,194,75,.55)}
   .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-  .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:11px;
-    padding:10px 13px;font-family:'Inter';font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:11px;padding:10px 13px;font-family:'Inter';font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
   .btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
-  .btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-  .btn-vid{background:var(--violet);color:#fff}
-  .btn-img{background:var(--cyan);color:#04121E}
-  .btn-gif{background:#2F9E57;color:#fff}
-  .btn-copy{background:rgba(238,241,255,.08);color:var(--white);border:1px solid var(--line)}
-  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
-    background:#0A0E24;border:1px solid rgba(124,92,255,.55);color:#fff;padding:12px 22px;border-radius:13px;
-    font-size:14px;font-weight:700;box-shadow:0 18px 40px -12px rgba(0,0,0,.8);transition:.25s;z-index:99;pointer-events:none}
+  .btn-vid{background:var(--sky);color:#04121E}
+  .btn-img{background:var(--gold);color:#241a03}
+  .btn-gif{background:#2f9e57;color:#fff}
+  .btn-copy{background:rgba(255,255,255,.08);color:#eceanf;border:1px solid var(--line)}
+  .btn-x{background:#000;color:#fff;border:1px solid rgba(255,255,255,.2)}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;background:#111;border:1px solid rgba(240,194,75,.5);color:#fff;padding:12px 22px;border-radius:13px;font-size:14px;font-weight:700;box-shadow:0 18px 40px -12px rgba(0,0,0,.7);transition:.25s;z-index:99;pointer-events:none}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .modal{position:fixed;inset:0;z-index:100;background:rgba(3,4,10,.88);backdrop-filter:blur(7px);
-    display:none;align-items:center;justify-content:center;padding:20px}
+  footer.foot{text-align:center;color:#6d6d7d;font-size:12.5px;margin-top:44px;line-height:1.7}
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(4,4,7,.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
   .modal.show{display:flex}
-  .modal .box{background:#0A0E24;border:1px solid var(--line);border-radius:20px;padding:18px;max-width:420px;width:100%;
-    display:flex;flex-direction:column;gap:12px;align-items:center}
-  .modal video,.modal img{max-width:100%;max-height:56vh;border-radius:12px;display:none;background:#05060F}
-  .modal h3{font-family:'Space Grotesk';font-size:16px}
-  .modal p{color:var(--muted);font-size:12.5px;text-align:center;line-height:1.55}
-  footer.foot{text-align:center;color:#5F659B;font-size:12.5px;margin-top:48px;line-height:1.7}
-  @media (prefers-reduced-motion:reduce){.tele .dot{animation:none}}
+  .sheet{position:relative;width:min(430px,94vw);background:#131318;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.8)}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:16px;cursor:pointer}
+  .mtitle{font-family:'Anton',sans-serif;font-size:22px;text-align:center;margin-bottom:14px;text-transform:uppercase;letter-spacing:.02em}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia video,.mmedia img{max-width:250px;max-height:445px;border-radius:16px;background:#0c0920;object-fit:contain;display:none}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--muted);line-height:1.5}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <div class="tele"><span class="dot"></span>SİNYAL: YOK · RAKİP: BOT · OYUN: AÇIK</div>
-    <h1>Rakip her zaman hazır.<br /><em>İnternet gerekmez.</em></h1>
-    <p>
-      <b>Bota karşı oynama</b> ve çevrimdışı mod için hazır reels/TikTok
-      videoları ve sosyal medya görselleri: 8 video, 6 gönderi görseli.
-      Videolar tarayıcıda MP4'e dönüşür — kayıt programı gerekmez.
-    </p>
-    <div class="rule"></div>
-    <div class="note">
-      <span style="font-size:18px">📡</span>
-      <p>
-        <b>Videolar 9:16, 1080×1920, 30 fps.</b> "Video İndir" tuşu MP4 üretir
-        (Instagram Reels ve TikTok'a doğrudan yüklenir). Telefonda açtıysan
-        modaldaki <b>Paylaş</b> ile Fotoğraflar'a kaydedebilirsin.
-      </p>
-    </div>
-  </header>
+  <div class="wrap">
+    <header class="top">
+      <div class="kick">— çevrimdışı &amp; jeton stüdyosu —</div>
+      <h1>Bota Karşı <em>&amp;</em> Jetonlar</h1>
+      <p>3.0.0'la gelen üç şeyin tanıtımı: <b>bota karşı oyna</b> (5 zorluk), <b>çevrimdışı mod</b> (internet yokken de oynanır) ve <b>jetonlar</b> — kategoride kelime aklına gelmiyorsa <b>Kelime Al</b>, Wordle'da tıkandıysan <b>harf al</b>. Dikey <b>video</b> (18-26sn) + <b>görsel</b>. Üzerine gel → oynar.</p>
+      <div class="filters" id="filters">
+        <button class="fbtn on" data-f="all" onclick="setFilter('all',this)">Hepsi</button>
+        <button class="fbtn" data-f="video" onclick="setFilter('video',this)">🎬 Video</button>
+        <button class="fbtn" data-f="image" onclick="setFilter('image',this)">🖼️ Görsel</button>
+      </div>
+      <div class="banner"><div>🪙</div><div><p><b>Rakamlar uygulamadan alındı</b> — Harf Al 15, Kelime Al 50, Wordle harf 25 / harfin yeri 50, bot maçı 25 (günde 1 bedava), hoş geldin hediyesi 100, reklam izle +5. <b>Gerçek MP4 üretir</b> (WebCodecs); görseller PNG. iPhone'da buton → önizleme → <b>Paylaş/Kaydet</b>.</p></div></div>
+      <div class="links">Diğer stüdyolar → <a href="yeni-oyunlar.html">Yeni Oyunlar</a> · <a href="viral-3.0.html">Viral 3.0</a> · <a href="reels-2.0.html">Reels 2.0</a> · <a href="sosyal-medya-2.0.html">Sosyal Medya 2.0</a></div>
+    </header>
 
-  <h2 class="sec">Reels &amp; TikTok</h2>
-  <div class="grid" id="reels"></div>
+    <div class="grid" id="grid"></div>
 
-  <h2 class="sec">Gönderi görselleri</h2>
-  <div class="grid" id="posts"></div>
+    <footer class="foot">İsim Şehir Online · @isimsehironline · App Store &amp; Google Play'de yayında<br/>Video 1080×1920 · Görsel 1080×1350 · ses yok (müziği uygulamada ekle)</footer>
+  </div>
+  <div class="toast" id="toast">Hazır ✓</div>
 
-  <footer class="foot">
-    İsim Şehir · Çevrimdışı Stüdyo<br />
-    Metinler uygulamadaki gerçek özelliklere göre yazıldı — olmayan bir şey vaat edilmiyor.
-  </footer>
-</div>
-
-<div class="toast" id="toast"></div>
-<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="box">
-    <h3 id="mtitle">Hazır ✓</h3>
-    <video id="resVid" controls playsinline loop></video>
-    <img id="resImg" alt="Üretilen görsel" />
-    <p id="mhint"></p>
-    <div class="btns">
-      <a class="btn btn-vid" id="resDl" download href="#">⬇︎ İndir</a>
-      <button class="btn btn-img" id="resShare" onclick="shareResult()">📤 Paylaş / Kaydet</button>
-      <button class="btn btn-copy" onclick="closeModal()">Kapat</button>
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <button class="mclose" onclick="closeModal()" aria-label="Kapat">✕</button>
+      <div class="mtitle" id="mtitle">Hazır</div>
+      <div class="mmedia"><video id="resVid" controls playsinline muted loop></video><img id="resImg" alt="" /></div>
+      <div class="mbtns">
+        <a class="btn btn-vid" id="resDl" download>⬇ İndir</a>
+        <button class="btn btn-gif" id="resShare" onclick="shareResult()">📲 Paylaş / Kaydet</button>
+      </div>
+      <p class="mhint" id="mhint"></p>
     </div>
   </div>
-</div>
 
 <script>
-/* ===================================================================
-   0) Sabitler
-   =================================================================== */
-const W = 1080, H = 1920;                    // reels / TikTok
-const APP_URL = "https://isimsehir.app";
-const C = {
-  void:"#05060F", deep:"#0B1030", violet:"#7C5CFF", violetDim:"#4B37A8",
-  cyan:"#4DC3FF", amber:"#FFB347", white:"#EEF1FF", muted:"#8A90C8",
-  green:"#37D399", red:"#FF6B6B",
-  // Jeton sahneleri için ALTIN malzeme. Mor/camgöbeği uzaydan ayrışsın diye
-  // ayrı bir malzeme: jeton konusu geldiğinde ekran gözle görülür şekilde
-  // ısınıyor, izleyici "burada başka bir şey anlatılıyor" diye anlıyor.
-  gold:"#F0C24B", goldDeep:"#A9741B", goldLite:"#FFE9A8",
+const APP_STORE="https://apps.apple.com/app/isim-sehir-online/id6766661912";
+const APP_URL=APP_STORE;
+
+/* ══════════════════ palet (viral-3.0 ailesi + altın/sinyal) ══════════════════ */
+const PAL={
+  ink:   {bg:"#F1E7CF",paper:true, fg:"#17307a",red:"#d6303a",accent:"#17307a",sub:"#5a5340",grid:"rgba(23,48,122,.10)",hi:"#FCE94F"},
+  high:  {bg:"#F4ECD8",paper:true, fg:"#1a1a1a",red:"#d6303a",accent:"#111",   sub:"#4a463a",grid:"rgba(0,0,0,.06)",hi:"#FFE14D"},
+  riso:  {bg:"#f3ebd6",paper:true, fg:"#e5372a",red:"#1a54ff",accent:"#e5372a",sub:"#7a5a2e",grid:"rgba(229,55,42,.10)",hi:"#FCE94F"},
+  gold:  {bg:"#F7EFD9",paper:true, fg:"#3A2A08",red:"#C2410C",accent:"#B8860B",sub:"#7a5a2e",grid:"rgba(160,120,20,.12)",hi:"#F5C842"},
+  vault: {bg:"#12100A",paper:false,fg:"#FBF3DF",red:"#F0C24B",accent:"#F0C24B",sub:"#A9987A",hi:"#F5C842",chip:"#F0C24B",chipText:"#20180a"},
+  air:   {bg:"#0B1220",paper:false,fg:"#EAF2FF",red:"#FF9F45",accent:"#5AC8FA",sub:"#8FA3C4",hi:"#FFD166",chip:"#5AC8FA",chipText:"#04121E"},
+  night: {bg:"#101014",paper:false,fg:"#F4ECD8",red:"#ff6b3d",accent:"#c8f000",sub:"#9a9aa8",hi:"#ffe14d",chip:"#c8f000",chipText:"#101007"},
+  app:   {bg:"#181334",paper:false,fg:"#FBF6EA",red:"#F5C842",accent:"#7C5CFF",sub:"#B7ADD8",hi:"#F5C842",grid:"rgba(159,135,255,.14)",chip:"#9F87FF",chipText:"#0d0a20"},
+  brat:  {bg:"#c8f000",paper:false,light:true,fg:"#0c0c0c",red:"#0c0c0c",accent:"#0c0c0c",sub:"#2b2b0e",hi:"#FCE94F",chip:"#101007",chipText:"#c8f000"},
 };
+const TILEC={violet:["#9F87FF","#7C5CFF","#5237C0"],sky:["#7BB0FF","#5B8FFF","#4070E0"],leaf:["#7BE093","#51CF66","#2EB94F"],gold:["#FFE286","#F5C842","#B8870D"],ink:["#3b62d6","#1f3fa8","#12266e"],red:["#ff7a80","#e0343d","#a11820"]};
 
-/**
- * 3B madeni para. Ön yüz elips (dönüşe göre daralır), arkasında kalınlık
- * veren koyu bir elips. Kenar-üstü görünümde ikisi üst üste binerek ince bir
- * dilime dönüşüyor — dönen jeton hissi buradan geliyor.
- */
-function drawCoin(ctx, {x, y, r, spin=0, alpha=1, label="🪙"}){
-  const w = Math.max(1.5, Math.abs(Math.cos(spin)) * r);
-  const depth = 0.16 * r * Math.sign(Math.cos(spin) || 1);
-  ctx.save();
-  ctx.globalAlpha = alpha;
+/* ══════════════════ util ══════════════════ */
+const clamp01=t=>Math.max(0,Math.min(1,t));
+const inv=(lp,s,l)=>clamp01((lp-s)/l);
+const eOutCubic=t=>1-Math.pow(1-t,3);
+const eOutBack=t=>{const c=1.70158,c3=c+1;return 1+c3*Math.pow(t-1,3)+c*Math.pow(t-1,2);};
+function isEmoji(s){return /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/u.test(s);}
+function seeded(n){let s=Math.sin(n*99.13)*43758.5453;return s-Math.floor(s);}
+function fmtN(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".");}
+function lines(txt){return String(txt).split("\n");}
 
-  // kalınlık
-  ctx.beginPath();
-  ctx.ellipse(x + depth, y, w, r, 0, 0, 7);
-  ctx.fillStyle = C.goldDeep; ctx.fill();
+/* ══════════════════ canvas temel ══════════════════ */
+function rr(ctx,x,y,w,h,r){r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+const APPLE_PATH="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z";
+const PLAY_PATH="M76.5 16.9C73 20.4 71 25.3 71 31v450c0 5.7 2 10.6 5.5 14.1l253.6-253.6L76.5 16.9zM104.6 13.4c-7-2.8-15-1.2-20.4 4.2l241.1 241.1 50.5-50.5L104.6 13.4zm344.6 216.7-71.2-41.1-55.9 55.9 55.9 55.9 71.2-41.1c20.6-12 20.6-43.7 0-55.8zM84.2 502.6c5.4 5.4 13.4 7 20.4 4.2l221-127.6-50.5-50.5L84.2 502.6z";
+function drawGlyph(ctx,d,vb,cx,cy,size,color){ctx.save();ctx.translate(cx-size/2,cy-size/2);const s=size/vb;ctx.scale(s,s);ctx.fillStyle=color;ctx.fill(new Path2D(d));ctx.restore();}
+function wrap(ctx,txt,font,maxW){ctx.font=font;const words=String(txt).split(" ");const out=[];let cur="";
+  for(const w of words){const test=cur?cur+" "+w:w;if(ctx.measureText(test).width>maxW&&cur){out.push(cur);cur=w;}else cur=test;}
+  if(cur)out.push(cur);return out;}
+function hexA(hex,a){const h=hex.replace("#","");const n=parseInt(h.length===3?h.split("").map(c=>c+c).join(""):h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;}
+function shade(hex,amt){const h=hex.replace("#","");const n=parseInt(h.length===3?h.split("").map(c=>c+c).join(""):h,16);let r=(n>>16)&255,g=(n>>8)&255,b=n&255;r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));return `rgb(${r},${g},${b})`;}
+function drawTile(ctx,cx,cy,s,stops,letter,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=s*0.2;ctx.shadowOffsetY=s*0.12;const g=ctx.createLinearGradient(-s/2,-s/2,s/2,s/2);g.addColorStop(0,stops[0]);g.addColorStop(.5,stops[1]);g.addColorStop(1,stops[2]);ctx.fillStyle=g;rr(ctx,-s/2,-s*0.57,s,s*1.14,s*0.17);ctx.fill();ctx.shadowColor="transparent";ctx.fillStyle="#fff";ctx.font=`400 ${Math.round(s*0.62)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.04);ctx.restore();}
 
-  // ön yüz
-  const g = ctx.createLinearGradient(x - w, y - r, x + w, y + r);
-  g.addColorStop(0, C.goldLite);
-  g.addColorStop(0.45, C.gold);
-  g.addColorStop(1, C.goldDeep);
-  ctx.beginPath();
-  ctx.ellipse(x, y, w, r, 0, 0, 7);
-  ctx.fillStyle = g; ctx.fill();
-  ctx.strokeStyle = C.goldLite; ctx.lineWidth = Math.max(1, r*0.06); ctx.stroke();
-
-  // yüzdeki işaret yalnızca yeterince genişken okunur
-  if(w > r*0.45){
-    ctx.save();
-    ctx.beginPath(); ctx.ellipse(x, y, w*0.98, r*0.98, 0, 0, 7); ctx.clip();
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.font = `700 ${Math.round(r*0.95)}px 'Space Grotesk', sans-serif`;
-    ctx.fillStyle = "rgba(90,55,0,.55)";
-    ctx.fillText(label, x, y + r*0.04);
-    ctx.restore();
+function makeGrain(w,h,alpha){const c=document.createElement("canvas");c.width=w;c.height=h;const g=c.getContext("2d");
+  const n=Math.round(w*h/900);for(let i=0;i<n;i++){const x=seeded(i*1.7)*w,y=seeded(i*2.3+7)*h,a=seeded(i*3.1)*alpha;g.fillStyle="rgba(0,0,0,"+a.toFixed(3)+")";g.fillRect(x,y,1.4,1.4);}
+  for(let i=0;i<n/2;i++){const x=seeded(i*4.4+1)*w,y=seeded(i*5.2+3)*h,a=seeded(i*6.1)*alpha*0.8;g.fillStyle="rgba(255,255,255,"+a.toFixed(3)+")";g.fillRect(x,y,1.4,1.4);}
+  return c;}
+function paperBG(ctx,R,P,mode){
+  const W=R.W,H=R.H;
+  const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,shade(P.bg,6));g.addColorStop(1,shade(P.bg,-8));ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  if(mode==="graph"){ctx.strokeStyle=P.grid||"rgba(0,0,0,.06)";ctx.lineWidth=1.4;const step=56;
+    for(let x=0;x<=W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<=H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+  else if(mode==="ruled"){ctx.strokeStyle=P.grid||"rgba(0,0,0,.07)";ctx.lineWidth=1.6;const step=96;
+    for(let y=170;y<=H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.strokeStyle="rgba(214,48,58,.5)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(150,0);ctx.lineTo(150,H);ctx.stroke();}
+  if(!R._grain)R._grain=makeGrain(W,H,0.05);ctx.globalAlpha=1;ctx.drawImage(R._grain,0,0);
+  const v=ctx.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,H*0.75);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(60,40,10,.10)");ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
+}
+function darkBG(ctx,R,P,t){
+  const W=R.W,H=R.H;ctx.fillStyle=P.bg;ctx.fillRect(0,0,W,H);
+  if(P!==PAL.brat){
+    const gx=W/2+Math.sin((t||0)/2600)*160,gy=H*0.42+Math.cos((t||0)/3100)*130;
+    const rg=ctx.createRadialGradient(gx,gy,0,gx,gy,W*0.9);rg.addColorStop(0,hexA(P.accent,.18));rg.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
   }
-  ctx.restore();
+  if(!R._grain)R._grain=makeGrain(W,H,0.045);ctx.globalAlpha=P===PAL.brat?0.5:1;ctx.drawImage(R._grain,0,0);ctx.globalAlpha=1;
 }
+function bgFor(ctx,R,t){const P=R.P;if(P.paper)paperBG(ctx,R,P,R.paperMode||"graph");else darkBG(ctx,R,P,t);}
 
-/** Jeton yağmuru — hediye sahnesinde ekrana dökülen paralar. */
-const RAIN = Array.from({length:26}, (_,i)=>({
-  x: 90 + (i*137) % (W-180),
-  delay: (i%13) * 130,
-  r: 34 + (i%5)*9,
-  sp: 0.9 + (i%7)*0.12,
-}));
-function drawCoinRain(ctx, t, until){
-  for(const c of RAIN){
-    const lt = t - c.delay;
-    if(lt < 0) continue;
-    const p = Math.min(1, lt/1500);
-    const y = -80 + p*(H*0.62) + Math.sin(lt/300)*8;
-    const a = t > until ? Math.max(0, 1 - (t-until)/500) : 1;
-    drawCoin(ctx, {x:c.x, y, r:c.r, spin: lt/220*c.sp, alpha: a*0.95});
-  }
-}
+function tape(ctx,cx,cy,w,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle="rgba(255,235,150,.55)";ctx.strokeStyle="rgba(180,150,40,.35)";ctx.lineWidth=1;rr(ctx,-w/2,-26,w,52,3);ctx.fill();ctx.stroke();ctx.restore();}
+function coffeeRing(ctx,cx,cy,r){ctx.save();ctx.strokeStyle="rgba(120,80,30,.16)";ctx.lineWidth=10;ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();ctx.strokeStyle="rgba(120,80,30,.08)";ctx.lineWidth=22;ctx.beginPath();ctx.arc(cx,cy,r-4,0.3,5.6);ctx.stroke();ctx.restore();}
+function starDoodle(ctx,cx,cy,r,col){ctx.save();ctx.translate(cx,cy);ctx.strokeStyle=col;ctx.lineWidth=r*0.14;ctx.lineCap="round";ctx.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*Math.PI*4/5;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.stroke();ctx.restore();}
+function circleScribble(ctx,cx,cy,w,h,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=7;ctx.lineCap="round";for(let k=0;k<2;k++){ctx.beginPath();for(let a=0;a<=Math.PI*2+0.3;a+=0.25){const r2=1+seeded(a*3+k)*0.06;ctx.lineTo(cx+Math.cos(a)*w/2*r2+k*3,cy+Math.sin(a)*h/2*r2);}ctx.stroke();}ctx.restore();}
+function hlBox(ctx,x,y,w,h,P){const light=P.paper||P.light;ctx.save();
+  if(light){ctx.globalCompositeOperation="multiply";ctx.globalAlpha=.9;ctx.fillStyle=P.hi||"#FCE94F";rr(ctx,x,y,w,h,4);ctx.fill();}
+  else{ctx.fillStyle=P.hi||"#FCE94F";rr(ctx,x,y,w,h,6);ctx.fill();}
+  ctx.restore();}
 
-/* ===================================================================
-   1) Küçük 3B motoru
-   -------------------------------------------------------------------
-   Canvas 2D'nin 3B'si yok; burada gerçek projeksiyon matematiği var:
-   nokta döndürülür, perspektifle düzleme düşürülür. Telefon ekranı gibi
-   dokulu yüzeyler DİLİM EŞLEMESİYLE çizilir — yüzey dikey şeritlere
-   bölünüp her şerit kendi derinliğine göre ölçeklenir, böylece dönen
-   telefon gerçekten dönüyormuş gibi görünür (kesme/skew taklidi değil).
-   =================================================================== */
-const CAM = { f: 1500, dist: 1500 };
+function inkTitle(ctx,txt,cx,cy,size,col,rot,lh,align){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle=col;ctx.font=`400 ${size}px Anton, sans-serif`;ctx.textAlign=align||"center";ctx.textBaseline="alphabetic";
+  lines(txt).forEach((ln,i)=>ctx.fillText(ln,0,i*(lh||size*1.02)));ctx.restore();}
+function markerTitle(ctx,txt,cx,cy,size,col,rot){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot||0);ctx.fillStyle=col;ctx.font=`800 ${size}px 'Shantell Sans','Patrick Hand',cursive`;ctx.textAlign="center";ctx.textBaseline="alphabetic";lines(txt).forEach((ln,i)=>ctx.fillText(ln,0,i*size*1.08));ctx.restore();}
+function handText(ctx,txt,x,y,size,col,align){ctx.save();ctx.fillStyle=col;ctx.font=`400 ${size}px 'Patrick Hand', cursive`;ctx.textAlign=align||"left";ctx.textBaseline="alphabetic";lines(txt).forEach((ln,i)=>ctx.fillText(ln,x,y+i*size*1.15));ctx.restore();}
 
-function rotY(p, a){ const c=Math.cos(a), s=Math.sin(a); return { x:p.x*c + p.z*s, y:p.y, z:-p.x*s + p.z*c }; }
-function rotX(p, a){ const c=Math.cos(a), s=Math.sin(a); return { x:p.x, y:p.y*c - p.z*s, z:p.y*s + p.z*c }; }
-function rotZ(p, a){ const c=Math.cos(a), s=Math.sin(a); return { x:p.x*c - p.y*s, y:p.x*s + p.y*c, z:p.z }; }
-function add(p, q){ return { x:p.x+q.x, y:p.y+q.y, z:p.z+q.z }; }
-
-/** 3B noktayı ekrana düşürür. `s` ölçek (uzaktaki küçük görünür). */
-function proj(p, cx=W/2, cy=H/2){
-  const s = CAM.f / Math.max(120, CAM.f + CAM.dist + p.z);
-  return { x: cx + p.x*s, y: cy + p.y*s, s };
-}
-
-/**
- * Dokulu düzlem (telefon ekranı, poster) — dilim eşlemeli perspektif.
- * `quad`: ekrana düşürülmüş 4 köşe [SolÜst, SağÜst, SağAlt, SolAlt].
- */
-function drawTexturedQuad(ctx, tex, quad, slices=64){
-  const [tl,tr,br,bl] = quad;
-  const w = tex.width, h = tex.height;
-  ctx.save();
-  for(let i=0;i<slices;i++){
-    const u0=i/slices, u1=(i+1)/slices;
-    const ax = tl.x+(tr.x-tl.x)*u0, ay = tl.y+(tr.y-tl.y)*u0;
-    const bx = bl.x+(br.x-bl.x)*u0, by = bl.y+(br.y-bl.y)*u0;
-    const cx = tl.x+(tr.x-tl.x)*u1, cy2 = tl.y+(tr.y-tl.y)*u1;
-    const sliceW = Math.hypot(cx-ax, cy2-ay) + 1.0;   // +1: şeritler arası dikiş olmasın
-    const sliceH = Math.hypot(bx-ax, by-ay);
-    const ang = Math.atan2(by-ay, bx-ax) - Math.PI/2;
-    ctx.save();
-    ctx.translate(ax, ay);
-    ctx.rotate(ang);
-    ctx.drawImage(tex, u0*w, 0, Math.max(1,(u1-u0)*w), h, 0, 0, sliceW, sliceH);
-    ctx.restore();
-  }
-  ctx.restore();
-}
-
-/** Yuvarlatılmış dikdörtgen yolu (her yerde lazım). */
-function rr(ctx, x, y, w, h, r){
-  const k = Math.min(r, w/2, h/2);
-  ctx.beginPath();
-  ctx.moveTo(x+k, y);
-  ctx.arcTo(x+w, y, x+w, y+h, k);
-  ctx.arcTo(x+w, y+h, x, y+h, k);
-  ctx.arcTo(x, y+h, x, y, k);
-  ctx.arcTo(x, y, x+w, y, k);
-  ctx.closePath();
-}
-
-/**
- * 3B kutu (harf küpü). Yüzler derinliğe göre sıralanıp boyanır; ön yüze
- * harf yazılır. Kenar ışığı mor, gövde koyu — sahnedeki tek "katı" nesne
- * bu olduğu için ağırlık merkezi o.
- */
-function drawCube(ctx, {pos, size, rot, letter, hue}){
-  const s = size/2;
-  const verts = [
-    {x:-s,y:-s,z:-s},{x:s,y:-s,z:-s},{x:s,y:s,z:-s},{x:-s,y:s,z:-s},
-    {x:-s,y:-s,z:s},{x:s,y:-s,z:s},{x:s,y:s,z:s},{x:-s,y:s,z:s},
-  ].map(v=>{
-    let p = rotX(v, rot.x); p = rotY(p, rot.y); p = rotZ(p, rot.z);
-    return add(p, pos);
-  });
-  const faces = [
-    {idx:[0,1,2,3], shade:1.00},   // ön
-    {idx:[5,4,7,6], shade:0.42},   // arka
-    {idx:[4,0,3,7], shade:0.62},   // sol
-    {idx:[1,5,6,2], shade:0.72},   // sağ
-    {idx:[4,5,1,0], shade:0.88},   // üst
-    {idx:[3,2,6,7], shade:0.5 },   // alt
-  ].map(f=>{
-    const z = f.idx.reduce((a,i)=>a+verts[i].z,0)/4;
-    return {...f, z, pts:f.idx.map(i=>proj(verts[i]))};
-  }).sort((a,b)=>b.z-a.z);
-
-  for(const f of faces){
-    const g = f.shade;
-    ctx.beginPath();
-    ctx.moveTo(f.pts[0].x, f.pts[0].y);
-    for(let i=1;i<4;i++) ctx.lineTo(f.pts[i].x, f.pts[i].y);
-    ctx.closePath();
-    ctx.fillStyle = `hsl(${hue} 78% ${9 + g*26}%)`;
-    ctx.fill();
-    ctx.strokeStyle = `hsla(${hue} 100% 78% / ${0.12 + g*0.35})`;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-  // Harf: en öndeki yüzün merkezine, yüzün ölçeğiyle.
-  const front = faces[faces.length-1];
-  if(letter){
-    const cx = front.pts.reduce((a,p)=>a+p.x,0)/4;
-    const cy = front.pts.reduce((a,p)=>a+p.y,0)/4;
-    const scale = Math.hypot(front.pts[1].x-front.pts[0].x, front.pts[1].y-front.pts[0].y);
-    ctx.save();
-    ctx.fillStyle = "#fff";
-    ctx.font = `700 ${Math.round(scale*0.56)}px 'Space Grotesk', sans-serif`;
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.shadowColor = `hsl(${hue} 100% 70%)`; ctx.shadowBlur = scale*0.35;
-    ctx.fillText(letter, cx, cy);
-    ctx.restore();
-  }
-}
-
-/* Derinlikli parçacık alanı: kamera içeri doğru süzülüyormuş hissi. */
-const DUST = Array.from({length:150}, (_,i)=>({
-  x:(Math.random()*2-1)*1400, y:(Math.random()*2-1)*2200,
-  z:Math.random()*2600, r:Math.random()*2.6+0.7, hue: Math.random()<0.25 ? 196 : 254,
-}));
-function drawDust(ctx, t){
-  for(const d of DUST){
-    const z = (d.z - (t*0.09)) % 2600;
-    const zz = z < 0 ? z + 2600 : z;
-    const p = proj({x:d.x, y:d.y, z:zz - 900});
-    const a = Math.max(0, 0.5 - zz/5200);
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, Math.max(0.4, d.r*p.s*1.6), 0, 7);
-    ctx.fillStyle = `hsla(${d.hue} 100% 78% / ${a})`;
-    ctx.fill();
-  }
-}
-
-/* Zemin: uzayan mor ufuk + hafif vinyet. Her sahnenin altlığı. */
-function drawSpace(ctx, t, tint){
-  const g = ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0, "#05060F");
-  g.addColorStop(0.55, tint || "#0B1030");
-  g.addColorStop(1, "#05060F");
-  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-
-  const glow = ctx.createRadialGradient(W/2, H*0.46, 40, W/2, H*0.46, W*0.95);
-  glow.addColorStop(0, "rgba(124,92,255,.22)");
-  glow.addColorStop(1, "rgba(124,92,255,0)");
-  ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
-
-  drawDust(ctx, t);
-
-  // Perspektif ızgara — "derinlik" hissinin omurgası.
-  ctx.save();
-  ctx.strokeStyle = "rgba(124,92,255,.16)"; ctx.lineWidth = 2;
-  for(let i=-9;i<=9;i++){
-    const a = proj({x:i*300, y:520, z:-700});
-    const b = proj({x:i*300, y:520, z:2600});
-    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-  }
-  for(let k=0;k<14;k++){
-    const z = ((k*260) + (t*0.12)%260) - 700;
-    const l = proj({x:-2700, y:520, z}), r2 = proj({x:2700, y:520, z});
-    ctx.globalAlpha = Math.max(0, 0.5 - z/3000);
-    ctx.beginPath(); ctx.moveTo(l.x,l.y); ctx.lineTo(r2.x,r2.y); ctx.stroke();
-  }
-  ctx.restore();
-}
-
-/* ===================================================================
-   2) Telefon dokusu — ekranın içeriği ayrı bir tuvale çizilir, sonra
-      3B düzleme kaplanır.
-   =================================================================== */
-const TEX_W = 540, TEX_H = 1100;
-function makeTex(){
-  const c = document.createElement("canvas");
-  c.width = TEX_W; c.height = TEX_H;
-  return c;
-}
-
-/** Oyun tahtası: kategori satırları, yazılan kelimeler, harf rozeti. */
-function paintBoard(tex, {letter, rows, typed, mode, botLevel}){
-  const x = tex.getContext("2d");
-  x.fillStyle = "#0B1030"; x.fillRect(0,0,TEX_W,TEX_H);
-
-  // Üst bar
-  x.fillStyle = "#151B3F"; x.fillRect(0,0,TEX_W,120);
-  x.fillStyle = C.muted;
-  x.font = "700 20px 'JetBrains Mono', monospace";
-  x.fillText(mode || "ÇEVRİMDIŞI", 28, 52);
-  x.fillStyle = C.white;
-  x.font = "700 30px 'Space Grotesk', sans-serif";
-  x.fillText("Bota karşı", 28, 92);
-
-  // Harf rozeti
-  x.save();
-  const bx = TEX_W-118, by = 22;
-  rr(x, bx, by, 92, 92, 24);
-  const bg = x.createLinearGradient(bx,by,bx+92,by+92);
-  bg.addColorStop(0, C.violet); bg.addColorStop(1, "#5B3FE0");
-  x.fillStyle = bg; x.fill();
-  x.fillStyle = "#fff"; x.textAlign="center"; x.textBaseline="middle";
-  x.font = "700 56px 'Space Grotesk', sans-serif";
-  x.fillText(letter, bx+46, by+50);
-  x.restore();
-
-  // RAKİP ŞERİDİ — botun kim olduğu her karede görünür olmalı; videonun
-  // konusu "bota karşı oynamak", bunu yalnızca başlıkta söylemek yetmiyor.
-  const oy = 138;
-  rr(x, 24, oy, TEX_W-48, 86, 20);
-  x.fillStyle = "#151B3F"; x.fill();
-  x.strokeStyle = "rgba(124,92,255,.45)"; x.lineWidth = 2; x.stroke();
-  // Bot avatarı: mor daire + göz + anten
-  x.save();
-  x.beginPath(); x.arc(76, oy+43, 28, 0, 7);
-  x.fillStyle = C.violet; x.fill();
-  x.strokeStyle = "rgba(238,241,255,.35)"; x.lineWidth = 3; x.stroke();
-  x.fillStyle = "#0B1030";
-  x.beginPath(); x.arc(66, oy+40, 6, 0, 7); x.fill();
-  x.beginPath(); x.arc(86, oy+40, 6, 0, 7); x.fill();
-  x.strokeStyle = C.cyan; x.lineWidth = 3;
-  x.beginPath(); x.moveTo(76, oy+15); x.lineTo(76, oy+4); x.stroke();
-  x.beginPath(); x.arc(76, oy+2, 4, 0, 7); x.fillStyle = C.cyan; x.fill();
-  x.restore();
-  x.fillStyle = C.white;
-  x.font = "700 26px 'Space Grotesk', sans-serif";
-  x.fillText("BOT · " + (botLevel || "İyi"), 120, oy+38);
-  x.fillStyle = C.green;
-  x.font = "700 19px 'JetBrains Mono', monospace";
-  x.fillText("hazır · yazıyor…", 120, oy+68);
-  x.textAlign = "right";
-  x.fillStyle = C.muted;
-  x.font = "700 19px 'JetBrains Mono', monospace";
-  x.fillText("RAKİP", TEX_W-46, oy+38);
-  x.textAlign = "left";
-
-  // Kategori satırları
-  let y = 250;
-  rows.forEach((r, i)=>{
-    const filled = i < typed;
-    rr(x, 24, y, TEX_W-48, 104, 20);
-    x.fillStyle = filled ? "rgba(124,92,255,.14)" : "#111740";
-    x.fill();
-    x.strokeStyle = filled ? "rgba(124,92,255,.55)" : "rgba(238,241,255,.08)";
-    x.lineWidth = 2; x.stroke();
-
-    x.textAlign = "left"; x.textBaseline = "alphabetic";
-    x.fillStyle = C.muted;
-    x.font = "700 19px 'JetBrains Mono', monospace";
-    x.fillText(r.cat.toLocaleUpperCase("tr-TR"), 46, y+36);
-
-    x.fillStyle = filled ? C.white : "rgba(238,241,255,.18)";
-    x.font = "600 34px 'Inter', sans-serif";
-    x.fillText(filled ? r.word : "—", 46, y+80);
-
-    if(filled){
-      x.fillStyle = C.green;
-      x.font = "700 22px 'JetBrains Mono', monospace";
-      x.textAlign = "right";
-      x.fillText("+10", TEX_W-46, y+80);
-      x.textAlign = "left";
-    }
-    y += 116;
+function kineticCap(ctx,R,words,cy,lp,opt){
+  opt=opt||{};const W=R.W,fs=opt.size||72;ctx.font=`900 ${fs}px 'Archivo Black', sans-serif`;
+  const n=words.length;const shown=Math.min(n,Math.floor(lp*n*1.25)+1);
+  const maxW=W-160;let ln=[],all=[],lw=0;
+  words.forEach((w,i)=>{const ww=ctx.measureText(w+" ").width;if(lw+ww>maxW&&ln.length){all.push(ln);ln=[];lw=0;}ln.push({w,i});lw+=ww;});
+  if(ln.length)all.push(ln);
+  const lineH=fs*1.28,totalH=all.length*lineH;let y=cy-totalH/2+fs;
+  all.forEach(row=>{
+    let rowW=0;row.forEach(o=>rowW+=ctx.measureText(o.w+" ").width);
+    let x=W/2-rowW/2;
+    row.forEach(o=>{
+      const ww=ctx.measureText(o.w+" ").width,wOnly=ctx.measureText(o.w).width;
+      const vis=o.i<shown,isCur=o.i===shown-1;
+      if(vis){
+        const pop=isCur?eOutBack(inv(lp,o.i/(n*1.25),0.18)):1;
+        ctx.save();ctx.translate(x+wOnly/2,y);ctx.scale(pop,pop);ctx.translate(-(x+wOnly/2),-y);
+        const hot=opt.hot&&opt.hot.includes(o.i);
+        if(hot)hlBox(ctx,x-6,y-fs*0.82,wOnly+12,fs*1.02,R.P);
+        ctx.fillStyle=hot?"#111":(opt.col||"#111");
+        ctx.font=`900 ${fs}px 'Archivo Black', sans-serif`;ctx.textAlign="left";ctx.textBaseline="alphabetic";
+        ctx.fillText(o.w,x,y);ctx.restore();
+      }
+      x+=ww;
+    });
+    y+=lineH;
   });
 }
 
-/** Kilit ekranı görünümü: sinyal çubukları + saat. */
-function paintSignal(tex, {bars, label, sub}){
-  const x = tex.getContext("2d");
-  const g = x.createLinearGradient(0,0,0,TEX_H);
-  g.addColorStop(0,"#0A0F2E"); g.addColorStop(1,"#05060F");
-  x.fillStyle = g; x.fillRect(0,0,TEX_W,TEX_H);
+function storeSticker(ctx,R,cy,scale){scale=scale||1;ctx.save();ctx.translate(R.W/2,cy);ctx.scale(scale,scale);
+  rr(ctx,-360,-64,720,128,64);ctx.fillStyle="#111";ctx.fill();
+  drawGlyph(ctx,APPLE_PATH,24,-276,0,50,"#fff");drawGlyph(ctx,PLAY_PATH,512,-212,2,48,"#fff");
+  ctx.fillStyle="#fff";ctx.font="800 42px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText("App Store & Google Play",-176,2);ctx.restore();}
+function brandChip(ctx,R){const P=R.P,dark=!P.paper,x=54,y=58;
+  ctx.save();ctx.fillStyle=dark?(P.chip||"#c8f000"):P.fg;rr(ctx,x,y,64,64,16);ctx.fill();
+  ctx.fillStyle=dark?(P.chipText||"#101007"):P.bg;ctx.font="400 34px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("İŞ",x+32,y+35);
+  ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillStyle=dark?"#fff":P.fg;ctx.font="400 30px Anton, sans-serif";ctx.fillText("İSİM ŞEHİR",x+78,y+28);
+  ctx.fillStyle=dark?"#9a9aa8":P.sub;ctx.font="800 15px Inter, sans-serif";ctx.fillText("ONLINE",x+78,y+52);ctx.restore();}
+function handleFoot(ctx,R){const P=R.P;ctx.save();ctx.fillStyle=P.paper?P.fg:(P.chip||"#c8f000");ctx.font="700 40px 'Caveat', cursive";ctx.textAlign="center";ctx.fillText("@isimsehironline",R.W/2,R.H-70);ctx.restore();}
+function progress(ctx,R,t){const P=R.P;ctx.save();ctx.fillStyle=P.paper?"rgba(0,0,0,.10)":"rgba(255,255,255,.14)";rr(ctx,54,R.H-124,R.W-108,8,4);ctx.fill();ctx.fillStyle=P.paper?P.red:(P.chip||"#c8f000");rr(ctx,54,R.H-124,(R.W-108)*clamp01(t/R.total),8,4);ctx.fill();ctx.restore();}
 
-  // Sinyal çubukları
-  const bx = TEX_W/2 - 130, by = 380;
-  for(let i=0;i<4;i++){
-    const h = 44 + i*38, on = i < bars;
-    rr(x, bx + i*70, by + (152-h), 46, h, 12);
-    x.fillStyle = on ? C.white : "rgba(238,241,255,.12)";
-    x.fill();
+function uiText(P){return P.paper?"#16161c":"#F2F2F7";}
+function uiSub(P){return P.paper?"#6b6b74":"#9a9aa8";}
+function uiCard(ctx,R,x,y,w,h,r){const P=R.P;rr(ctx,x,y,w,h,r);ctx.fillStyle=P.paper?"rgba(255,255,255,.92)":"rgba(28,28,38,.94)";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();}
+function appIcon(ctx,x,y,s){ctx.save();rr(ctx,x,y,s,s,s*0.24);ctx.fillStyle="#7C5CFF";ctx.fill();ctx.fillStyle="#fff";ctx.font=`400 ${Math.round(s*0.5)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("İŞ",x+s/2,y+s/2+1);ctx.restore();}
+function notifCard(ctx,R,cx,y,w,title,body,when,pop){const P=R.P;
+  const wl=wrap(ctx,body,"600 34px Inter, sans-serif",w-150);const h=84+wl.length*44;
+  if(pop>0){const e=eOutCubic(clamp01(pop)),x=cx-w/2;
+    ctx.save();ctx.globalAlpha=clamp01(pop*2);ctx.translate(0,(1-e)*-40);
+    uiCard(ctx,R,x,y,w,h,26);appIcon(ctx,x+22,y+20,52);
+    ctx.fillStyle=uiText(P);ctx.font="800 33px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillText(title,x+94,y+52);
+    ctx.fillStyle=uiSub(P);ctx.font="600 26px Inter, sans-serif";ctx.textAlign="right";ctx.fillText(when||"şimdi",x+w-24,y+50);
+    ctx.fillStyle=uiText(P);ctx.font="600 34px Inter, sans-serif";ctx.textAlign="left";wl.forEach((ln,k)=>ctx.fillText(ln,x+94,y+98+k*44));
+    ctx.restore();}
+  return h;}
+
+/* ══════════════════ jeton / çevrimdışı / bot yardımcıları ══════════════════ */
+const G_LITE="#FFE9A8",G_MID="#F0C24B",G_DEEP="#A9741B";
+
+/** 3B madeni para: ön yüz elips (dönüşle daralır), arkada kalınlık veren koyu elips. */
+function coin(ctx,x,y,r,spin,alpha){
+  spin=spin||0;const c=Math.cos(spin);const w=Math.max(r*0.05,Math.abs(c)*r);
+  ctx.save();ctx.globalAlpha=alpha==null?1:alpha;ctx.translate(x,y);
+  ctx.beginPath();ctx.ellipse(r*0.10*(c<0?-1:1),r*0.05,w,r,0,0,7);ctx.fillStyle="#8A6410";ctx.fill();
+  const g=ctx.createLinearGradient(-w,-r,w,r);g.addColorStop(0,G_LITE);g.addColorStop(.45,G_MID);g.addColorStop(1,G_DEEP);
+  ctx.beginPath();ctx.ellipse(0,0,w,r,0,0,7);ctx.fillStyle=g;ctx.fill();
+  ctx.lineWidth=Math.max(1.5,r*0.07);ctx.strokeStyle="#FFF3CF";ctx.stroke();
+  if(w>r*0.45){
+    ctx.beginPath();ctx.ellipse(0,0,w*0.74,r*0.74,0,0,7);ctx.lineWidth=Math.max(1,r*0.05);ctx.strokeStyle="rgba(120,80,10,.30)";ctx.stroke();
+    ctx.save();ctx.scale(w/r,1);
+    ctx.fillStyle="rgba(110,72,6,.75)";ctx.font=`400 ${Math.round(r*0.92)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("J",0,r*0.05);ctx.restore();
   }
-  // Çarpı (sinyal yok)
-  if(bars === 0){
-    x.strokeStyle = C.amber; x.lineWidth = 14; x.lineCap = "round";
-    x.beginPath();
-    x.moveTo(bx-10, by+10); x.lineTo(bx+300, by+165);
-    x.moveTo(bx+300, by+10); x.lineTo(bx-10, by+165);
-    x.stroke();
-  }
-  x.textAlign="center";
-  x.fillStyle = bars===0 ? C.amber : C.white;
-  x.font = "700 46px 'JetBrains Mono', monospace";
-  x.fillText(label, TEX_W/2, 660);
-  if(sub){
-    x.fillStyle = C.muted;
-    x.font = "600 28px 'Inter', sans-serif";
-    x.fillText(sub, TEX_W/2, 712);
-  }
-  x.textAlign="left";
-}
-
-/**
- * Telefonu 3B çizer: gövde (yuvarlatılmış kasa) + ekran dokusu.
- * `rotYv` dönüş açısı, `lift` yukarı süzülme, `z` derinlik.
- */
-function drawPhone3D(ctx, tex, {rotYv=0, rotXv=-0.06, z=0, y=0, scale=1, glow=true}){
-  const w = 300*scale, h = 610*scale, d = 22*scale;
-  const corners = [
-    {x:-w/2,y:-h/2,z:-d},{x:w/2,y:-h/2,z:-d},{x:w/2,y:h/2,z:-d},{x:-w/2,y:h/2,z:-d},
-  ].map(p=>{
-    let q = rotX(p, rotXv); q = rotY(q, rotYv);
-    return proj({x:q.x, y:q.y + y, z:q.z + z});
-  });
-
-  // Kasa: ekranın biraz dışına taşan koyu gövde
-  const body = [
-    {x:-w/2-14,y:-h/2-14,z:d},{x:w/2+14,y:-h/2-14,z:d},{x:w/2+14,y:h/2+14,z:d},{x:-w/2-14,y:h/2+14,z:d},
-  ].map(p=>{
-    let q = rotX(p, rotXv); q = rotY(q, rotYv);
-    return proj({x:q.x, y:q.y + y, z:q.z + z});
-  });
-
-  ctx.save();
-  if(glow){
-    ctx.shadowColor = "rgba(124,92,255,.55)";
-    ctx.shadowBlur = 90;
-  }
-  ctx.beginPath();
-  ctx.moveTo(body[0].x, body[0].y);
-  for(let i=1;i<4;i++) ctx.lineTo(body[i].x, body[i].y);
-  ctx.closePath();
-  ctx.fillStyle = "#0A0C1C"; ctx.fill();
-  ctx.shadowBlur = 0;
-  ctx.strokeStyle = "rgba(238,241,255,.22)"; ctx.lineWidth = 3; ctx.stroke();
-  ctx.restore();
-
-  drawTexturedQuad(ctx, tex, corners, 72);
-
-  // Cam yansıması: köşeden geçen ince aydınlık bant
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(corners[0].x, corners[0].y);
-  for(let i=1;i<4;i++) ctx.lineTo(corners[i].x, corners[i].y);
-  ctx.closePath();
-  ctx.clip();
-  const gg = ctx.createLinearGradient(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
-  gg.addColorStop(0, "rgba(255,255,255,.16)");
-  gg.addColorStop(.35, "rgba(255,255,255,.02)");
-  gg.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = gg; ctx.fillRect(0,0,W,H);
   ctx.restore();
 }
-
-/* ===================================================================
-   3) Metin yardımcıları
-   =================================================================== */
-function fitText(ctx, text, max, weight, family, start){
-  let size = start;
-  do{
-    ctx.font = `${weight} ${size}px ${family}`;
-    if(ctx.measureText(text).width <= max) break;
-    size -= 4;
-  } while(size > 20);
-  return size;
+/** Jeton yağmuru — hediye sahnesi. p: 0→1 ilerleme.
+    Paralar üst yarıda kalır; başlık/sayı alanına inmez (üst üste binme olmasın). */
+const RAIN=Array.from({length:30},(_,i)=>({x:70+(i*151)%940,d:(i%15)*0.045,r:26+(i%5)*10,sp:0.9+(i%7)*0.13}));
+function coinRain(ctx,R,p,fade){
+  RAIN.forEach((c,i)=>{const lp=clamp01((p-c.d)/0.75);if(lp<=0)return;
+    const y=-90+lp*(R.H*0.42)+Math.sin((p+i)*6)*10;
+    coin(ctx,c.x,y,c.r,(p*8+i)*c.sp,(fade==null?1:fade)*0.95);});
 }
-/** Kinetik başlık: satırlar aşağıdan gelir, hafif 3B eğim. */
-function kinetic(ctx, lines, {y, t, color=C.white, size=104, gap=118, delay=90}){
-  lines.forEach((ln, i)=>{
-    const k = Math.max(0, Math.min(1, (t - i*delay)/420));
-    const e = 1 - Math.pow(1-k, 3);
-    if(k <= 0) return;
-    ctx.save();
-    ctx.globalAlpha = e;
-    ctx.translate(W/2, y + i*gap + (1-e)*70);
-    ctx.scale(0.86 + e*0.14, 0.86 + e*0.14);
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    const s = fitText(ctx, ln.t, W-140, 700, "'Space Grotesk', sans-serif", ln.size || size);
-    ctx.font = `700 ${s}px 'Space Grotesk', sans-serif`;
-    ctx.fillStyle = ln.c || color;
-    if(ln.glow){ ctx.shadowColor = ln.c || color; ctx.shadowBlur = 40; }
-    ctx.fillText(ln.t, 0, 0);
-    ctx.restore();
-  });
-}
-/** Telemetri satırı — sahnenin "gerçek" bilgisi burada. */
-function telemetry(ctx, text, y, color=C.amber){
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.font = "700 30px 'JetBrains Mono', monospace";
-  ctx.fillStyle = color;
-  ctx.fillText(text, W/2, y);
+/** Bakiye hapı — sağ kenara yaslı (x = sağ kenar). */
+function coinPill(ctx,x,y,n,scale){
+  scale=scale||1;ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+  const label=fmtN(Math.round(n));ctx.font="800 44px Inter, sans-serif";
+  const w=ctx.measureText(label).width+140;
+  rr(ctx,-w,-42,w,84,42);ctx.fillStyle="rgba(240,194,75,.15)";ctx.fill();
+  ctx.lineWidth=3;ctx.strokeStyle="rgba(240,194,75,.55)";ctx.stroke();
+  coin(ctx,-w+50,0,28,0,1);
+  ctx.fillStyle=G_MID;ctx.textAlign="right";ctx.textBaseline="middle";ctx.font="800 44px Inter, sans-serif";ctx.fillText(label,-34,3);
   ctx.restore();
 }
-/** Alt marka bandı: her videonun sonunda aynı yerde. */
-function brandBar(ctx, t){
-  const k = Math.min(1, t/500);
-  ctx.save();
-  ctx.globalAlpha = k;
-  ctx.textAlign = "center";
-  ctx.fillStyle = C.white;
-  ctx.font = "700 62px 'Space Grotesk', sans-serif";
-  ctx.fillText("İSİM ŞEHİR", W/2, H-300);
-  ctx.fillStyle = C.muted;
-  ctx.font = "600 34px 'Inter', sans-serif";
-  ctx.fillText("App Store ve Google Play'de", W/2, H-238);
+/** Fiyat etiketli jeton butonu (Kelime Al · 50 gibi). */
+function coinBtn(ctx,cx,cy,w,h,label,price,pressed){
+  ctx.save();ctx.translate(cx,cy);const s=pressed?0.96:1;ctx.scale(s,s);
+  rr(ctx,-w/2,-h/2,w,h,h/2);
+  const g=ctx.createLinearGradient(0,-h/2,0,h/2);g.addColorStop(0,G_LITE);g.addColorStop(1,G_MID);
+  ctx.fillStyle=g;ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#8A6410";ctx.stroke();
+  ctx.fillStyle="#3A2A08";ctx.font="800 42px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";
+  ctx.fillText(label,-w/2+46,1);
+  const pr=String(price);ctx.font="800 42px Inter, sans-serif";
+  ctx.textAlign="right";ctx.fillText(pr,w/2-84,1);
+  coin(ctx,w/2-46,0,22,0,1);
   ctx.restore();
 }
-
-/* ===================================================================
-   4) Sahneler
-   =================================================================== */
-const BOARD_ROWS = [
-  {cat:"İsim",   word:"Kerem"},
-  {cat:"Şehir",  word:"Kars"},
-  {cat:"Hayvan", word:"Kaplan"},
-  {cat:"Bitki",  word:"Kekik"},
-  {cat:"Eşya",   word:"Kalem"},
+/** Telefon gövdesi — içi koyu ekran. */
+function phone(ctx,x,y,w,h){
+  ctx.save();
+  rr(ctx,x-16,y-16,w+32,h+32,68);ctx.fillStyle="#23232B";ctx.fill();
+  ctx.lineWidth=3;ctx.strokeStyle="rgba(255,255,255,.10)";ctx.stroke();
+  rr(ctx,x,y,w,h,54);ctx.fillStyle="#0A0D18";ctx.fill();
+  ctx.restore();
+}
+/** iOS tarzı durum çubuğu — sinyal çubuğu sayısı, wifi, uçak modu. */
+function statusBar(ctx,x,y,w,o){
+  o=o||{};const col=o.col||"#EAF2FF",bars=o.bars==null?4:o.bars;
+  ctx.save();ctx.fillStyle=col;
+  ctx.font="800 32px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(o.time||"09:41",x+44,y);
+  let rx=x+w-44;
+  ctx.lineWidth=3;ctx.strokeStyle=col;rr(ctx,rx-54,y-15,48,30,9);ctx.stroke();
+  ctx.globalAlpha=.9;ctx.fillRect(rx-48,y-9,28,18);ctx.fillRect(rx-2,y-7,5,14);ctx.globalAlpha=1;
+  rx-=82;
+  if(o.air){ctx.font="32px Inter, sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText("✈️",rx,y);rx-=54;}
+  else if(o.wifi!==false){ctx.lineWidth=4.5;ctx.strokeStyle=col;
+    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(rx-20,y+13,i*9,-Math.PI*0.80,-Math.PI*0.20);ctx.stroke();}
+    ctx.beginPath();ctx.arc(rx-20,y+13,3.5,0,7);ctx.fillStyle=col;ctx.fill();rx-=56;}
+  for(let i=0;i<4;i++){const bh=11+i*7;ctx.globalAlpha=i<bars?0.95:0.20;ctx.fillStyle=col;
+    rr(ctx,rx-68+i*17,y+14-bh,11,bh,3);ctx.fill();}
+  ctx.globalAlpha=1;ctx.restore();
+}
+/** "ÇEVRİMDIŞI" rozeti — nabız atar. */
+function offlineBadge(ctx,cx,cy,t,scale){
+  scale=scale||1;ctx.save();ctx.translate(cx,cy);ctx.scale(scale,scale);
+  const label="ÇEVRİMDIŞI";ctx.font="800 30px Inter, sans-serif";const w=ctx.measureText(label).width+96;
+  rr(ctx,-w/2,-30,w,60,30);ctx.fillStyle="rgba(255,159,69,.16)";ctx.fill();
+  ctx.lineWidth=2.5;ctx.strokeStyle="rgba(255,159,69,.6)";ctx.stroke();
+  const pu=0.55+0.45*(0.5+0.5*Math.sin((t||0)/380));
+  ctx.beginPath();ctx.arc(-w/2+34,1,9,0,7);ctx.fillStyle=`rgba(255,159,69,${pu.toFixed(2)})`;ctx.fill();
+  ctx.fillStyle="#FF9F45";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(label,-w/2+54,2);
+  ctx.restore();
+}
+const CATS=["İSİM","ŞEHİR","HAYVAN","BİTKİ","EŞYA"];
+/** İsim Şehir kategori satırı — yazılan kelime el yazısıyla. */
+function catRow(ctx,R,x,y,w,h,cat,word,o){
+  o=o||{};const P=R.P;
+  rr(ctx,x,y,w,h,24);
+  ctx.fillStyle=o.hot?"rgba(240,194,75,.14)":(P.paper?"rgba(255,255,255,.62)":"rgba(255,255,255,.06)");ctx.fill();
+  ctx.lineWidth=o.hot?4:2.5;ctx.strokeStyle=o.hot?G_MID:(P.paper?"rgba(0,0,0,.14)":"rgba(255,255,255,.14)");ctx.stroke();
+  ctx.fillStyle=P.sub;ctx.font="800 25px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+  ctx.fillText(cat,x+30,y+44);
+  ctx.font=`400 ${Math.round(h*0.40)}px 'Patrick Hand', cursive`;ctx.textBaseline="middle";
+  ctx.fillStyle=word?P.fg:(P.paper?"rgba(0,0,0,.20)":"rgba(255,255,255,.20)");
+  ctx.fillText(word||"—",x+30,y+h*0.70);
+  if(o.caret){const tw=ctx.measureText(word||"").width;
+    ctx.fillStyle=P.red;ctx.fillRect(x+36+tw,y+h*0.70-25,5,50);}
+  if(o.badge){
+    ctx.font="800 24px Inter, sans-serif";const bw=ctx.measureText(o.badge).width+82,bx=x+w-bw-22;
+    rr(ctx,bx,y+h/2-25,bw,50,25);ctx.fillStyle="rgba(240,194,75,.18)";ctx.fill();
+    ctx.lineWidth=2;ctx.strokeStyle="rgba(240,194,75,.55)";ctx.stroke();
+    coin(ctx,bx+30,y+h/2,16,0,1);
+    ctx.fillStyle=G_MID;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(o.badge,bx+54,y+h/2+1);}
+}
+/** Süre halkası — kalan saniye ortada. */
+function timerRing(ctx,cx,cy,r,left,total,P){
+  ctx.save();ctx.lineWidth=12;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.strokeStyle=P.paper?"rgba(0,0,0,.10)":"rgba(255,255,255,.12)";ctx.stroke();
+  const p=clamp01(left/total),warn=left<=10;
+  ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+p*Math.PI*2);ctx.strokeStyle=warn?"#d6303a":(P.paper?P.accent:P.accent);ctx.stroke();
+  ctx.fillStyle=warn?"#d6303a":P.fg;ctx.font=`400 ${Math.round(r*0.95)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillText(String(Math.max(0,Math.ceil(left))),cx,cy+2);ctx.restore();
+}
+const LEVELS=[
+  {l:"Çaylak",d:"az kategori doldurur, herkesin bildiği kelimeler"},
+  {l:"Acemi", d:"yavaş yazar, sık kullanılan kelimeler"},
+  {l:"Orta",  d:"dengeli — çoğu kategoriyi doldurur"},
+  {l:"İyi",   d:"hızlı yazar, seyrek kelimeler bulur"},
+  {l:"Usta",  d:"hepsini doldurur, kimsenin aklına gelmeyenleri seçer"},
 ];
-
-const texSignal = null; // tembel kurulur
-const TEX = {};
-function tex(key, painter){
-  if(!TEX[key]) TEX[key] = makeTex();
-  painter(TEX[key]);
-  return TEX[key];
+/** Zorluk kartı — 5 seviyeden biri. */
+function levelCard(ctx,R,x,y,w,h,i,sel,pop){
+  const P=R.P,L=LEVELS[i];
+  ctx.save();if(pop!=null){ctx.globalAlpha=clamp01(pop*2);ctx.translate((1-eOutCubic(clamp01(pop)))*-70,0);}
+  rr(ctx,x,y,w,h,26);
+  ctx.fillStyle=sel?"rgba(91,168,232,.18)":(P.paper?"rgba(255,255,255,.6)":"rgba(255,255,255,.05)");ctx.fill();
+  ctx.lineWidth=sel?5:2.5;ctx.strokeStyle=sel?"#5BA8E8":(P.paper?"rgba(0,0,0,.13)":"rgba(255,255,255,.13)");ctx.stroke();
+  // seviye barları
+  for(let k=0;k<5;k++){const bh=14+k*11;ctx.globalAlpha=k<=i?1:0.18;
+    ctx.fillStyle=k<=i?"#5BA8E8":(P.paper?"#000":"#fff");rr(ctx,x+34+k*22,y+h/2+30-bh,14,bh,4);ctx.fill();}
+  ctx.globalAlpha=1;
+  ctx.fillStyle=P.fg;ctx.font="400 52px Anton, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+  ctx.fillText(L.l,x+180,y+h/2-4);
+  ctx.fillStyle=P.sub;ctx.font="600 26px Inter, sans-serif";
+  ctx.fillText(L.d,x+180,y+h/2+42);
+  if(sel){ctx.fillStyle="#5BA8E8";ctx.font="800 40px Inter, sans-serif";ctx.textAlign="right";ctx.fillText("✓",x+w-34,y+h/2+12);}
+  ctx.restore();
+}
+/** SEN vs BOT skor çubuğu. */
+function vsRow(ctx,R,x,y,w,name,emoji,score,max,col){
+  const P=R.P;
+  ctx.save();
+  ctx.font="52px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(emoji,x,y);
+  ctx.fillStyle=P.fg;ctx.font="400 46px Anton, sans-serif";ctx.fillText(name,x+76,y-2);
+  ctx.fillStyle=col;ctx.font="400 62px Anton, sans-serif";ctx.textAlign="right";ctx.fillText(String(Math.round(score)),x+w,y-2);
+  const bw=w,bx=x;
+  ctx.fillStyle=P.paper?"rgba(0,0,0,.10)":"rgba(255,255,255,.10)";rr(ctx,bx,y+40,bw,16,8);ctx.fill();
+  ctx.fillStyle=col;rr(ctx,bx,y+40,Math.max(16,bw*clamp01(score/max)),16,8);ctx.fill();
+  ctx.restore();
+}
+/* Wordle karoları */
+function wTileC(P,st){
+  if(st==="g")return{bg:"#4E9F5B",fg:"#fff"};
+  if(st==="y")return{bg:"#D9A93C",fg:"#fff"};
+  return P.paper?{bg:"#b7b09c",fg:"#fffdf5"}:{bg:"#3E3E4A",fg:"#EDEDF4"};
+}
+function wTile(ctx,x,y,s,letter,st,P,flip,ghost){
+  ctx.save();ctx.translate(x+s/2,y+s/2);
+  const f=clamp01(flip),sq=Math.abs(Math.cos(Math.PI*f)),revealed=f>=0.5;
+  ctx.scale(1,Math.max(0.04,sq));
+  if(!revealed){
+    ctx.fillStyle=ghost?"rgba(240,194,75,.18)":(P.paper?"rgba(255,255,255,.62)":"rgba(255,255,255,.07)");rr(ctx,-s/2,-s/2,s,s,12);ctx.fill();
+    ctx.lineWidth=ghost?5:3.5;ctx.strokeStyle=ghost?G_MID:(P.paper?"rgba(0,0,0,.28)":"rgba(255,255,255,.28)");ctx.stroke();
+    if(letter){ctx.fillStyle=ghost?G_MID:P.fg;ctx.font=`400 ${Math.round(s*0.58)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.03);}
+  }else{
+    const c=wTileC(P,st);ctx.fillStyle=c.bg;rr(ctx,-s/2,-s/2,s,s,12);ctx.fill();
+    ctx.fillStyle=c.fg;ctx.font=`400 ${Math.round(s*0.58)}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(letter,0,s*0.03);
+  }
+  ctx.restore();
+}
+function wRow(ctx,R,word,states,cy,s,typeD,flipD,ghostIdx){
+  const P=R.P,n=word.length,gap=Math.round(s*0.12),tw=n*s+(n-1)*gap,x0=R.W/2-tw/2;
+  const fw=1.6/n,span=(n-1)/n+fw;
+  for(let i=0;i<n;i++){
+    const typed=typeD>=(i+1)/n-0.001;
+    const fl=flipD<=0?0:clamp01((flipD*span-i/n)/fw);
+    const isGhost=ghostIdx!=null&&ghostIdx.includes(i);
+    if(!typed&&fl<=0&&!isGhost){
+      ctx.save();ctx.fillStyle=P.paper?"rgba(255,255,255,.4)":"rgba(255,255,255,.04)";rr(ctx,x0+i*(s+gap),cy,s,s,12);ctx.fill();
+      ctx.lineWidth=3;ctx.strokeStyle=P.paper?"rgba(0,0,0,.18)":"rgba(255,255,255,.18)";ctx.stroke();ctx.restore();
+    }else{
+      wTile(ctx,x0+i*(s+gap),cy,s,word[i],states[i],P,fl,isGhost&&fl<0.5);
+    }
+  }
 }
 
-const SCENES = {
-  /* Sinyal ölüyor: çubuklar 4→0, telefon yavaşça dönüyor. */
-  signalDrop(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0B1030");
-    const k = t/dur;
-    const bars = k < .18 ? 4 : k < .34 ? 3 : k < .5 ? 2 : k < .66 ? 1 : 0;
-    const shake = bars === 0 ? Math.sin(t/40)*3 : 0;
-    const tx = tex("sig", tt=>paintSignal(tt, {
-      bars,
-      label: bars===0 ? "SİNYAL YOK" : `${bars} ÇUBUK`,
-      sub: bars===0 ? "metro · tünel · asansör" : "bağlantı zayıflıyor",
-    }));
-    ctx.save(); ctx.translate(shake, 0);
-    drawPhone3D(ctx, tx, { rotYv: Math.sin(t/1400)*0.28, y: -60, z: 120, scale: 1.05, glow: bars>0 });
+/* ══════════════════ VİDEO sahneleri ══════════════════ */
+const SCENES={
+  kinetic(ctx,R,sc,lp){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0,0.2);markerTitle(ctx,sc.kicker,R.W/2,540,54,P.red,-0.03);ctx.restore();}
+    kineticCap(ctx,R,String(sc.text).split(" "),sc.cy||960,lp,{size:sc.size||74,col:P.fg,hot:sc.hot});
+  },
+  punch(ctx,R,sc,lp){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0.04,0.25);markerTitle(ctx,sc.kicker,R.W/2,660,52,P.red,-0.02);ctx.restore();}
+    const e=eOutBack(inv(lp,0.08,0.4));ctx.save();ctx.globalAlpha=clamp01(inv(lp,0.08,0.3));ctx.translate(R.W/2,sc.kicker?980:920);ctx.scale(e,e);
+    if(isEmoji(sc.big)){ctx.font="340px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(sc.big,0,0);}
+    else{const L=lines(sc.big),longest=L.reduce((a,b)=>a.length>b.length?a:b),fs=longest.length<=4?280:longest.length<=8?190:130;
+      ctx.fillStyle=P.fg;ctx.font=`400 ${fs}px Anton, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";L.forEach((ln,i)=>ctx.fillText(ln,0,(i-(L.length-1)/2)*fs*1.02));}
     ctx.restore();
-    telemetry(ctx, bars===0 ? "PING: —" : `PING: ${Math.round(300 - bars*40)} ms`, H*0.80, bars===0?C.amber:C.muted);
-    kinetic(ctx, [{t:"Sinyal gitti."}], {y:H*0.13, t});
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.42,0.4);handText(ctx,sc.sub,R.W/2,sc.kicker?1230:1200,50,P.sub,"center");ctx.restore();}
+  },
+  list(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0.02,0.25);inkTitle(ctx,sc.title,R.W/2,470,84,P.fg,-0.02);ctx.restore();
+    const items=sc.items,y0=660,gap=(R.H-940)/items.length;
+    items.forEach((it,i)=>{const d=inv(lp,0.14+i*0.13,0.34),e=eOutCubic(d),y=y0+i*gap+gap/2;
+      ctx.save();ctx.globalAlpha=d;ctx.translate((1-e)*-140,0);
+      ctx.fillStyle=P.red;ctx.font="400 100px Anton, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText((i+1),120,y);
+      ctx.fillStyle=P.fg;ctx.font="800 50px Inter, sans-serif";
+      wrap(ctx,it,"800 50px Inter, sans-serif",R.W-360).forEach((ln,k,arr)=>ctx.fillText(ln,290,y-(arr.length-1)*31+k*62));
+      ctx.restore();});
+  },
+  outro(ctx,R,sc,lp){const P=R.P;
+    const e=eOutBack(inv(lp,0.05,0.4));ctx.save();ctx.globalAlpha=clamp01(inv(lp,0.05,0.3));ctx.translate(R.W/2,820);ctx.scale(e,e);
+    inkTitle(ctx,sc.title||"HEMEN\nDENE",0,0,120,P.fg,-0.02,124);ctx.restore();
+    storeSticker(ctx,R,1090,eOutBack(inv(lp,0.28,0.4)));
+    ctx.save();ctx.globalAlpha=inv(lp,0.45,0.4);handText(ctx,sc.sub||"güncelle · İsim Şehir Online",R.W/2,1260,46,P.sub,"center");ctx.restore();
+  },
+  ctanotif(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.2);markerTitle(ctx,sc.kicker||"güncelle ve dene",R.W/2,700,52,P.red,-0.03);ctx.restore();
+    notifCard(ctx,R,R.W/2,820,900,"İsim Şehir Online",sc.text,"şimdi",inv(lp,0.12,0.35));
+    storeSticker(ctx,R,1180,eOutBack(inv(lp,0.4,0.4)));
   },
 
-  /* Karanlıktan tahta doğuyor: telefon öne gelir, kelimeler yazılır. */
-  boardWrite(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#101744");
-    const typed = Math.min(BOARD_ROWS.length, Math.floor(t/620));
-    const tx = tex("board", tt=>paintBoard(tt, {
-      letter:"K", rows:BOARD_ROWS, typed, mode:"ÇEVRİMDIŞI", botLevel:"İyi",
-    }));
-    const intro = Math.min(1, t/700);
-    drawPhone3D(ctx, tx, {
-      rotYv: (1-intro)*0.9 + Math.sin(t/1800)*0.06,
-      y: -40 + (1-intro)*260,
-      z: 900*(1-intro),
-      scale: 1.06,
-    });
-    telemetry(ctx, "MOD: ÇEVRİMDIŞI · RAKİP: BOT", H*0.80);
-    kinetic(ctx, [{t:"İnternetsiz.", c:C.cyan, glow:true}], {y:H*0.13, t});
-  },
-
-  /* Uçuş modu: 3B anahtar döner, sahne kararır, tahta yanar. */
-  airplane(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0A0E2A");
-    const k = Math.min(1, t/900);
-    // Anahtar: yatay kapsül + kayan topuz
-    const cw = 460, ch = 210;
-    ctx.save();
-    ctx.translate(W/2, H*0.38);
-    ctx.rotate(-0.06 + (1-k)*0.25);
-    ctx.scale(0.8 + k*0.2, 0.8 + k*0.2);
-    rr(ctx, -cw/2, -ch/2, cw, ch, ch/2);
-    ctx.fillStyle = k > .5 ? "rgba(124,92,255,.35)" : "rgba(238,241,255,.08)";
-    ctx.fill();
-    ctx.strokeStyle = k > .5 ? C.violet : "rgba(238,241,255,.25)";
-    ctx.lineWidth = 5; ctx.stroke();
-    const knob = -cw/2 + ch/2 + (cw-ch) * (k>.5 ? Math.min(1,(k-.5)*3) : 0);
-    ctx.beginPath(); ctx.arc(knob, 0, ch/2 - 16, 0, 7);
-    ctx.fillStyle = k > .5 ? C.violet : "#3B4270";
-    ctx.shadowColor = C.violet; ctx.shadowBlur = k>.5 ? 50 : 0;
-    ctx.fill();
-    ctx.restore();
-    ctx.save();
-    ctx.textAlign="center"; ctx.font="700 40px 'JetBrains Mono', monospace";
-    ctx.fillStyle = k>.5 ? C.violet : C.muted;
-    ctx.fillText("UÇUŞ MODU", W/2, H*0.38 + 190);
-    ctx.restore();
-    kinetic(ctx, [{t:"Uçakta mısın?", size:96}], {y:H*0.13, t});
-    if(t > 1400) kinetic(ctx, [{t:"Oyun yine açılıyor.", c:C.cyan, size:74}], {y:H*0.62, t:t-1400});
-  },
-
-  /* Harf küpleri: 5 küp yörüngede döner, ortada kelime belirir. */
-  cubes(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0D1338");
-    const letters = ["K","A","R","S","!"];
-    letters.forEach((L,i)=>{
-      const a = (t/1600) + i*(Math.PI*2/letters.length);
-      const R = 430;
-      const pos = { x: Math.cos(a)*R, y: Math.sin(a*0.7)*120 - 40, z: Math.sin(a)*R };
-      drawCube(ctx, {
-        pos, size: 190,
-        rot: { x: t/2600 + i, y: a*1.4, z: Math.sin(t/2000+i)*0.15 },
-        letter: L, hue: i%2 ? 196 : 254,
-      });
-    });
-    kinetic(ctx, [
-      {t:"5 kategori.", size:88},
-      {t:"Tek harf.", c:C.cyan, size:88},
-    ], {y:H*0.12, t});
-    telemetry(ctx, "SÜRE: 90 sn · RAKİP HAZIR", H*0.84);
-  },
-
-  /* Zorluk halkası: 1→5 dolan yay, ortada seviye adı. */
-  difficulty(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0B1030");
-    const names = ["Çaylak","Acemi","Orta","İyi","Usta"];
-    const lvl = Math.min(4, Math.floor(t/900));
-    const p = Math.min(1, (t - lvl*900)/700);
-    const cx = W/2, cy = H*0.42, R = 300;
-
-    ctx.save();
-    ctx.lineWidth = 34; ctx.lineCap = "round";
-    ctx.strokeStyle = "rgba(238,241,255,.07)";
-    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
-
-    const frac = (lvl + p)/5;
-    const grad = ctx.createLinearGradient(cx-R, cy-R, cx+R, cy+R);
-    grad.addColorStop(0, C.cyan); grad.addColorStop(1, C.violet);
-    ctx.strokeStyle = grad;
-    ctx.shadowColor = C.violet; ctx.shadowBlur = 40;
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, -Math.PI/2, -Math.PI/2 + Math.PI*2*frac);
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.save();
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.fillStyle = C.white;
-    ctx.font = "700 150px 'Space Grotesk', sans-serif";
-    ctx.fillText(String(lvl+1), cx, cy-24);
-    ctx.fillStyle = C.cyan;
-    ctx.font = "700 46px 'JetBrains Mono', monospace";
-    ctx.fillText(names[lvl].toLocaleUpperCase("tr-TR"), cx, cy+82);
-    ctx.restore();
-
-    kinetic(ctx, [{t:"Zorluğu sen seç.", size:92}], {y:H*0.13, t});
-    telemetry(ctx, "5 ZORLUK · GÜNDE 1 MAÇ ÜCRETSİZ", H*0.80);
-  },
-
-  /* Kafa kafaya: sen vs bot, iki sütun ve yükselen puanlar. */
-  duel(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0C1236");
-    const k = Math.min(1, t/900);
-    const mine = Math.round(Math.min(1, t/3400) * 45);
-    const bots = Math.round(Math.min(1, t/3400) * 40);
-
-    const col = (cx, name, score, isBot, hue) => {
-      ctx.save();
-      ctx.translate(cx, H*0.44);
-      ctx.scale(k, k);
-      // Kaide
-      rr(ctx, -260, -300, 520, 620, 40);
-      ctx.fillStyle = isBot ? "rgba(124,92,255,.10)" : "rgba(77,195,255,.10)";
-      ctx.fill();
-      ctx.strokeStyle = isBot ? "rgba(124,92,255,.5)" : "rgba(77,195,255,.5)";
-      ctx.lineWidth = 4; ctx.stroke();
-      // Avatar
-      ctx.beginPath(); ctx.arc(0, -170, 84, 0, 7);
-      ctx.fillStyle = `hsl(${hue} 80% 60%)`; ctx.fill();
-      if(isBot){
-        ctx.fillStyle = "#0B1030";
-        ctx.beginPath(); ctx.arc(-28, -180, 15, 0, 7); ctx.fill();
-        ctx.beginPath(); ctx.arc(28, -180, 15, 0, 7); ctx.fill();
-        ctx.strokeStyle = C.cyan; ctx.lineWidth = 8;
-        ctx.beginPath(); ctx.moveTo(0, -254); ctx.lineTo(0, -290); ctx.stroke();
-        ctx.beginPath(); ctx.arc(0, -298, 12, 0, 7); ctx.fillStyle = C.cyan; ctx.fill();
-      } else {
-        ctx.fillStyle = "#0B1030";
-        ctx.font = "700 76px 'Space Grotesk', sans-serif";
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("S", 0, -168);
-      }
-      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = C.white;
-      ctx.font = "700 44px 'Space Grotesk', sans-serif";
-      ctx.fillText(name, 0, -40);
-      ctx.fillStyle = isBot ? C.violet : C.cyan;
-      ctx.font = "700 150px 'Space Grotesk', sans-serif";
-      ctx.fillText(String(score), 0, 130);
-      ctx.fillStyle = C.muted;
-      ctx.font = "700 28px 'JetBrains Mono', monospace";
-      ctx.fillText("PUAN", 0, 190);
-      ctx.restore();
-    };
-    col(W*0.27, "SEN", mine, false, 196);
-    col(W*0.73, "BOT", bots, true, 254);
-
-    // Ortadaki şimşek
-    ctx.save();
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.font = "700 90px 'Space Grotesk', sans-serif";
-    ctx.fillStyle = C.amber;
-    ctx.shadowColor = C.amber; ctx.shadowBlur = 40;
-    ctx.fillText("VS", W/2, H*0.44);
-    ctx.restore();
-
-    kinetic(ctx, [{t:"Bota karşı oyna.", size:84}], {y:H*0.12, t});
-    telemetry(ctx, "5 ZORLUK · İNTERNETSİZ", H*0.84);
-  },
-
-  /* Rakip bekleme: boş oda sayacı vs anında hazır bot. */
-  noWait(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0A0E2A");
-    const waited = Math.floor(t/1000);
-    const flip = t > 3000;
-
-    ctx.save();
-    ctx.textAlign = "center";
-    // Üst: "oyuncu bekleniyor" sayacı
-    ctx.globalAlpha = flip ? Math.max(0, 1 - (t-3000)/500) : 1;
-    ctx.fillStyle = C.muted;
-    ctx.font = "700 34px 'JetBrains Mono', monospace";
-    ctx.fillText("ODA BEKLİYOR", W/2, H*0.40);
-    ctx.fillStyle = C.amber;
-    ctx.font = "700 190px 'Space Grotesk', sans-serif";
-    ctx.fillText(`00:${String(Math.min(59, waited*7)).padStart(2,"0")}`, W/2, H*0.52);
-    ctx.restore();
-
-    if(flip){
-      const k = Math.min(1, (t-3000)/600);
-      ctx.save();
-      ctx.globalAlpha = k;
-      ctx.translate(W/2, H*0.46);
-      ctx.scale(0.6 + k*0.4, 0.6 + k*0.4);
-      ctx.beginPath(); ctx.arc(0, -60, 120, 0, 7);
-      ctx.fillStyle = C.violet;
-      ctx.shadowColor = C.violet; ctx.shadowBlur = 70;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = "#0B1030";
-      ctx.beginPath(); ctx.arc(-40, -74, 21, 0, 7); ctx.fill();
-      ctx.beginPath(); ctx.arc(40, -74, 21, 0, 7); ctx.fill();
-      ctx.strokeStyle = C.cyan; ctx.lineWidth = 11;
-      ctx.beginPath(); ctx.moveTo(0, -180); ctx.lineTo(0, -220); ctx.stroke();
-      ctx.beginPath(); ctx.arc(0, -228, 16, 0, 7); ctx.fillStyle = C.cyan; ctx.fill();
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.white;
-      ctx.font = "700 62px 'Space Grotesk', sans-serif";
-      ctx.fillText("BOT HAZIR", 0, 130);
-      ctx.fillStyle = C.green;
-      ctx.font = "700 30px 'JetBrains Mono', monospace";
-      ctx.fillText("BEKLEME: 00:00", 0, 186);
+  /* ── 1) Sinyal ölüyor → çevrimdışı mod açılıyor ── */
+  signal(ctx,R,sc,lp,t){const P=R.P;
+    if(sc.kicker){ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker,R.W/2,430,54,P.red,-0.03);ctx.restore();}
+    const pw=740,ph=1000,px=R.W/2-pw/2,py=540,cx=px+pw/2;
+    phone(ctx,px,py,pw,ph);
+    const drop=clamp01(inv(lp,0.10,0.30));
+    const air=lp>0.44;
+    statusBar(ctx,px,py+58,pw,{bars:air?0:Math.round(4-drop*4),wifi:!air&&drop<0.6,air:air,time:"09:41"});
+    if(lp<0.50){
+      ctx.save();ctx.globalAlpha=1-clamp01(inv(lp,0.40,0.10));
+      ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.font="120px Inter, sans-serif";ctx.fillText("📡",cx,py+ph*0.36);
+      ctx.fillStyle="#8FA3C4";ctx.font="800 42px Inter, sans-serif";
+      ctx.fillText(drop>0.7?"Bağlantı yok":"Bağlanılıyor…",cx,py+ph*0.50);
+      for(let i=0;i<3;i++){const a=(Math.sin((t||0)/220+i)+1)/2;
+        ctx.fillStyle=`rgba(143,163,196,${(0.25+a*0.6).toFixed(2)})`;ctx.beginPath();ctx.arc(cx-40+i*40,py+ph*0.58,10,0,7);ctx.fill();}
       ctx.restore();
     }
-
-    kinetic(ctx, [{t: flip ? "Rakip zaten burada." : "Rakip bekliyorsun.", size:80}],
-      {y:H*0.14, t: flip ? t-3000 : t});
-  },
-
-  /* Hoş geldin hediyesi: jetonlar dökülür, sayaç 0 → 100. */
-  giftRain(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#141026");
-    drawCoinRain(ctx, t, dur - 900);
-
-    const k = Math.min(1, Math.max(0, (t-700)/2200));
-    const n = Math.round(k * 100);
-    ctx.save();
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    // Sayaç
-    ctx.fillStyle = C.gold;
-    ctx.shadowColor = C.gold; ctx.shadowBlur = 50;
-    ctx.font = "700 250px 'Space Grotesk', sans-serif";
-    ctx.fillText(String(n), W/2, H*0.56);
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = C.goldLite;
-    ctx.font = "700 54px 'JetBrains Mono', monospace";
-    ctx.fillText("JETON", W/2, H*0.56 + 170);
-    ctx.restore();
-
-    kinetic(ctx, [
-      {t:"Hoş geldin hediyesi", size:74, c:C.white},
-    ], {y:H*0.16, t});
-    if(t > 2600) telemetry(ctx, "HESABINA YÜKLENDİ", H*0.80, C.green);
-  },
-
-  /* Takıldın mı: boş kategori → Harf Al → harfler açılır. */
-  hintBuy(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#100D22");
-    const word = "KEKİK";
-    const shown = Math.max(0, Math.min(word.length, Math.floor((t-1800)/420)));
-
-    // Kategori kartı
-    ctx.save();
-    ctx.translate(W/2, H*0.42);
-    rr(ctx, -400, -150, 800, 300, 36);
-    ctx.fillStyle = "rgba(240,194,75,.08)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(240,194,75,.45)"; ctx.lineWidth = 4; ctx.stroke();
-    ctx.textAlign = "left";
-    ctx.fillStyle = C.muted;
-    ctx.font = "700 30px 'JetBrains Mono', monospace";
-    ctx.fillText("BİTKİ", -340, -70);
-    // Harf kutuları
-    for(let i=0;i<word.length;i++){
-      const bx = -340 + i*136;
-      rr(ctx, bx, -10, 116, 116, 22);
-      ctx.fillStyle = i < shown ? "rgba(240,194,75,.20)" : "rgba(238,241,255,.05)";
-      ctx.fill();
-      ctx.strokeStyle = i < shown ? C.gold : "rgba(238,241,255,.14)";
-      ctx.lineWidth = 3; ctx.stroke();
-      if(i < shown){
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillStyle = C.goldLite;
-        ctx.font = "700 62px 'Space Grotesk', sans-serif";
-        ctx.fillText(word[i], bx+58, 50);
-        ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
-      }
+    if(lp>=0.48){
+      const e=eOutBack(inv(lp,0.48,0.26));
+      ctx.save();ctx.translate(cx,py+ph*0.50);ctx.scale(e,e);
+      ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.font="170px Inter, sans-serif";ctx.fillText("🤖",0,-220);
+      ctx.fillStyle="#EAF2FF";ctx.font="400 74px Anton, sans-serif";ctx.fillText("ÇEVRİMDIŞI MOD",0,-60);
+      ctx.fillStyle="#8FA3C4";ctx.font="600 33px Inter, sans-serif";ctx.fillText("internet yok — bota karşı oyna",0,6);
+      rr(ctx,-250,72,500,108,54);ctx.fillStyle="#5AC8FA";ctx.fill();
+      ctx.fillStyle="#04121E";ctx.font="800 42px Inter, sans-serif";ctx.fillText("MAÇI BAŞLAT",0,127);
+      ctx.restore();
     }
-    ctx.restore();
-
-    // "Harf Al · 15" düğmesi ve basılma anı
-    const pressed = t > 1500 && t < 2100;
-    ctx.save();
-    ctx.translate(W/2, H*0.66);
-    ctx.scale(pressed ? 0.94 : 1, pressed ? 0.94 : 1);
-    rr(ctx, -260, -60, 520, 120, 34);
-    ctx.fillStyle = pressed ? C.gold : "rgba(240,194,75,.16)";
-    ctx.fill();
-    ctx.strokeStyle = C.gold; ctx.lineWidth = 4; ctx.stroke();
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillStyle = pressed ? "#2A1D00" : C.gold;
-    ctx.font = "700 46px 'Space Grotesk', sans-serif";
-    ctx.fillText("Harf Al", -40, 0);
-    ctx.restore();
-    drawCoin(ctx, {x: W/2 + 120, y: H*0.66, r: 40, spin: t/300});
-    ctx.save();
-    ctx.textAlign = "left"; ctx.textBaseline = "middle";
-    ctx.fillStyle = C.goldLite;
-    ctx.font = "700 44px 'Space Grotesk', sans-serif";
-    ctx.fillText("15", W/2 + 168, H*0.66);
-    ctx.restore();
-
-    kinetic(ctx, [{t:"Kelime gelmiyor mu?", size:80}], {y:H*0.15, t});
-    if(shown >= word.length) telemetry(ctx, "PUANIN DÜŞMEZ", H*0.84, C.green);
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.60,0.3);handText(ctx,sc.sub,R.W/2,py+ph+130,50,P.sub,"center");ctx.restore();}
   },
 
-  /* Wordle ipucu: 5×5 tahta, bir harf jetonla altına dönüyor. */
-  wordleHint(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0E1030");
-    const cell = 150, gap = 16, cols = 5, rows = 4;
-    const bw = cols*cell + (cols-1)*gap;
-    const x0 = W/2 - bw/2, y0 = H*0.24;
-    const guesses = [
-      ["K","A","L","E","M"],
-      ["K","E","M","İ","K"],
-    ];
-    const state = [
-      ["correct","absent","absent","present","absent"],
-      ["correct","present","absent","absent","correct"],
-    ];
-    const reveal = t > 2200;
-
-    for(let r=0;r<rows;r++){
-      for(let c=0;c<cols;c++){
-        const x = x0 + c*(cell+gap), y = y0 + r*(cell+gap);
-        rr(ctx, x, y, cell, cell, 20);
-        let fill = "rgba(238,241,255,.04)", stroke = "rgba(238,241,255,.14)", ch = "";
-        if(r < guesses.length){
-          ch = guesses[r][c];
-          const st = state[r][c];
-          fill = st === "correct" ? "rgba(55,211,153,.85)"
-               : st === "present" ? "rgba(255,179,71,.85)" : "rgba(238,241,255,.10)";
-          stroke = fill;
-        }
-        // Jetonla açılan konum: 3. satır, 3. hücre
-        const isHinted = reveal && r === 2 && c === 2;
-        if(isHinted){ fill = "rgba(240,194,75,.22)"; stroke = C.gold; ch = "K"; }
-        ctx.fillStyle = fill; ctx.fill();
-        ctx.strokeStyle = stroke; ctx.lineWidth = 3; ctx.stroke();
-        if(ch){
-          ctx.save();
-          ctx.textAlign="center"; ctx.textBaseline="middle";
-          ctx.fillStyle = isHinted ? C.goldLite : "#fff";
-          ctx.font = "700 78px 'Space Grotesk', sans-serif";
-          ctx.fillText(ch, x+cell/2, y+cell/2+4);
-          ctx.restore();
-        }
-      }
+  /* ── 2) Zorluk seçimi: 5 kart, biri seçiliyor ── */
+  botpick(ctx,R,sc,lp,t){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker||"BOTA KARŞI OYNA",R.W/2,420,52,P.red,-0.02);
+    inkTitle(ctx,"ZORLUK SEÇ",R.W/2,540,86,P.fg,-0.01);ctx.restore();
+    const x=90,w=R.W-180,h=150,gap=20,y0=630;
+    const pick=sc.pick==null?4:sc.pick;
+    const settled=lp>0.62;
+    // seçim imleci kartlar arasında dolaşır, sonra `pick`e oturur
+    const cursor=settled?pick:Math.floor(inv(lp,0.12,0.5)*9)%5;
+    for(let i=0;i<5;i++){
+      levelCard(ctx,R,x,y0+i*(h+gap),w,h,i,i===cursor,inv(lp,0.04+i*0.07,0.3));
     }
-
-    // İpucu düğmesi
-    ctx.save();
-    ctx.translate(W/2, H*0.78);
-    rr(ctx, -330, -58, 660, 116, 32);
-    ctx.fillStyle = reveal ? "rgba(240,194,75,.2)" : "rgba(238,241,255,.06)";
-    ctx.fill();
-    ctx.strokeStyle = reveal ? C.gold : "rgba(238,241,255,.2)"; ctx.lineWidth = 4; ctx.stroke();
-    ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.fillStyle = reveal ? C.gold : C.muted;
-    ctx.font = "700 40px 'Space Grotesk', sans-serif";
-    ctx.fillText("💡 Harfin yeri · 50 jeton", 0, 0);
-    ctx.restore();
-
-    kinetic(ctx, [{t:"Wordle'da tıkandın.", size:78}], {y:H*0.13, t});
+    if(settled){
+      const e=eOutBack(inv(lp,0.66,0.3));
+      ctx.save();ctx.translate(R.W/2,y0+5*(h+gap)+110);ctx.scale(e,e);
+      rr(ctx,-330,-62,660,124,62);ctx.fillStyle="#5BA8E8";ctx.fill();
+      ctx.fillStyle="#04121E";ctx.font="800 46px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText("MAÇI BAŞLAT",0,2);ctx.restore();
+      ctx.save();ctx.globalAlpha=inv(lp,0.74,0.26);
+      handText(ctx,sc.sub||"günde 1 maç bedava · sonrası 25 jeton",R.W/2,y0+5*(h+gap)+230,46,P.sub,"center");ctx.restore();
+    }
   },
 
-  /* Kapanış: telefon merkeze oturur, marka bandı. */
-  outro(ctx, sc, t, dur){
-    drawSpace(ctx, t, "#0C1236");
-    const tx = tex("board", tt=>paintBoard(tt, {
-      letter:"K", rows:BOARD_ROWS, typed:5, mode:"ÇEVRİMDIŞI", botLevel:"Usta",
-    }));
-    const k = Math.min(1, t/800);
-    drawPhone3D(ctx, tx, {
-      rotYv: (1-k)*0.5, y: -90, z: 300*(1-k), scale: 0.95 + k*0.05,
+  /* ── 3) Sen vs Bot: skorlar tırmanır, kazanan damgalanır ── */
+  botrace(ctx,R,sc,lp,t){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker||"TUR 3 · HARF: K",R.W/2,430,50,P.red,-0.02);ctx.restore();
+    // kategori tikleri
+    const cols=["Kerem","Kayseri","Kanguru","Kavun","Kalem"];
+    const bots=["Kaan","Konya","Kartal","Kekik","Kaşık"];
+    const x=90,w=R.W-180,rh=122,y0=590;
+    for(let i=0;i<5;i++){
+      const me=inv(lp,0.06+i*0.075,0.16),bo=inv(lp,0.10+i*0.075,0.16);
+      ctx.save();ctx.globalAlpha=Math.max(me,bo)>0?1:0.25;
+      rr(ctx,x,y0+i*rh,w,rh-14,22);ctx.fillStyle=P.paper?"rgba(255,255,255,.55)":"rgba(255,255,255,.05)";ctx.fill();
+      ctx.lineWidth=2;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.fillStyle=P.sub;ctx.font="800 26px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+      ctx.fillText(CATS[i],x+26,y0+i*rh+38);
+      ctx.font="400 50px 'Patrick Hand', cursive";
+      ctx.fillStyle=me>0.2?P.fg:(P.paper?"rgba(0,0,0,.18)":"rgba(255,255,255,.18)");
+      ctx.fillText(me>0.2?cols[i]:"—",x+26,y0+i*rh+88);
+      ctx.textAlign="right";
+      ctx.fillStyle=bo>0.2?"#5BA8E8":(P.paper?"rgba(0,0,0,.18)":"rgba(255,255,255,.18)");
+      ctx.fillText(bo>0.2?bots[i]:"—",x+w-26,y0+i*rh+88);
+      ctx.restore();
+    }
+    ctx.save();ctx.fillStyle=P.sub;ctx.font="800 24px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+    ctx.fillText("SEN",x+26,y0-24);ctx.textAlign="right";ctx.fillText("BOT · USTA",x+w-26,y0-24);ctx.restore();
+    // skorlar
+    const p=eOutCubic(inv(lp,0.14,0.62));
+    const my=(sc.my||70)*p,bt=(sc.bot||55)*p,max=Math.max(sc.my||70,sc.bot||55);
+    vsRow(ctx,R,x,y0+5*rh+70,w,"SEN","🙂",my,max,P.paper?P.red:(P.hi||"#F5C842"));
+    vsRow(ctx,R,x,y0+5*rh+206,w,"BOT","🤖",bt,max,"#5BA8E8");
+    if(lp>0.80){const e=eOutBack(inv(lp,0.80,0.2));
+      ctx.save();ctx.translate(R.W/2,y0+5*rh+366);ctx.rotate(-0.08);ctx.scale(e,e);
+      const label=sc.win===false?"BOT KAZANDI":"SEN KAZANDIN";
+      const col=sc.win===false?"#5BA8E8":"#2f9e57";
+      ctx.font="400 78px Anton, sans-serif";const tw=ctx.measureText(label).width;
+      rr(ctx,-tw/2-42,-76,tw+84,140,18);ctx.lineWidth=9;ctx.strokeStyle=col;ctx.stroke();
+      ctx.fillStyle=col;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(label,0,-6);ctx.restore();}
+  },
+
+  /* ── 4) Kelime Al: boş kategori + süre + jetonla dolduruyor ── */
+  hintbuy(ctx,R,sc,lp,t){const P=R.P;
+    const words=["Kerem","Kayseri","Kanguru","",""];
+    const bought=sc.word||"Kavun";
+    const x=80,w=R.W-160,rh=140,y0=690;
+    // üst bar: harf karosu + süre + bakiye
+    drawTile(ctx,190,520,150,TILEC.gold,"K",-0.04);
+    const left=Math.max(0,18-lp*20);
+    timerRing(ctx,R.W/2,520,72,left,60,P);
+    const bal=lp<0.62?320:320-(sc.price||50);
+    coinPill(ctx,R.W-80,520,bal,1);
+    // satırlar
+    for(let i=0;i<5;i++){
+      const filled=i<3?words[i]:"";
+      const hot=i===3;
+      let show=filled;
+      if(hot&&lp>0.66){const typ=clamp01(inv(lp,0.66,0.2));show=bought.slice(0,Math.round(typ*bought.length));}
+      catRow(ctx,R,x,y0+i*rh,w,rh-16,CATS[i],show,{hot:hot&&lp<0.88,caret:hot&&lp>0.66&&lp<0.88,
+        badge:hot&&lp>0.86?"jeton kullanıldı":null});
+    }
+    // "aklıma gelmiyor" el yazısı
+    if(lp<0.44){ctx.save();ctx.globalAlpha=inv(lp,0.06,0.18)*(1-clamp01(inv(lp,0.36,0.08)));
+      handText(ctx,"aklıma… hiçbir şey gelmiyor 😵‍💫",R.W/2,y0+5*rh+100,50,P.red,"center");ctx.restore();}
+    // buton
+    if(lp>0.44&&lp<0.72){
+      const pressed=lp>0.60&&lp<0.66;
+      const e=eOutBack(inv(lp,0.44,0.18));
+      ctx.save();ctx.globalAlpha=clamp01(inv(lp,0.44,0.1))*(1-clamp01(inv(lp,0.66,0.06)));
+      ctx.translate(R.W/2,y0+5*rh+80);ctx.scale(e,e);
+      coinBtn(ctx,0,0,660,116,sc.label||"KELİME AL",sc.price||50,pressed);
+      ctx.restore();
+      if(pressed){ // dokunuş halkası
+        ctx.save();ctx.globalAlpha=0.5;ctx.lineWidth=6;ctx.strokeStyle=G_MID;
+        ctx.beginPath();ctx.arc(R.W/2+230,y0+5*rh+80,40+inv(lp,0.60,0.06)*40,0,7);ctx.stroke();ctx.restore();}
+    }
+    if(lp>0.72){ctx.save();ctx.globalAlpha=inv(lp,0.74,0.2);
+      handText(ctx,sc.sub||"jeton puanını DÜŞÜRMEZ — sadece rozet çıkar",R.W/2,y0+5*rh+100,48,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── 5) Wordle'da harf al ── */
+  wordlehint(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker||"5. TAHMİN · SERİ TEHLİKEDE",R.W/2,470,50,P.red,-0.02);ctx.restore();
+    const s=150,rh=s+22,y0=580;
+    const done=sc.rows||[{w:"KALEM",s:"xyxxx"},{w:"SORUN",s:"xxgxx"}];
+    done.forEach((rw,r)=>wRow(ctx,R,rw.w,rw.s,y0+r*rh,s,1,1));
+    // bakiye
+    coinPill(ctx,R.W-80,340,lp<0.55?180:180-(sc.price||25),0.9);
+    // boş satır → ipucu harfi belirir
+    const ry=y0+done.length*rh;
+    const revealed=lp>0.58;
+    const target=sc.reveal||"__R__";
+    const shownWord=revealed?target.replace(/_/g," "):"     ";
+    const ghost=[];target.split("").forEach((c,i)=>{if(c!=="_")ghost.push(i);});
+    wRow(ctx,R,shownWord,"     ",ry,s,revealed?1:0,0,revealed?ghost:null);
+    // buton
+    if(lp>0.28&&lp<0.66){
+      const pressed=lp>0.52&&lp<0.58,e=eOutBack(inv(lp,0.28,0.18));
+      ctx.save();ctx.globalAlpha=clamp01(inv(lp,0.28,0.1))*(1-clamp01(inv(lp,0.60,0.06)));
+      ctx.translate(R.W/2,ry+s+150);ctx.scale(e,e);
+      coinBtn(ctx,0,0,620,112,sc.label||"HARF AL",sc.price||25,pressed);
+      ctx.restore();
+    }
+    // çözüm
+    if(lp>0.68){
+      const typeD=eOutCubic(inv(lp,0.68,0.12)),flipD=inv(lp,0.78,0.16);
+      wRow(ctx,R,sc.answer||"KİRAZ",sc.answerStates||"ggggg",ry+rh,s,typeD,flipD);
+      if(lp>0.93){const e=eOutBack(inv(lp,0.93,0.07));
+        ctx.save();ctx.translate(R.W/2,ry+2*rh+140);ctx.scale(e,e);ctx.rotate(-0.04);
+        markerTitle(ctx,"SERİ KURTULDU 🔥",0,0,66,P.paper?"#2f9e57":"#7BE093",0);ctx.restore();}
+    }
+    if(sc.sub&&lp>0.34){ctx.save();ctx.globalAlpha=inv(lp,0.34,0.2)*(1-clamp01(inv(lp,0.64,0.1)));
+      handText(ctx,sc.sub,R.W/2,ry+s+250,46,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── 6) Hoş geldin hediyesi: jeton yağmuru ── */
+  coingift(ctx,R,sc,lp,t){const P=R.P;
+    coinRain(ctx,R,inv(lp,0,0.75),1-clamp01(inv(lp,0.86,0.14)));
+    ctx.save();ctx.globalAlpha=inv(lp,0.16,0.2);markerTitle(ctx,sc.kicker||"HOŞ GELDİN HEDİYESİ",R.W/2,940,56,P.red,-0.03);ctx.restore();
+    const e=eOutBack(inv(lp,0.24,0.3));
+    ctx.save();ctx.globalAlpha=clamp01(inv(lp,0.24,0.2));ctx.translate(R.W/2,1120);ctx.scale(e,e);
+    ctx.fillStyle=P.fg;ctx.font="400 300px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText(String(sc.n||100),0,0);
+    ctx.fillStyle=P.sub;ctx.font="800 58px Inter, sans-serif";ctx.fillText("JETON",0,150);
+    ctx.restore();
+    if(lp>0.52){ctx.save();ctx.globalAlpha=inv(lp,0.52,0.25);
+      handText(ctx,sc.sub||"doğrulanmış her hesaba, bir kez",R.W/2,1400,52,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── 7) Fiyat listesi — jeton nereye gider ── */
+  pricetable(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker||"JETON NEREYE GİDER?",R.W/2,450,54,P.red,-0.03);ctx.restore();
+    const rows=sc.rows||PRICES;
+    const x=90,w=R.W-180,h=138,gap=18,y0=560;
+    rows.forEach((r,i)=>{
+      const d=inv(lp,0.08+i*0.11,0.3),e=eOutCubic(d);
+      ctx.save();ctx.globalAlpha=d;ctx.translate((1-e)*120,0);
+      const y=y0+i*(h+gap);
+      rr(ctx,x,y,w,h,26);ctx.fillStyle=P.paper?"rgba(255,255,255,.6)":"rgba(255,255,255,.05)";ctx.fill();
+      ctx.lineWidth=2.5;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.font="52px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(r.e,x+34,y+h/2);
+      ctx.fillStyle=P.fg;ctx.font="400 48px Anton, sans-serif";ctx.fillText(r.t,x+112,y+h/2-16);
+      ctx.fillStyle=P.sub;ctx.font="600 26px Inter, sans-serif";ctx.fillText(r.d,x+112,y+h/2+34);
+      ctx.textAlign="right";ctx.fillStyle=G_MID;ctx.font="400 66px Anton, sans-serif";
+      ctx.fillText(r.p,x+w-84,y+h/2-2);
+      coin(ctx,x+w-46,y+h/2,24,0,1);
+      ctx.restore();
     });
-    kinetic(ctx, [
-      {t: sc.line1 || "İnternet yokken bile", size:76},
-      {t: sc.line2 || "oyun cebinde.", c:C.violet, size:76, glow:true},
-    ], {y:H*0.12, t});
-    brandBar(ctx, t-600);
+    if(sc.sub){ctx.save();ctx.globalAlpha=inv(lp,0.66,0.3);
+      handText(ctx,sc.sub,R.W/2,y0+rows.length*(h+gap)+80,46,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── 8) Puan düşmez: skor tablosu + rozet ── */
+  nopenalty(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,sc.kicker||"EN ÇOK SORULAN",R.W/2,470,52,P.red,-0.02);
+    inkTitle(ctx,"JETON PUANI\nDÜŞÜRÜR MÜ?",R.W/2,600,88,P.fg,-0.01,94);ctx.restore();
+    const x=100,w=R.W-200,h=150,y0=840;
+    const rows=[{n:"Kavun",p:10,badge:false},{n:"Kalem",p:10,badge:true}];
+    rows.forEach((r,i)=>{
+      const d=inv(lp,0.20+i*0.16,0.3);
+      ctx.save();ctx.globalAlpha=d;
+      const y=y0+i*(h+22);
+      rr(ctx,x,y,w,h,26);ctx.fillStyle=P.paper?"rgba(255,255,255,.6)":"rgba(255,255,255,.05)";ctx.fill();
+      ctx.lineWidth=2.5;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.fillStyle=P.sub;ctx.font="800 24px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="alphabetic";
+      ctx.fillText(i===0?"BİTKİ":"EŞYA",x+30,y+44);
+      ctx.fillStyle=P.fg;ctx.font="400 56px 'Patrick Hand', cursive";ctx.fillText(r.n,x+30,y+108);
+      ctx.textAlign="right";ctx.fillStyle=P.paper?"#2f9e57":"#7BE093";ctx.font="400 62px Anton, sans-serif";
+      ctx.fillText("+"+r.p,x+w-34,y+96);
+      if(r.badge&&lp>0.52){
+        ctx.save();ctx.globalAlpha=inv(lp,0.52,0.2);
+        const bl="jeton kullanıldı";ctx.font="800 24px Inter, sans-serif";const bw=ctx.measureText(bl).width+82;
+        rr(ctx,x+260,y+18,bw,50,25);ctx.fillStyle="rgba(240,194,75,.18)";ctx.fill();
+        ctx.lineWidth=2;ctx.strokeStyle="rgba(240,194,75,.55)";ctx.stroke();
+        coin(ctx,x+290,y+43,16,0,1);
+        ctx.fillStyle=G_MID;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(bl,x+314,y+44);ctx.restore();
+      }
+      ctx.restore();
+    });
+    if(lp>0.68){const e=eOutBack(inv(lp,0.68,0.24));
+      ctx.save();ctx.translate(R.W/2,y0+2*(h+22)+150);ctx.scale(e,e);ctx.rotate(-0.05);
+      hlBox(ctx,-320,-58,640,88,P);
+      ctx.fillStyle="#111";ctx.font="900 54px 'Archivo Black', sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText("HAYIR. DÜŞMEZ.",0,-12);ctx.restore();
+      ctx.save();ctx.globalAlpha=inv(lp,0.80,0.2);
+      handText(ctx,"sadece 'jeton kullanıldı' rozeti görünür",R.W/2,y0+2*(h+22)+280,46,P.sub,"center");ctx.restore();}
+  },
+
+  /* ── 9) Jeton kazanma yolları ── */
+  earn(ctx,R,sc,lp){const P=R.P;
+    ctx.save();ctx.globalAlpha=inv(lp,0,0.15);markerTitle(ctx,"JETON NASIL KAZANILIR?",R.W/2,470,54,P.red,-0.03);ctx.restore();
+    const rows=[
+      {e:"🎁",t:"HOŞ GELDİN",d:"doğrulanmış hesaba, bir kez",p:"+100"},
+      {e:"📺",t:"REKLAM İZLE",d:"günde 10 defaya kadar",p:"+5"},
+      {e:"🚫",t:"REKLAMSIZ ÜRÜNÜ",d:"her gün otomatik",p:"+25"},
+      {e:"🛒",t:"JETON PAKETİ",d:"200 · 600 · 1.500 · 4.000",p:"₺"},
+    ];
+    const x=90,w=R.W-180,h=150,gap=20,y0=580;
+    rows.forEach((r,i)=>{
+      const d=inv(lp,0.10+i*0.13,0.3),e=eOutCubic(d);
+      ctx.save();ctx.globalAlpha=d;ctx.translate((1-e)*-120,0);
+      const y=y0+i*(h+gap);
+      rr(ctx,x,y,w,h,26);ctx.fillStyle=P.paper?"rgba(255,255,255,.6)":"rgba(255,255,255,.05)";ctx.fill();
+      ctx.lineWidth=2.5;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.font="56px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(r.e,x+34,y+h/2);
+      ctx.fillStyle=P.fg;ctx.font="400 48px Anton, sans-serif";ctx.fillText(r.t,x+120,y+h/2-18);
+      ctx.fillStyle=P.sub;ctx.font="600 26px Inter, sans-serif";ctx.fillText(r.d,x+120,y+h/2+34);
+      ctx.textAlign="right";ctx.fillStyle=G_MID;ctx.font="400 64px Anton, sans-serif";ctx.fillText(r.p,x+w-40,y+h/2-2);
+      ctx.restore();
+    });
+    ctx.save();ctx.globalAlpha=inv(lp,0.66,0.3);
+    handText(ctx,"tek kuruş harcamadan da birikir",R.W/2,y0+4*(h+gap)+80,48,P.sub,"center");ctx.restore();
   },
 };
 
-/* ===================================================================
-   5) Reels tanımları
-   =================================================================== */
-const REELS = [
-  {
-    id:1, title:"Tünel", sub:"16 sn · sinyal ölür, oyun açılır",
-    scenes:[
-      {type:"signalDrop", dur:5200},
-      {type:"boardWrite", dur:6200},
-      {type:"outro", dur:4600, line1:"Şebeke bitti.", line2:"Oyun bitmedi."},
-    ],
-    caption:"Metroda sinyal yok, oyun var 🚇\nBota karşı çevrimdışı oyna — İsim Şehir.",
-    tags:"#isimşehir #kelimeoyunu #çevrimdışı #metro #mobiloyun",
-  },
-  {
-    id:2, title:"Uçuş modu", sub:"15 sn · uçakta da oynanır",
-    scenes:[
-      {type:"airplane", dur:5000},
-      {type:"boardWrite", dur:6000},
-      {type:"outro", dur:4400, line1:"Uçuş modunda bile", line2:"5 kategori, tek harf."},
-    ],
-    caption:"Uçuş modu açık, oyun açık ✈️\nİsim Şehir'i internetsiz oyna.",
-    tags:"#isimşehir #uçuşmodu #çevrimdışı #kelimeoyunu #seyahat",
-  },
-  {
-    id:4, title:"Sen vs Bot", sub:"14 sn · kafa kafaya",
-    scenes:[
-      {type:"duel", dur:5200},
-      {type:"boardWrite", dur:5200},
-      {type:"outro", dur:4200, line1:"Rakip her zaman hazır.", line2:"İnternet gerekmez."},
-    ],
-    caption:"Sen mi bot mu? 🤖\n5 zorluk, internetsiz oynanır — İsim Şehir.",
-    tags:"#isimşehir #botakarşı #kelimeoyunu #mobiloyun #çevrimdışı",
-  },
-  {
-    id:5, title:"Bekleme yok", sub:"13 sn · oda dolmasını bekleme",
-    scenes:[
-      {type:"noWait", dur:5000},
-      {type:"boardWrite", dur:4600},
-      {type:"outro", dur:4000, line1:"Oda dolsun diye", line2:"beklemek yok."},
-    ],
-    caption:"Oda dolmasını bekleme ⏳\nBota karşı bas oyna — istediğin an, internetsiz.",
-    tags:"#isimşehir #botakarşı #kelimeoyunu #hemenoyna",
-  },
-  {
-    id:6, title:"100 jeton hediye", sub:"13 sn · yeni sürüm hediyesi",
-    scenes:[
-      {type:"giftRain", dur:5200},
-      {type:"hintBuy", dur:4600},
-      {type:"outro", dur:3600, line1:"Başlangıç bizden.", line2:"100 jeton hediye."},
-    ],
-    caption:"Yeni sürümde herkese 100 jeton hediye 🪙\nHarf al, ipucu aç, bota karşı maç yap.",
-    tags:"#isimşehir #hediye #kelimeoyunu #mobiloyun",
-  },
-  {
-    id:7, title:"Takıldın mı?", sub:"13 sn · Harf Al / Kelime Al",
-    scenes:[
-      {type:"hintBuy", dur:5400},
-      {type:"boardWrite", dur:4200},
-      {type:"outro", dur:3600, line1:"Jeton puanını düşürmez.", line2:"Sadece yardım eder."},
-    ],
-    caption:"Kelime aklına gelmiyorsa harf al 🪙\nHarf Al 15, Kelime Al 50 jeton — puanın düşmez.",
-    tags:"#isimşehir #kelimeoyunu #ipucu #mobiloyun",
-  },
-  {
-    id:8, title:"Wordle ipucu", sub:"12 sn · günün kelimesi",
-    scenes:[
-      {type:"wordleHint", dur:5200},
-      {type:"giftRain", dur:3400},
-      {type:"outro", dur:3400, line1:"Günün kelimesinde", line2:"tıkanmak yok."},
-    ],
-    caption:"Günün kelimesinde tıkandıysan ipucu var 💡\nHarf 25, harfin yeri 50 jeton.",
-    tags:"#isimşehir #wordle #gününkelimesi #kelimeoyunu",
-  },
-  {
-    id:3, title:"Rakip hazır", sub:"14 sn · 5 zorluk seviyesi",
-    scenes:[
-      {type:"cubes", dur:4800},
-      {type:"difficulty", dur:5000},
-      {type:"outro", dur:4400, line1:"Rakip beklemek yok.", line2:"Bot hep hazır."},
-    ],
-    caption:"Oda dolsun diye beklemek yok 🤖\n5 zorluk, internetsiz oynanır.",
-    tags:"#isimşehir #bot #kelimeoyunu #mobiloyun #çevrimdışı",
-  },
+/* ══════════════════ GÖRSEL renderer'ları ══════════════════ */
+const PRICES=[
+  {e:"🔤",t:"HARF AL",d:"İsim Şehir · kelimenin harfleri açılır",p:"15"},
+  {e:"📝",t:"KELİME AL",d:"İsim Şehir · kategoriyi doldurur",p:"50"},
+  {e:"🟩",t:"WORDLE · HARF",d:"kelimede geçen bir harf",p:"25"},
+  {e:"📍",t:"WORDLE · HARFİN YERİ",d:"harf + tam konumu",p:"50"},
+  {e:"🤖",t:"BOT MAÇI",d:"günde 1 maç bedava, sonrası",p:"25"},
 ];
 
-/* ===================================================================
-   6) Gönderi görselleri (statik)
-   =================================================================== */
-const POSTS = [
-  {
-    id:101, w:1080, h:1350, cls:"p", title:"Instagram · dikey",
-    caption:"İnternet yokken de oyun var. İsim Şehir'i çevrimdışı, bota karşı oyna.",
-    tags:"#isimşehir #çevrimdışı #kelimeoyunu",
-    draw(ctx, w, h){
-      const t = 1200;
-      const sc = h/H;
-      ctx.save(); ctx.scale(w/W, w/W);
-      drawSpace(ctx, t, "#0B1030");
-      ctx.restore();
-      // Telefon
-      ctx.save();
-      ctx.translate(w/2 - W/2*(w/W), h*0.50 - H/2*(w/W));
-      ctx.scale(w/W, w/W);
-      const tx = tex("board", tt=>paintBoard(tt, {letter:"K", rows:BOARD_ROWS, typed:5, mode:"ÇEVRİMDIŞI"}));
-      drawPhone3D(ctx, tx, { rotYv:-0.34, rotXv:-0.05, y:120, z:60, scale:1.0 });
-      ctx.restore();
-      // Başlık
-      ctx.save();
-      ctx.textAlign="center";
-      ctx.fillStyle = C.amber;
-      ctx.font = "700 30px 'JetBrains Mono', monospace";
-      ctx.fillText("SİNYAL: YOK", w/2, 130);
-      ctx.fillStyle = C.white;
-      let s = fitText(ctx, "Şebeke bitti.", w-140, 700, "'Space Grotesk', sans-serif", 96);
-      ctx.font = `700 ${s}px 'Space Grotesk', sans-serif`;
-      ctx.fillText("Şebeke bitti.", w/2, 232);
-      ctx.fillStyle = C.violet;
-      ctx.font = `700 ${s}px 'Space Grotesk', sans-serif`;
-      ctx.fillText("Oyun bitmedi.", w/2, 232 + s*1.05);
-      ctx.fillStyle = C.muted;
-      ctx.font = "600 30px 'Inter', sans-serif";
-      ctx.fillText("Bota karşı çevrimdışı oyna · 5 zorluk", w/2, h-96);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 40px 'Space Grotesk', sans-serif";
-      ctx.fillText("İSİM ŞEHİR", w/2, h-146);
-      ctx.restore();
-    },
-  },
-  {
-    id:103, w:1080, h:1080, cls:"sq", title:"Instagram · kare",
-    caption:"Rakip beklemek yok: bota karşı, istediğin an, internetsiz oyna.",
-    tags:"#isimşehir #botakarşı #kelimeoyunu",
-    draw(ctx, w, h){
-      ctx.save(); ctx.scale(w/W, w/W); drawSpace(ctx, 1400, "#0C1236"); ctx.restore();
-      const cx = w/2;
-      // Sen vs Bot rozetleri
-      const badge = (x, label, sub, isBot) => {
-        ctx.save();
-        ctx.translate(x, h*0.46);
-        ctx.beginPath(); ctx.arc(0, -40, 96, 0, 7);
-        ctx.fillStyle = isBot ? C.violet : C.cyan;
-        ctx.shadowColor = isBot ? C.violet : C.cyan; ctx.shadowBlur = 50;
-        ctx.fill(); ctx.shadowBlur = 0;
-        ctx.fillStyle = "#0B1030";
-        if(isBot){
-          ctx.beginPath(); ctx.arc(-32, -52, 17, 0, 7); ctx.fill();
-          ctx.beginPath(); ctx.arc(32, -52, 17, 0, 7); ctx.fill();
-          ctx.strokeStyle = "#0B1030"; ctx.lineWidth = 9;
-          ctx.beginPath(); ctx.moveTo(0, -136); ctx.lineTo(0, -172); ctx.stroke();
-        } else {
-          ctx.textAlign = "center"; ctx.textBaseline = "middle";
-          ctx.font = "700 88px 'Space Grotesk', sans-serif";
-          ctx.fillText("S", 0, -38);
-        }
-        ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-        ctx.fillStyle = C.white;
-        ctx.font = "700 44px 'Space Grotesk', sans-serif";
-        ctx.fillText(label, 0, 110);
-        ctx.fillStyle = C.muted;
-        ctx.font = "700 24px 'JetBrains Mono', monospace";
-        ctx.fillText(sub, 0, 152);
-        ctx.restore();
-      };
-      badge(cx - 220, "SEN", "her an", false);
-      badge(cx + 220, "BOT", "5 zorluk", true);
+const IMAGES={
+  /* internet yok posteri */
+  offlineposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"metroda · uçakta · dağ başında",R.W/2,150,48,P.red,-0.02);
+    inkTitle(ctx,"İNTERNET YOK.\nOYUN VAR.",R.W/2,270,92,P.fg,-0.015,98);
+    const pw=560,ph=640,px=R.W/2-pw/2,py=470;
+    phone(ctx,px,py,pw,ph);
+    statusBar(ctx,px,py+48,pw,{bars:0,air:true,time:"09:41"});
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.font="130px Inter, sans-serif";ctx.fillText("🤖",px+pw/2,py+230);
+    ctx.fillStyle="#EAF2FF";ctx.font="400 54px Anton, sans-serif";ctx.fillText("ÇEVRİMDIŞI MOD",px+pw/2,py+350);
+    ctx.fillStyle="#8FA3C4";ctx.font="600 26px Inter, sans-serif";ctx.fillText("bota karşı oyna — bağlantı gerekmez",px+pw/2,py+400);
+    rr(ctx,px+pw/2-190,py+460,380,88,44);ctx.fillStyle="#5AC8FA";ctx.fill();
+    ctx.fillStyle="#04121E";ctx.font="800 34px Inter, sans-serif";ctx.fillText("MAÇI BAŞLAT",px+pw/2,py+505);
+    handText(ctx,d.foot||"jetonun kuyruğa yazılır, bağlanınca düşer 👌",R.W/2,R.H-170,48,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);},
 
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.amber;
-      ctx.font = "700 62px 'Space Grotesk', sans-serif";
-      ctx.fillText("VS", cx, h*0.46 - 20);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 76px 'Space Grotesk', sans-serif";
-      ctx.fillText("Bota karşı oyna.", cx, 190);
-      ctx.fillStyle = C.violet;
-      ctx.font = "700 42px 'JetBrains Mono', monospace";
-      ctx.fillText("İNTERNET GEREKMEZ", cx, 258);
-      ctx.fillStyle = C.muted;
-      ctx.font = "600 32px 'Inter', sans-serif";
-      ctx.fillText("Oda dolsun diye beklemek yok", cx, h-140);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 44px 'Space Grotesk', sans-serif";
-      ctx.fillText("İSİM ŞEHİR", cx, h-80);
-      ctx.restore();
-    },
-  },
-  {
-    id:104, w:1080, h:1920, cls:"v", title:"Story / TikTok kapak",
-    caption:"Metroda, uçakta, sinyalsiz köyde — bota karşı oynamaya devam.",
-    tags:"#isimşehir #çevrimdışı #botakarşı",
-    draw(ctx, w, h){
-      drawSpace(ctx, 2100, "#0B1030");
-      const tx = tex("board", tt=>paintBoard(tt, {
-        letter:"K", rows:BOARD_ROWS, typed:4, mode:"ÇEVRİMDIŞI", botLevel:"İyi",
-      }));
-      drawPhone3D(ctx, tx, { rotYv:-0.30, rotXv:-0.05, y:150, z:80, scale:1.02 });
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.amber;
-      ctx.font = "700 34px 'JetBrains Mono', monospace";
-      ctx.fillText("SİNYAL: YOK · RAKİP: BOT", w/2, 200);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 104px 'Space Grotesk', sans-serif";
-      ctx.fillText("Şebeke bitti.", w/2, 320);
-      ctx.fillStyle = C.violet;
-      ctx.font = "700 104px 'Space Grotesk', sans-serif";
-      ctx.fillText("Oyun bitmedi.", w/2, 430);
-      ctx.fillStyle = C.muted;
-      ctx.font = "600 36px 'Inter', sans-serif";
-      ctx.fillText("Bota karşı · 5 zorluk · internetsiz", w/2, h-190);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 58px 'Space Grotesk', sans-serif";
-      ctx.fillText("İSİM ŞEHİR", w/2, h-120);
-      ctx.restore();
-    },
-  },
-  {
-    id:105, w:1080, h:1350, cls:"p", title:"Jeton ekonomisi · dikey",
-    caption:"Jeton nasıl kazanılır, nereye harcanır? Hepsi tek karede.",
-    tags:"#isimşehir #jeton #kelimeoyunu",
-    draw(ctx, w, h){
-      ctx.save(); ctx.scale(w/W, w/W); drawSpace(ctx, 600, "#141026"); ctx.restore();
+  /* 5 zorluk posteri */
+  botposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"rakip beklemek yok",R.W/2,150,50,P.red,-0.02);
+    inkTitle(ctx,"BOTA KARŞI OYNA",R.W/2,270,86,P.fg,-0.015);
+    const x=80,w=R.W-160,h=134,gap=16,y0=340;
+    for(let i=0;i<5;i++)levelCard(ctx,R,x,y0+i*(h+gap),w,h,i,i===(d.sel==null?4:d.sel));
+    handText(ctx,d.foot||"günde 1 maç bedava · sonrası 25 jeton",R.W/2,R.H-170,50,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);},
 
-      // Fiş/defter dili: mono sayılar, ince ayraçlar. Diğer görsellerdeki
-      // ortalanmış kinetik başlıktan bilerek farklı — bu bir tarife.
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.gold;
-      ctx.font = "700 30px 'JetBrains Mono', monospace";
-      ctx.fillText("JETON · NASIL ÇALIŞIR", w/2, 120);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 82px 'Space Grotesk', sans-serif";
-      ctx.fillText("Kazan, harca.", w/2, 210);
-      ctx.restore();
+  /* fiyat listesi posteri */
+  priceposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    tape(ctx,R.W/2,60,240,-0.03);
+    markerTitle(ctx,d.kicker||"jetonun tarifesi",R.W/2,160,48,P.red,-0.03);
+    inkTitle(ctx,"JETON NEREYE GİDER?",R.W/2,270,74,P.fg,-0.01);
+    const x=80,w=R.W-160,h=134,gap=16,y0=330;
+    PRICES.forEach((r,i)=>{const y=y0+i*(h+gap);
+      rr(ctx,x,y,w,h,26);ctx.fillStyle=P.paper?"rgba(255,255,255,.62)":"rgba(255,255,255,.05)";ctx.fill();
+      ctx.lineWidth=2.5;ctx.strokeStyle=P.paper?"rgba(0,0,0,.12)":"rgba(255,255,255,.12)";ctx.stroke();
+      ctx.font="48px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(r.e,x+30,y+h/2);
+      ctx.fillStyle=P.fg;ctx.font="400 44px Anton, sans-serif";ctx.fillText(r.t,x+104,y+h/2-16);
+      ctx.fillStyle=P.sub;ctx.font="600 24px Inter, sans-serif";ctx.fillText(r.d,x+104,y+h/2+30);
+      ctx.textAlign="right";ctx.fillStyle=G_MID;ctx.font="400 60px Anton, sans-serif";ctx.fillText(r.p,x+w-76,y+h/2-2);
+      coin(ctx,x+w-42,y+h/2,22,0,1);});
+    handText(ctx,d.foot||"harf fiyatı aynı turda ikinci kategoride artar",R.W/2,R.H-172,44,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);},
 
-      drawCoin(ctx, {x: w/2, y: 320, r: 74, spin: 0.5});
+  /* 100 jeton hediye posteri */
+  giftposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    for(let i=0;i<9;i++){const s=seeded(i*7.3);coin(ctx,90+s*900,120+seeded(i*3.1)*140,26+seeded(i*5.5)*18,i*1.1,0.9);}
+    markerTitle(ctx,d.kicker||"hoş geldin hediyesi",R.W/2,360,54,P.red,-0.03);
+    ctx.fillStyle=P.fg;ctx.font="400 290px Anton, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("100",R.W/2,560);
+    ctx.fillStyle=P.sub;ctx.font="800 54px Inter, sans-serif";ctx.fillText("JETON",R.W/2,700);
+    circleScribble(ctx,R.W/2,580,620,320,P.paper?P.red:(P.hi||"#F5C842"));
+    const opts=["📺  reklam izle → +5 (günde 10)","🚫  Reklamsız ürünü → her gün +25","🛒  jeton paketi → 200'den başlar"];
+    ctx.textAlign="center";ctx.textBaseline="alphabetic";
+    opts.forEach((o,i)=>{ctx.fillStyle=P.fg;ctx.font="700 36px Inter, sans-serif";ctx.fillText(o,R.W/2,880+i*66);});
+    handText(ctx,d.foot||"harcamadan da birikir 🙂",R.W/2,R.H-172,50,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);},
 
-      const line = (y, label, val, tint) => {
-        ctx.save();
-        ctx.strokeStyle = "rgba(238,241,255,.10)"; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(90, y+26); ctx.lineTo(w-90, y+26); ctx.stroke();
-        ctx.textAlign = "left";
-        ctx.fillStyle = C.white;
-        ctx.font = "600 34px 'Inter', sans-serif";
-        ctx.fillText(label, 90, y);
-        ctx.textAlign = "right";
-        ctx.fillStyle = tint || C.gold;
-        ctx.font = "700 34px 'JetBrains Mono', monospace";
-        ctx.fillText(val, w-90, y);
-        ctx.restore();
-      };
+  /* Kelime Al: önce/sonra */
+  hintposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"POV: kategori boş, süre bitiyor",R.W/2,150,46,P.red,-0.02);
+    inkTitle(ctx,"AKLINA GELMİYOR MU?",R.W/2,260,68,P.fg,-0.01);
+    const x=80,w=R.W-160,h=104,gap=12,y0=312;
+    const before=["Kerem","Kayseri","Kanguru",""];
+    before.forEach((wd,i)=>catRow(ctx,R,x,y0+i*(h+gap),w,h,CATS[i],wd,{hot:i===3}));
+    const by=y0+4*(h+gap)+16;
+    coinBtn(ctx,R.W/2,by+56,620,108,"KELİME AL",50);
+    ctx.fillStyle=P.sub;ctx.font="800 40px Inter, sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("↓",R.W/2,by+140);
+    catRow(ctx,R,x,by+172,w,h,"BİTKİ","Kavun",{badge:"jeton kullanıldı"});
+    handText(ctx,d.foot||"puanın düşmez — sadece rozet görünür",R.W/2,R.H-190,48,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);},
 
-      ctx.save();
-      ctx.textAlign="left"; ctx.fillStyle = C.green;
-      ctx.font = "700 26px 'JetBrains Mono', monospace";
-      ctx.fillText("KAZAN", 90, 470); ctx.restore();
-      line(530, "Hoş geldin hediyesi", "+100", C.green);
-      line(600, "Reklam izle (günde 10)", "+5", C.green);
-      line(670, "Reklamsız · her gün", "+25", C.green);
+  /* Wordle ipucu posteri */
+  wordlehintposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    markerTitle(ctx,d.kicker||"5. tahmin · seri tehlikede",R.W/2,150,48,P.red,-0.02);
+    inkTitle(ctx,"WORDLE'DA TIKANDIN MI?",R.W/2,258,64,P.fg,-0.01);
+    const s=118,rh=s+18,y0=300;
+    const rows=d.rows||[{w:"KALEM",s:"xyxxx"},{w:"SORUN",s:"xxgxx"}];
+    rows.forEach((rw,r)=>wRow(ctx,R,rw.w,rw.s,y0+r*rh,s,1,1));
+    wRow(ctx,R,"  R  ","     ",y0+rows.length*rh,s,1,0,[2]);
+    const by=y0+rows.length*rh+s+52;
+    coinBtn(ctx,R.W/2-262,by,500,100,"HARF AL",25);
+    coinBtn(ctx,R.W/2+262,by,500,100,"HARFİN YERİ",50);
+    wRow(ctx,R,"KİRAZ","ggggg",by+108,s,1,1);
+    handText(ctx,d.foot||"seri bozulmasın diye 25 jeton verilir mi? verilir.",R.W/2,R.H-186,46,P.sub,"center");
+    brandChip(ctx,R);handleFoot(ctx,R);},
 
-      ctx.save();
-      ctx.textAlign="left"; ctx.fillStyle = C.amber;
-      ctx.font = "700 26px 'JetBrains Mono', monospace";
-      ctx.fillText("HARCA", 90, 790); ctx.restore();
-      line(850, "Harf Al", "−15");
-      line(920, "Kelime Al", "−50");
-      line(990, "Wordle · harf", "−25");
-      line(1060, "Wordle · harfin yeri", "−50");
-      line(1130, "Bot maçı (günde 1 bedava)", "−25");
+  /* çevrimdışı + bot birleşik duyuru */
+  featureposter(ctx,R,d){const P=R.P;bgFor(ctx,R,0);
+    inkTitle(ctx,"3.0.0 GELDİ",R.W/2,180,92,P.fg,-0.02);
+    handText(ctx,d.sub||"üç yeni şey — hepsi uygulamanın içinde",R.W/2,248,42,P.sub,"center");
+    const items=[
+      {e:"🤖",t:"BOTA KARŞI OYNA",d:"5 zorluk · günde 1 maç bedava"},
+      {e:"✈️",t:"ÇEVRİMDIŞI MOD",d:"internet yokken de oynanır"},
+      {e:"🪙",t:"JETONLAR",d:"kelime al · harf al · Wordle ipucu"},
+    ];
+    const x=80,w=R.W-160,h=250,gap=24,y0=320;
+    items.forEach((it,i)=>{const y=y0+i*(h+gap);
+      rr(ctx,x,y,w,h,32);ctx.fillStyle=P.paper?"rgba(255,255,255,.6)":"rgba(255,255,255,.05)";ctx.fill();
+      ctx.lineWidth=3;ctx.strokeStyle=P.paper?"rgba(0,0,0,.13)":"rgba(255,255,255,.13)";ctx.stroke();
+      ctx.font="110px Inter, sans-serif";ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(it.e,x+44,y+h/2);
+      ctx.fillStyle=P.fg;ctx.font="400 58px Anton, sans-serif";ctx.fillText(it.t,x+190,y+h/2-22);
+      ctx.fillStyle=P.sub;ctx.font="600 30px Inter, sans-serif";ctx.fillText(it.d,x+190,y+h/2+38);});
+    storeSticker(ctx,R,R.H-210,0.86);
+    brandChip(ctx,R);handleFoot(ctx,R);},
+};
 
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.muted;
-      ctx.font = "600 26px 'Inter', sans-serif";
-      ctx.fillText("Jeton puanını düşürmez — sadece yardım eder.", w/2, h-96);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 40px 'Space Grotesk', sans-serif";
-      ctx.fillText("İSİM ŞEHİR", w/2, h-46);
-      ctx.restore();
-    },
-  },
-  {
-    id:106, w:1080, h:1080, cls:"sq", title:"100 jeton hediye · kare",
-    caption:"Yeni sürümde herkese 100 jeton hediye. Denemek bizden.",
-    tags:"#isimşehir #hediye #jeton",
-    draw(ctx, w, h){
-      ctx.save(); ctx.scale(w/W, w/W); drawSpace(ctx, 300, "#141026"); ctx.restore();
-      for(let i=0;i<7;i++){
-        drawCoin(ctx, {
-          x: 120 + (i*143) % (w-240), y: 150 + ((i*211) % (h-380)),
-          r: 26 + (i%3)*10, spin: i*0.9, alpha: 0.35,
-        });
-      }
-      drawCoin(ctx, {x: w/2, y: h*0.44, r: 190, spin: 0.35, label:"100"});
-      ctx.save();
-      ctx.textAlign = "center";
-      ctx.fillStyle = C.gold;
-      ctx.font = "700 30px 'JetBrains Mono', monospace";
-      ctx.fillText("YENİ SÜRÜM HEDİYESİ", w/2, 130);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 78px 'Space Grotesk', sans-serif";
-      ctx.fillText("100 jeton hediye", w/2, h-210);
-      ctx.fillStyle = C.muted;
-      ctx.font = "600 32px 'Inter', sans-serif";
-      ctx.fillText("Harf al · Wordle ipucu · bota karşı maç", w/2, h-150);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 42px 'Space Grotesk', sans-serif";
-      ctx.fillText("İSİM ŞEHİR", w/2, h-70);
-      ctx.restore();
-    },
-  },
-  {
-    id:102, w:1600, h:900, cls:"l", title:"X (Twitter) · yatay",
-    caption:"Metroda, uçakta, sinyalsiz köyde: İsim Şehir çevrimdışı oynanır.",
-    tags:"#isimşehir #çevrimdışı #kelimeoyunu",
-    draw(ctx, w, h){
-      ctx.save(); ctx.scale(w/W, h/H); drawSpace(ctx, 900, "#0B1030"); ctx.restore();
-      // Sağda telefon, solda metin — yatayda okuma yönü bunu ister.
-      ctx.save();
-      ctx.translate(w*0.72 - W/2*0.52, h/2 - H/2*0.52);
-      ctx.scale(0.52, 0.52);
-      const tx = tex("board", tt=>paintBoard(tt, {letter:"K", rows:BOARD_ROWS, typed:4, mode:"ÇEVRİMDIŞI"}));
-      drawPhone3D(ctx, tx, { rotYv:0.42, rotXv:-0.04, y:0, z:0, scale:1.35 });
-      ctx.restore();
+/* ══════════════════ ITEMS ══════════════════ */
+const CTA="\n📲 App Store & Google Play'de İsim Şehir Online — güncelle, hepsi içinde";
+const ITEMS=[
+  /* ═══════════════ VİDEOLAR ═══════════════ */
+  {id:1,kind:"video",pal:"air",title:"Sinyal Gitti",sub:"çevrimdışı · POV",
+   caption:"📡 Metroda internet gitti, oyun kapanmadı.\nİsim Şehir'de artık ÇEVRİMDIŞI MOD var: bağlantı yokken bota karşı oynuyorsun. Tünelde, uçakta, dağ başında.\nSen en son nerede internetsiz kaldın? 👇"+CTA,
+   tags:"#isimşehir #çevrimdışı #offline #kelimeoyunu #metro #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"POV:",text:"metroda internet gitti ve umurunda değil",hot:[5],size:74,dur:3800},
+     {type:"signal",kicker:"SİNYAL: YOK",sub:"oyun kapanmıyor — bota karşı devam",dur:8200},
+     {type:"punch",big:"✈️",sub:"uçak modunda bile oynanır",dur:2800},
+     {type:"outro",title:"ÇEVRİMDIŞI\nDENE",sub:"güncelle · İsim Şehir Online",dur:3400}]},
 
-      ctx.save();
-      ctx.textAlign="left";
-      ctx.fillStyle = C.amber;
-      ctx.font = "700 26px 'JetBrains Mono', monospace";
-      ctx.fillText("MOD: ÇEVRİMDIŞI", 92, 250);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 86px 'Space Grotesk', sans-serif";
-      ctx.fillText("Sinyal yok.", 92, 356);
-      ctx.fillStyle = C.violet;
-      ctx.font = "700 86px 'Space Grotesk', sans-serif";
-      ctx.fillText("Oyun var.", 92, 452);
-      ctx.fillStyle = C.muted;
-      ctx.font = "600 30px 'Inter', sans-serif";
-      ctx.fillText("Bota karşı 5 zorluk · rakip beklemeden başla", 92, 528);
-      ctx.fillStyle = C.white;
-      ctx.font = "700 34px 'Space Grotesk', sans-serif";
-      ctx.fillText("İSİM ŞEHİR", 92, h-92);
-      ctx.restore();
-    },
-  },
+  {id:2,kind:"video",pal:"app",title:"Rakip Hazır",sub:"bot · 5 zorluk",
+   caption:"🤖 Oda kurup kimse gelmeyince oyunu kapatıyor muydun? Artık gerek yok.\nBOTA KARŞI OYNA: 5 zorluk — Çaylak'tan Usta'ya. Günde 1 maç bedava, sonrası 25 jeton.\nSence Usta'yı yenebilir misin? 👇"+CTA,
+   tags:"#isimşehir #bot #yapayzeka #kelimeoyunu #yeniözellik #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"ARTIK BEKLEME YOK",text:"rakip mi yok? bot her zaman hazır",hot:[3],size:76,dur:3800},
+     {type:"botpick",kicker:"BOTA KARŞI OYNA",pick:4,sub:"günde 1 maç bedava · sonrası 25 jeton",dur:7600},
+     {type:"botrace",kicker:"TUR 3 · HARF: K",my:78,bot:64,win:true,dur:8600},
+     {type:"outro",title:"USTA'YI\nYEN",sub:"5 zorluk seni bekliyor",dur:3200}]},
+
+  {id:3,kind:"video",pal:"high",paperMode:"graph",title:"Kelime Al",sub:"jeton · kurtarma",
+   caption:"😵‍💫 Süre 8 saniye, BİTKİ kategorisi boş ve aklına tek kelime gelmiyor.\nArtık jetonla KELİME AL (50) ya da HARF AL (15). En güzeli: jeton puanını düşürmüyor — sadece 'jeton kullanıldı' rozeti çıkıyor.\nSen hangi kategoride donup kalıyorsun? 👇"+CTA,
+   tags:"#isimşehir #jeton #ipucu #kelimeoyunu #yeniözellik #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"HERKESİN BAŞINA GELDİ",text:"süre bitiyor ve aklına hiçbir şey gelmiyor",hot:[4],size:70,dur:3800},
+     {type:"hintbuy",label:"KELİME AL",price:50,word:"Kavun",sub:"jeton puanını DÜŞÜRMEZ",dur:9200},
+     {type:"nopenalty",kicker:"EN ÇOK SORULAN",dur:6800},
+     {type:"outro",title:"JETONU\nDENE",sub:"hoş geldin hediyesi: 100 jeton",dur:3200}]},
+
+  {id:4,kind:"video",pal:"ink",paperMode:"graph",title:"Wordle İpucu",sub:"jeton · seri kurtarma",
+   caption:"🟩 5. tahmin, seri tehlikede, hiçbir harf oturmuyor.\nWordle'da artık jetonla harf alabiliyorsun: bir harf 25, harfin tam yeri 50.\nSerini kurtarmak için jeton harcar mıydın, yoksa seriyi feda mı ederdin? 👇"+CTA,
+   tags:"#isimşehir #wordle #türkçewordle #jeton #seri #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"POV:",text:"12 günlük serin tek tahmine kaldı",hot:[2,3],size:74,dur:3600},
+     {type:"wordlehint",kicker:"5. TAHMİN · SERİ TEHLİKEDE",rows:[{w:"KALEM",s:"xyxxx"},{w:"SORUN",s:"xxgxx"}],reveal:"__R__",price:25,answer:"KİRAZ",answerStates:"ggggg",sub:"harf 25 · harfin yeri 50",dur:10500},
+     {type:"punch",big:"🔥",sub:"seri bozulmadı",dur:2600},
+     {type:"outro",title:"SERİNİ\nKORU",sub:"günün kelimesi seni bekliyor",dur:3200}]},
+
+  {id:5,kind:"video",pal:"vault",title:"100 Jeton",sub:"hediye · ekonomi",
+   caption:"🪙 Hesabını doğrula, 100 jeton cebine.\nSonrası da bedava birikiyor: reklam izle +5 (günde 10), Reklamsız ürünü varsa her gün +25.\nİlk 100 jetonu nereye harcarsın — Kelime Al mı, Wordle harfi mi? 👇"+CTA,
+   tags:"#isimşehir #jeton #hediye #ücretsiz #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"coingift",kicker:"HOŞ GELDİN HEDİYESİ",n:100,sub:"doğrulanmış her hesaba, bir kez",dur:6200},
+     {type:"earn",dur:7600},
+     {type:"pricetable",kicker:"NEREYE HARCARSIN?",sub:"karar senin",dur:8200},
+     {type:"outro",title:"100 JETON\nSENİ BEKLİYOR",sub:"güncelle ve al",dur:3400}]},
+
+  {id:6,kind:"video",pal:"riso",paperMode:"graph",title:"Jetonun Tarifesi",sub:"fiyat listesi",
+   caption:"💸 Jeton nereye gider, tam liste:\n🔤 Harf Al 15 · 📝 Kelime Al 50 · 🟩 Wordle harf 25 · 📍 harfin yeri 50 · 🤖 bot maçı 25 (günde 1 bedava).\nSence en çok hangisi işine yarar? 👇"+CTA,
+   tags:"#isimşehir #jeton #fiyat #kelimeoyunu #ipucu #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"ŞEFFAF OLALIM",text:"jeton tam olarak nereye gidiyor",hot:[4],size:76,dur:3600},
+     {type:"pricetable",kicker:"JETON NEREYE GİDER?",sub:"harf fiyatı aynı turda ikinci kategoride artar",dur:9000},
+     {type:"list",title:"AMA ŞUNU BİL",items:["Jeton puanını düşürmez","Sadece 'jeton kullanıldı' rozeti çıkar","Hoş geldin hediyesi: 100 jeton","Reklam izleyerek bedava birikir"],dur:6600},
+     {type:"outro",title:"HESABINI\nAÇ",sub:"100 jetonla başla",dur:3200}]},
+
+  {id:7,kind:"video",pal:"night",title:"Usta'ya Kafa Tut",sub:"bot · meydan okuma",
+   caption:"🤖 İDDİA: 'Usta' seviyesindeki botu yenemezsin. Hepsini dolduruyor, üstelik kimsenin aklına gelmeyen kelimeleri seçiyor.\nKanıtla: skorunun ekran görüntüsünü yoruma at 👇"+CTA,
+   tags:"#isimşehir #bot #meydanokuma #kelimeoyunu #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"İDDİA:",text:"Usta seviyesindeki botu yenemezsin",hot:[1,2],size:74,dur:3600},
+     {type:"botpick",kicker:"ZORLUK: USTA",pick:4,sub:"hepsini doldurur, seyrek kelimeler seçer",dur:7000},
+     {type:"botrace",kicker:"SON TUR · HARF: K",my:64,bot:78,win:false,dur:8600},
+     {type:"punch",big:"😤",sub:"rövanş: hemen bir maç daha",dur:2600},
+     {type:"outro",title:"SEN\nDENE",sub:"skorunu yoruma at",dur:3200}]},
+
+  {id:8,kind:"video",pal:"gold",paperMode:"ruled",title:"Üç Yenilik",sub:"3.0.0 duyuru",
+   caption:"🎉 Güncelleme geldi — üç yeni şey birden:\n🤖 Bota karşı oyna (5 zorluk) · ✈️ Çevrimdışı mod (internetsiz oynanır) · 🪙 Jetonlar (kelime al, harf al, Wordle ipucu).\nHangisini ilk deneyeceksin? 👇"+CTA,
+   tags:"#isimşehir #güncelleme #yeniözellik #bot #çevrimdışı #jeton #keşfet",
+   scenes:[
+     {type:"kinetic",kicker:"GÜNCELLEME",text:"aynı anda üç yeni şey geldi",hot:[3],size:78,dur:3600},
+     {type:"list",title:"3.0.0",items:["Bota karşı oyna — 5 zorluk","Çevrimdışı mod — internet gerekmez","Jetonlar — kelime al, harf al","Wordle ipucu — seri kurtarır"],dur:7200},
+     {type:"signal",kicker:"İNTERNET YOKKEN BİLE",sub:"bota karşı devam",dur:7000},
+     {type:"ctanotif",kicker:"şimdi güncelle",text:"3.0.0 hazır — bot, çevrimdışı mod ve 100 jeton seni bekliyor 🪙",dur:4600}]},
+
+  /* ═══════════════ GÖRSELLER ═══════════════ */
+  {id:11,kind:"image",pal:"air",render:"offlineposter",title:"İnternet Yok",sub:"çevrimdışı duyuru",
+   data:{kicker:"metroda · uçakta · dağ başında",foot:"jetonun kuyruğa yazılır, bağlanınca düşer 👌"},
+   caption:"✈️ İnternet yok. Oyun var.\nÇevrimdışı mod geldi: bağlantı olmadan bota karşı oynuyorsun. Metroda, uçakta, kapsama dışında.\nEn çok nerede internetsiz kalıyorsun? 👇"+CTA,
+   tags:"#isimşehir #çevrimdışı #offline #yeniözellik #keşfet"},
+
+  {id:12,kind:"image",pal:"app",render:"botposter",title:"5 Zorluk",sub:"bot tanıtımı",
+   data:{sel:4,kicker:"rakip beklemek yok",foot:"günde 1 maç bedava · sonrası 25 jeton"},
+   caption:"🤖 Çaylak'tan Usta'ya 5 zorluk. Oda kurup kimseyi beklemeden hemen oyna.\nGünde 1 maç bedava, sonrası 25 jeton.\nHangi seviyede takılıp kalıyorsun? 👇"+CTA,
+   tags:"#isimşehir #bot #yapayzeka #kelimeoyunu #keşfet"},
+
+  {id:13,kind:"image",pal:"gold",paperMode:"ruled",render:"priceposter",title:"Jeton Tarifesi",sub:"fiyat listesi",
+   data:{kicker:"jetonun tarifesi",foot:"harf fiyatı aynı turda ikinci kategoride artar"},
+   caption:"🪙 Jeton nereye gider — tam liste, gizlisi saklısı yok:\n🔤 Harf Al 15 · 📝 Kelime Al 50 · 🟩 Wordle harf 25 · 📍 harfin yeri 50 · 🤖 bot maçı 25.\nSence en çok hangisi işine yarar? 👇"+CTA,
+   tags:"#isimşehir #jeton #ipucu #kelimeoyunu #keşfet"},
+
+  {id:14,kind:"image",pal:"vault",render:"giftposter",title:"100 Jeton Hediye",sub:"kazanma yolları",
+   data:{kicker:"hoş geldin hediyesi",foot:"harcamadan da birikir 🙂"},
+   caption:"🎁 Hesabını doğrula → 100 jeton hediye.\nSonrası bedava birikir: reklam izle +5 (günde 10), Reklamsız ürünü varsa her gün +25.\nİlk 100 jetonu nereye harcarsın? 👇"+CTA,
+   tags:"#isimşehir #jeton #hediye #ücretsiz #keşfet"},
+
+  {id:15,kind:"image",pal:"high",paperMode:"graph",render:"hintposter",title:"Kelime Al",
+   sub:"önce/sonra",
+   data:{kicker:"POV: kategori boş, süre bitiyor",foot:"puanın düşmez — sadece rozet görünür"},
+   caption:"😵‍💫 'Bitki… bitki… B ile bitki…' Süre 6 saniye.\nArtık Kelime Al (50 jeton) var — ve en iyisi: jeton puanını düşürmüyor, sadece 'jeton kullanıldı' rozeti çıkıyor.\nSeni en çok hangi kategori kilitliyor? 👇"+CTA,
+   tags:"#isimşehir #jeton #ipucu #kelimeoyunu #relatable #keşfet"},
+
+  {id:16,kind:"image",pal:"ink",paperMode:"graph",render:"wordlehintposter",title:"Wordle İpucu",sub:"seri kurtarma",
+   data:{kicker:"5. tahmin · seri tehlikede",rows:[{w:"KALEM",s:"xyxxx"},{w:"SORUN",s:"xxgxx"}],foot:"seri bozulmasın diye 25 jeton verilir mi? verilir."},
+   caption:"🟩 Serin 12 gün, 5. tahmindesin ve hiçbir harf oturmuyor.\nWordle'da jetonla harf al (25) ya da harfin tam yerini al (50).\nSeriyi kurtarmak için jeton harcar mıydın? 👇"+CTA,
+   tags:"#isimşehir #wordle #türkçewordle #jeton #seri #keşfet"},
+
+  {id:17,kind:"image",pal:"riso",paperMode:"graph",render:"featureposter",title:"3.0.0 Geldi",sub:"birleşik duyuru",
+   data:{sub:"üç yeni şey — hepsi uygulamanın içinde"},
+   caption:"🎉 Güncelleme: 🤖 bota karşı oyna (5 zorluk) · ✈️ çevrimdışı mod · 🪙 jetonlar.\nKelime aklına gelmiyorsa satın al, Wordle'da tıkandıysan harf al, internet yoksa bota karşı devam et.\nGüncelle, 100 jetonun seni bekliyor 👇"+CTA,
+   tags:"#isimşehir #güncelleme #yeniözellik #bot #çevrimdışı #jeton #keşfet"},
 ];
 
-/* ===================================================================
-   7) Çizim döngüsü
-   =================================================================== */
-function drawReelAt(R, t){
-  const ctx = R.ctx;
-  let acc = 0, sc = R.scenes[0], local = t;
-  for(const s of R.scenes){
-    if(t < acc + s.dur){ sc = s; local = t - acc; break; }
-    acc += s.dur;
-  }
-  ctx.clearRect(0,0,W,H);
-  (SCENES[sc.type] || SCENES.outro)(ctx, sc, local, sc.dur);
-  // Sahne geçişlerinde kısa karartma — kesme yerine nefes.
-  const fade = Math.min(local, sc.dur - local);
-  if(fade < 260){
-    ctx.fillStyle = `rgba(5,6,15,${(1 - fade/260) * 0.85})`;
-    ctx.fillRect(0,0,W,H);
-  }
+/* ══════════════════ motor ══════════════════ */
+function drawItemAt(R,t){const ctx=R.ctx;
+  if(R.kind==="image"){IMAGES[R.render](ctx,R,R.data||{});return;}
+  bgFor(ctx,R,t);
+  let acc=0,sc=null,lp=1;
+  for(const s of R.scenes){if(t<acc+s.dur){sc=s;lp=(t-acc)/s.dur;break;}acc+=s.dur;}
+  if(!sc){sc=R.scenes[R.scenes.length-1];lp=1;}
+  const a=clamp01(Math.min(lp/0.1,(1-lp)/0.1,1));
+  ctx.save();ctx.globalAlpha=a;(SCENES[sc.type]||SCENES.punch)(ctx,R,sc,lp,t);ctx.restore();
+  brandChip(ctx,R);handleFoot(ctx,R);progress(ctx,R,t);
 }
 
-const toastEl = document.getElementById("toast");
-function toast(m){
-  toastEl.textContent = m; toastEl.classList.add("show");
-  clearTimeout(window._tt); window._tt = setTimeout(()=>toastEl.classList.remove("show"), 2300);
-}
+const toastEl=document.getElementById("toast");
+function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(window._tt);window._tt=setTimeout(()=>toastEl.classList.remove("show"),2200);}
 
-function buildAll(){
-  document.getElementById("reels").innerHTML = REELS.map(R=>`
-    <div class="card">
-      <div class="stage v">
-        <canvas id="rc${R.id}" width="${W}" height="${H}"></canvas>
-        <button class="play" onclick="restart(${R.id})" title="Baştan oynat"><span>▶</span></button>
+let curFilter="all";
+function setFilter(f,btn){curFilter=f;document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("on"));btn.classList.add("on");
+  document.querySelectorAll(".gcard").forEach(el=>{const k=el.dataset.kind;el.style.display=(f==="all"||f===k)?"":"none";});}
+
+function build(){
+  const root=document.getElementById("grid");
+  root.innerHTML=ITEMS.map(R=>{
+    const isV=R.kind==="video";
+    return `<div class="card gcard" data-kind="${R.kind}">
+      <div class="${isV?"badge9":"badge4"}">${isV?"🎬 VİDEO · 9:16":"🖼️ GÖRSEL · 4:5"}</div>
+      <div class="stage ${isV?"v":"i"}">
+        <canvas id="c${R.id}" width="1080" height="${isV?1920:1350}"></canvas>
+        ${isV?`<button class="play" onclick="restart(${R.id})" title="Baştan oynat"><span>▶</span></button>`:""}
       </div>
       <div class="rtitle">${R.title}<small>${R.sub}</small></div>
-      <textarea class="cap" id="rcap${R.id}">${R.caption}\n\n${R.tags}</textarea>
+      <textarea class="cap" id="cap${R.id}">${R.caption}\n\n${R.tags}</textarea>
       <div class="btns">
-        <button class="btn btn-vid" onclick="recordVideo(${R.id})">🎬 Video İndir</button>
-        <button class="btn btn-gif" onclick="recordGif(${R.id})">GIF</button>
+        ${isV
+          ?`<button class="btn btn-vid" onclick="exportVideo(${R.id})">🎬 Video İndir</button><button class="btn btn-gif" onclick="exportGif(${R.id})">🟢 GIF</button>`
+          :`<button class="btn btn-img" onclick="exportImage(${R.id})">🖼️ Görsel İndir</button>`}
         <button class="btn btn-copy" onclick="copyCap(${R.id})">📋 Kopyala</button>
+        <button class="btn btn-x" onclick="shareX(${R.id})">𝕏</button>
       </div>
-    </div>`).join("");
-
-  document.getElementById("posts").innerHTML = POSTS.map(P=>`
-    <div class="card">
-      <div class="stage ${P.cls}">
-        <canvas id="pc${P.id}" width="${P.w}" height="${P.h}"></canvas>
-      </div>
-      <div class="rtitle">${P.title}<small>${P.w}×${P.h}</small></div>
-      <textarea class="cap" id="rcap${P.id}">${P.caption}\n\n${P.tags}</textarea>
-      <div class="btns">
-        <button class="btn btn-img" onclick="savePost(${P.id})">🖼 PNG İndir</button>
-        <button class="btn btn-copy" onclick="copyCap(${P.id})">📋 Kopyala</button>
-      </div>
-    </div>`).join("");
-
-  REELS.forEach(R=>{
-    R.canvas = document.getElementById("rc"+R.id);
-    R.ctx = R.canvas.getContext("2d");
-    R.total = R.scenes.reduce((a,s)=>a+s.dur, 0);
-    R.base = performance.now(); R.visible = true;
-    try{ drawReelAt(R, 400); }catch(e){ console.error("ilk çizim", e); }
+    </div>`;}).join("");
+  ITEMS.forEach(R=>{
+    R.P=PAL[R.pal]||PAL.ink;R.W=1080;R.H=R.kind==="video"?1920:1350;
+    R.canvas=document.getElementById("c"+R.id);R.ctx=R.canvas.getContext("2d");
+    if(R.kind==="video"){R.total=R.scenes.reduce((a,s)=>a+s.dur,0);R.base=performance.now();R.visible=true;R.active=false;}
+    try{drawItemAt(R,R.kind==="video"?Math.min(1200,R.total*0.3):0);}catch(e){console.error("ilk çizim #"+R.id,e);}
   });
-  POSTS.forEach(P=>{
-    P.canvas = document.getElementById("pc"+P.id);
-    P.ctx = P.canvas.getContext("2d");
-    try{ P.draw(P.ctx, P.w, P.h); }catch(e){ console.error("post çizim", e); }
-  });
-
-  const io = new IntersectionObserver(es=>es.forEach(e=>{
-    const R = REELS.find(r=>r.canvas === e.target); if(R) R.visible = e.isIntersecting;
-  }), {threshold:0.2});
-  REELS.forEach(R=>io.observe(R.canvas));
+  const io=new IntersectionObserver(es=>es.forEach(e=>{const R=ITEMS.find(r=>r.canvas===e.target);if(R&&R.kind==="video")R.visible=e.isIntersecting;}),{threshold:0.2});
+  ITEMS.forEach(R=>{if(R.kind==="video")io.observe(R.canvas);});
   requestAnimationFrame(loop);
 }
+function loop(now){ITEMS.forEach(R=>{if(R.kind==="video"&&(R.visible||R.active)&&!R._encoding){try{const t=(now-R.base)%R.total;drawItemAt(R,t);}catch(e){console.error("frame #"+R.id,e);}}});requestAnimationFrame(loop);}
+function getR(id){return ITEMS.find(r=>r.id===id);}
+function restart(id){const R=getR(id);if(R.kind==="video"){R.base=performance.now();R.visible=true;}}
 
-function loop(now){
-  REELS.forEach(R=>{
-    if(R.visible && !R._encoding){
-      try{ drawReelAt(R, (now - R.base) % R.total); }catch(e){ console.error("kare", e); }
-    }
-  });
-  requestAnimationFrame(loop);
-}
-function getR(id){ return REELS.find(r=>r.id === id); }
-function getP(id){ return POSTS.find(p=>p.id === id); }
-function restart(id){ const R = getR(id); R.base = performance.now(); R.visible = true; }
+function capText(id){return document.getElementById("cap"+id).value.trim();}
+async function copyCap(id){try{await navigator.clipboard.writeText(capText(id));toast("Başlık + hashtag kopyalandı ✓");}catch(e){toast("Kopyalanamadı — elle seç");}}
+function shareX(id){window.open("https://twitter.com/intent/tweet?text="+encodeURIComponent(capText(id)+"\n"+APP_URL),"_blank","noopener");}
 
-/* ---- kopyalama ---- */
-function capText(id){ return document.getElementById("rcap"+id).value.trim(); }
-async function copyCap(id){
-  try{ await navigator.clipboard.writeText(capText(id)); toast("Başlık + etiketler kopyalandı ✓"); }
-  catch(e){ toast("Kopyalanamadı — elle seç"); }
+let curFile=null,curUrl=null;
+function showResult(blob,ext,id,kind){
+  if(curUrl)URL.revokeObjectURL(curUrl);curUrl=URL.createObjectURL(blob);
+  const fname=`isimsehir-jeton-${kind==="video"?"reel":"post"}-${id}.${ext}`;
+  try{curFile=new File([blob],fname,{type:blob.type});}catch(e){curFile=null;}
+  const vid=document.getElementById("resVid"),img=document.getElementById("resImg");
+  if(kind==="video"){vid.src=curUrl;vid.style.display="block";img.style.display="none";vid.play().catch(()=>{});}
+  else{img.src=curUrl;img.style.display="block";vid.style.display="none";try{vid.pause();vid.removeAttribute("src");vid.load();}catch(e){}}
+  const a=document.getElementById("resDl");a.href=curUrl;a.download=fname;
+  document.getElementById("mtitle").textContent=ext.toUpperCase()+" hazır ✓";
+  const canShare=!!(curFile&&navigator.canShare&&navigator.canShare({files:[curFile]}));
+  document.getElementById("resShare").style.display=canShare?"inline-flex":"none";
+  document.getElementById("mhint").textContent=canShare?'iPhone: "Paylaş/Kaydet" → Fotoğraflar. Bilgisayar: "İndir".':'İndir\'e bas. Açılmazsa tarayıcıya sürükle.';
+  document.getElementById("modal").classList.add("show");toast(ext.toUpperCase()+" hazır ✓");
 }
+function closeModal(){document.getElementById("modal").classList.remove("show");const v=document.getElementById("resVid");try{v.pause();}catch(e){}}
+async function shareResult(){if(!curFile){toast("Paylaşım desteklenmiyor — İndir'i kullan");return;}try{await navigator.share({files:[curFile],title:curFile.name});}catch(e){if(e&&e.name!=="AbortError")toast("Paylaşım başarısız — İndir'i dene");}}
 
-/* ---- sonuç modalı ---- */
-let curFile = null, curUrl = null;
-function showResult(blob, ext, id, kind){
-  if(curUrl) URL.revokeObjectURL(curUrl);
-  curUrl = URL.createObjectURL(blob);
-  const fname = `isimsehir-cevrimdisi-${id}.${ext}`;
-  try{ curFile = new File([blob], fname, {type:blob.type}); }catch(e){ curFile = null; }
-  const vid = document.getElementById("resVid"), img = document.getElementById("resImg");
-  if(kind === "video"){
-    vid.src = curUrl; vid.style.display = "block"; img.style.display = "none";
-    vid.play().catch(()=>{});
-  } else {
-    img.src = curUrl; img.style.display = "block"; vid.style.display = "none";
-    try{ vid.pause(); vid.removeAttribute("src"); vid.load(); }catch(e){}
-  }
-  const a = document.getElementById("resDl"); a.href = curUrl; a.download = fname;
-  document.getElementById("mtitle").textContent = ext.toUpperCase() + " hazır ✓";
-  const canShare = !!(curFile && navigator.canShare && navigator.canShare({files:[curFile]}));
-  document.getElementById("resShare").style.display = canShare ? "inline-flex" : "none";
-  document.getElementById("mhint").textContent = canShare
-    ? 'iPhone: "Paylaş / Kaydet" → "Videoyu Kaydet". Bilgisayarda "İndir".'
-    : 'İndir\'e bas. Dosya açılmazsa VLC ile aç.';
-  document.getElementById("modal").classList.add("show");
-  toast(ext.toUpperCase() + " hazır ✓");
-}
-function closeModal(){
-  document.getElementById("modal").classList.remove("show");
-  try{ document.getElementById("resVid").pause(); }catch(e){}
-}
-async function shareResult(){
-  if(!curFile){ toast("Paylaşım desteklenmiyor — İndir'i kullan"); return; }
-  try{ await navigator.share({files:[curFile], title:curFile.name}); }
-  catch(e){ if(e && e.name !== "AbortError") toast("Paylaşım başarısız — İndir'i dene"); }
-}
+function exportImage(id){const R=getR(id);try{drawItemAt(R,0);R.canvas.toBlob(b=>{if(b)showResult(b,"png",id,"image");else toast("PNG üretilemedi");},"image/png");}catch(e){console.error(e);toast("Görsel hatası");}}
 
-/* ---- PNG ---- */
-function savePost(id){
-  const P = getP(id);
-  try{ P.draw(P.ctx, P.w, P.h); }catch(e){ console.error(e); }
-  P.canvas.toBlob(b=>{ if(b) showResult(b, "png", id, "image"); else toast("PNG üretilemedi"); }, "image/png");
-}
-
-/* ---- MP4 (WebCodecs + mp4-muxer) ---- */
-async function pickAvc(){
-  const cands = ["avc1.640028","avc1.4d0028","avc1.420028","avc1.640032","avc1.42e028"];
-  for(const c of cands){
-    try{
-      const s = await VideoEncoder.isConfigSupported({codec:c, width:W, height:H, bitrate:8e6, framerate:30});
-      if(s && s.supported) return c;
-    }catch(e){}
-  }
-  return null;
-}
+async function pickAvc(W,H){const cands=["avc1.640028","avc1.4d0028","avc1.420028","avc1.640032","avc1.42e028"];
+  for(const c of cands){try{const s=await VideoEncoder.isConfigSupported({codec:c,width:W,height:H,bitrate:8e6,framerate:30});if(s&&s.supported)return c;}catch(e){}}return null;}
 async function encodeMP4(R){
-  if(!("VideoEncoder" in window) || !("VideoFrame" in window) || !window.Mp4Muxer) return null;
-  const codec = await pickAvc(); if(!codec) return null;
-  const fps = 30, frames = Math.max(1, Math.round(R.total/1000*fps));
-  const target = new Mp4Muxer.ArrayBufferTarget();
-  const muxer = new Mp4Muxer.Muxer({target, video:{codec:"avc", width:W, height:H}, fastStart:"in-memory"});
-  let err = null;
-  const enc = new VideoEncoder({
-    output:(chunk, meta)=>muxer.addVideoChunk(chunk, meta),
-    error:e=>{ err = e; console.error("enc", e); },
-  });
-  enc.configure({codec, width:W, height:H, bitrate:8e6, framerate:fps});
-  for(let i=0;i<frames;i++){
-    drawReelAt(R, i/frames * R.total);
-    const vf = new VideoFrame(R.canvas, {timestamp: Math.round(i*1e6/fps), duration: Math.round(1e6/fps)});
-    enc.encode(vf, {keyFrame: i % 60 === 0});
-    vf.close();
-    if(i % 20 === 0) await new Promise(r=>setTimeout(r, 0));
-    if(err) break;
-  }
-  if(err) return null;
-  await enc.flush(); muxer.finalize(); enc.close();
-  return new Blob([target.buffer], {type:"video/mp4"});
+  if(!("VideoEncoder" in window)||!("VideoFrame" in window)||!window.Mp4Muxer)return null;
+  const W=R.W,H=R.H,codec=await pickAvc(W,H);if(!codec)return null;
+  const fps=30,frames=Math.max(1,Math.round(R.total/1000*fps));
+  const target=new Mp4Muxer.ArrayBufferTarget();
+  const muxer=new Mp4Muxer.Muxer({target,video:{codec:"avc",width:W,height:H},fastStart:"in-memory"});
+  let err=null;const enc=new VideoEncoder({output:(chunk,meta)=>muxer.addVideoChunk(chunk,meta),error:e=>{err=e;console.error("enc",e);}});
+  enc.configure({codec,width:W,height:H,bitrate:8000000,framerate:fps});R._encoding=true;
+  try{for(let i=0;i<frames;i++){if(err)break;const t=i/frames*R.total;drawItemAt(R,t);
+    const vf=new VideoFrame(R.canvas,{timestamp:Math.round(i*1e6/fps),duration:Math.round(1e6/fps)});enc.encode(vf,{keyFrame:i%fps===0});vf.close();
+    if(i%14===0)toast("🎬 MP4… %"+Math.round(i/frames*100));if(enc.encodeQueueSize>6)await new Promise(r=>setTimeout(r));}
+    await enc.flush();muxer.finalize();}finally{R._encoding=false;try{enc.close();}catch(e){}}
+  if(err)return null;return new Blob([target.buffer],{type:"video/mp4"});
 }
-function pickMime(){
-  const c = ["video/mp4;codecs=h264","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"];
-  for(const m of c){ try{ if(window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m; }catch(e){} }
-  return "";
-}
-function recordWebM(R){
-  return new Promise(res=>{
-    const mime = pickMime(); if(!mime || !window.MediaRecorder) return res(null);
-    let stream; try{ stream = R.canvas.captureStream(30); }catch(e){ return res(null); }
-    let rec; try{ rec = new MediaRecorder(stream, {mimeType:mime, videoBitsPerSecond:9e6}); }catch(e){ return res(null); }
-    const parts = [];
-    rec.ondataavailable = e=>{ if(e.data.size) parts.push(e.data); };
-    rec.onstop = ()=>res({blob:new Blob(parts, {type:mime}), ext: mime.includes("mp4") ? "mp4" : "webm"});
-    R.base = performance.now(); R.visible = true;
-    rec.start();
-    setTimeout(()=>{ try{ rec.stop(); }catch(e){} }, R.total + 200);
-  });
-}
-async function recordVideo(id){
-  const R = getR(id);
-  toast("🎬 MP4 hazırlanıyor… " + Math.round(R.total/1000) + " sn ⏳");
-  R._encoding = true;
-  try{
-    const blob = await encodeMP4(R);
-    R._encoding = false;
-    if(blob && blob.size > 0){ showResult(blob, "mp4", id, "video"); return; }
-  }catch(e){ R._encoding = false; console.error(e); }
+function pickMime(){const c=["video/mp4;codecs=h264","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"];for(const m of c){try{if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;}catch(e){}}return"";}
+function recordWebM(R){return new Promise(res=>{const mime=pickMime();if(!mime||!window.MediaRecorder)return res(null);
+  let stream;try{stream=R.canvas.captureStream(30);}catch(e){return res(null);}
+  let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});}catch(e){return res(null);}
+  const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  rec.onstop=()=>{R.active=false;res({blob:new Blob(chunks,{type:mime}),ext:mime.indexOf("mp4")>-1?"mp4":"webm"});};
+  R.active=true;R.base=performance.now();rec.start();setTimeout(()=>{try{rec.stop();}catch(e){R.active=false;res(null);}},R.total+150);});}
+async function exportVideo(id){const R=getR(id);toast("🎬 Video hazırlanıyor (MP4)… ⏳");
+  try{const blob=await encodeMP4(R);if(blob){showResult(blob,"mp4",id,"video");return;}}catch(e){console.error(e);}
   toast("MP4 motoru yok — WebM deneniyor");
-  try{
-    const r = await recordWebM(R);
-    if(r && r.blob.size > 0){ showResult(r.blob, r.ext, id, "video"); return; }
-  }catch(e){ console.error(e); }
-  toast("Bu tarayıcı video üretemiyor — GIF'i dene");
-}
+  try{const r=await recordWebM(R);if(r&&r.blob.size>0){showResult(r.blob,r.ext,id,"video");return;}}catch(e){console.error(e);}
+  toast("Bu cihaz video üretemiyor — 🟢 GIF'i kullan");}
 
-/* ---- GIF (yedek) ---- */
-async function recordGif(id){
-  if(typeof GIF === "undefined"){ toast("GIF motoru yüklenemedi — http üzerinden aç"); return; }
-  const R = getR(id);
-  const fps = 12, frames = Math.max(8, Math.round(R.total/1000*fps));
-  const gw = 540, gh = 960;
-  const tmp = document.createElement("canvas"); tmp.width = gw; tmp.height = gh;
-  const tctx = tmp.getContext("2d");
-  toast("GIF hazırlanıyor… " + frames + " kare ⏳");
-  R._encoding = true;
-  try{
-    const gif = new GIF({workers:2, quality:12, width:gw, height:gh, workerScript:"gif.worker.js", background:"#05060F"});
-    for(let i=0;i<frames;i++){
-      drawReelAt(R, i/frames * R.total);
-      tctx.drawImage(R.canvas, 0, 0, gw, gh);
-      gif.addFrame(tctx, {copy:true, delay: Math.round(1000/fps)});
-    }
-    gif.on("finished", b=>{ R._encoding = false; showResult(b, "gif", id, "image"); });
-    gif.on("abort", ()=>{ R._encoding = false; toast("GIF iptal"); });
-    gif.render();
-  }catch(e){ R._encoding = false; console.error(e); toast("GIF başarısız — http üzerinden aç"); }
-}
+async function exportGif(id){if(typeof GIF==="undefined"){toast("GIF motoru yüklenemedi — http link üzerinden aç");return;}
+  const R=getR(id);const fps=12,frames=Math.max(8,Math.round(R.total/1000*fps));const gw=540,gh=960;
+  const tmp=document.createElement("canvas");tmp.width=gw;tmp.height=gh;const tctx=tmp.getContext("2d");
+  toast("🟢 GIF hazırlanıyor… "+frames+" kare ⏳");R._encoding=true;
+  try{const gif=new GIF({workers:2,quality:12,width:gw,height:gh,workerScript:"gif.worker.js",background:"#0b0820"});
+    for(let i=0;i<frames;i++){const t=i/frames*R.total;drawItemAt(R,t);tctx.drawImage(R.canvas,0,0,gw,gh);gif.addFrame(tctx,{copy:true,delay:Math.round(1000/fps)});}
+    gif.on("finished",b=>{R._encoding=false;showResult(b,"gif",id,"image");});
+    gif.on("abort",()=>{R._encoding=false;toast("GIF iptal");});gif.render();
+  }catch(e){R._encoding=false;console.error(e);toast("GIF başarısız (http link dene)");}}
 
-/* ---- açılış: yazı tipleri önce, yoksa canvas metni yanlış ölçülür ---- */
-(function boot(){
-  const go = ()=>{ try{ buildAll(); }catch(e){ console.error("kurulum", e); } };
-  if(document.fonts && document.fonts.load){
-    Promise.all([
-      document.fonts.load("700 100px 'Space Grotesk'"),
-      document.fonts.load("700 40px 'JetBrains Mono'"),
-      document.fonts.load("600 40px Inter"),
-      document.fonts.load("900 40px Inter"),
-    ]).then(()=>document.fonts.ready).then(go).catch(go);
-  } else go();
-})();
+(function boot(){const go=()=>build();
+  if(document.fonts&&document.fonts.ready){Promise.all([
+    document.fonts.load("400 100px Anton"),document.fonts.load("800 60px 'Shantell Sans'"),
+    document.fonts.load("400 60px 'Patrick Hand'"),document.fonts.load("900 60px 'Archivo Black'"),
+    document.fonts.load("800 40px Inter"),document.fonts.load("700 40px Caveat")
+  ]).then(()=>document.fonts.ready).then(go).catch(go);}else{go();}})();
 </script>
 </body>
 </html>
