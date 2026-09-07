@@ -308,10 +308,12 @@ const D={};
 /* ══ 1 · KONFETİ — klasik kutlama karesi; logo ışığın merkezinde ══ */
 D.konfeti={h0:1030,title:"Konfeti",sub:"kutlama · logo merkezde",
 render(ctx,R){
-  deepBG(ctx,R,{gy:.16,ga:.20});
+  /* Huzme ve arka ışık mavi: altın lacivertin üstünde hardala kaçıyordu.
+     Bu karede altın yalnızca rakamın rengi. */
+  deepBG(ctx,R,{top:"#12275C",gy:.16,glow:L.sky,ga:.22});
   const b=band(R,this.h0);
   /* huzmeler logonun tam arkasından çıkmalı — bant kaymasıyla birlikte taşınır */
-  rays(ctx,R.W/2,b+190,1500,L.gold,18,.10);
+  rays(ctx,R.W/2,b+190,1500,L.sky,18,.12);
   confetti(ctx,R,120,{y0:0,y1:R.H,avoid:{x:R.W/2,y:b+190,r:230}});
   ctx.save();ctx.translate(0,b);
   logo(ctx,R.W/2,190,320,{glow:hexA(L.gold,.55)});
