@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · 10.000 Oyuncu — Teşekkür Stüdyosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=Patrick+Hand&family=Shantell+Sans:wght@600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+<script src="logo.js"></script>
+<style>
+  /* ══ GÖRSEL DİL ══
+     Tek eşik: 10.000 oyuncu. On tasarım, on ayrı sahne — ama tek bir kimlik.
+     Kimliğin kaynağı uydurma değil, uygulamanın kendi logosu: lacivert gövde,
+     altın "İSİM", beyaz "ŞEHİR". Palet (L) bu üç renkten türetildi; her karede
+     altın yalnızca sayının ve kutlamanın rengi, lacivert zeminin.
+
+     Her karede aynı künye var ve hep aynı sırada:
+       logo → İsim Şehir Online → instagram/X/TikTok · isimsehironline
+              → App Store + Google Play rozetleri
+     Künye tek bileşen (colophon); bir gün hesap adı değişirse tek yerden döner.
+
+     Logo gerçek PNG (logo.js içinde veri URI). "İŞ" gibi harf kısaltması
+     kullanılmıyor — marka logo demek.
+
+     Ölçü: kompozisyon sabit yükseklikli bir banda çizilir, bant dikeyde
+     ortalanır. Böylece aynı çizim kodu 4:5 feed ve 9:16 story üretir. */
+  :root{
+    --deep:#0A0E2A;--navy:#141A4A;--navy2:#1E2A6B;--line:#2B3578;
+    --gold:#FFC63D;--gold2:#FFA000;--cream:#FFF6E0;--text:#F5F7FF;--dim:#9AA3D0;
+    --sky:#4FC3F7;--purple:#9575CD;--red:#E53935;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:var(--text);background:var(--deep);
+    min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(74% 46% at 50% -10%,rgba(255,198,61,.16),transparent 62%),
+                     radial-gradient(60% 42% at 10% 6%,rgba(79,195,247,.10),transparent 60%)}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 22px}
+
+  header.top{padding:56px 0 8px;text-align:center}
+  header.top img.logo{width:104px;height:104px;display:block;margin:0 auto 14px;
+    filter:drop-shadow(0 16px 34px rgba(0,0,0,.6))}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  header.top h1{font-size:clamp(36px,6vw,64px);font-weight:900;letter-spacing:-.035em;line-height:1.0;margin:12px 0 0}
+  header.top h1 span{color:var(--gold)}
+  header.top p{color:#c3c9ef;font-size:15px;max-width:700px;margin:16px auto 0;line-height:1.65}
+  header.top p b{color:var(--text);font-weight:700}
+
+  .filters{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:26px 0 0}
+  .fbtn{cursor:pointer;border:1.5px solid var(--line);background:var(--navy);color:#ccd3f5;border-radius:999px;
+    padding:9px 18px;font-weight:700;font-size:13px;font-family:inherit;transition:.14s}
+  .fbtn:hover{border-color:#3f4aa0}
+  .fbtn.on{background:var(--gold);border-color:var(--gold);color:#2a1e00}
+
+  .facts{margin:26px auto 0;max-width:980px;display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:10px}
+  .fact{background:var(--navy);border:1px solid var(--line);border-radius:16px;padding:13px 15px;text-align:left}
+  .fact b{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+  .fact span{font-size:13px;line-height:1.55;color:#dee3fb}
+  .fact span i{font-style:normal;color:var(--gold);font-weight:700}
+
+  .links{margin:20px 0 30px;text-align:center;font-size:12.5px;color:var(--dim)}
+  .links a{color:var(--sky);text-decoration:none}
+  .links a:hover{text-decoration:underline}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:26px;align-items:start}
+  .card{border:1px solid var(--line);background:var(--navy);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .kind{align-self:flex-start;font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .kind.a45{background:rgba(79,195,247,.14);color:#9fdcff;border:1px solid rgba(79,195,247,.4)}
+  .kind.a916{background:rgba(255,198,61,.14);color:#ffd97a;border:1px solid rgba(255,198,61,.42)}
+  .stage{position:relative;border-radius:26px;overflow:hidden;background:var(--deep);border:6px solid #171d47;
+    box-shadow:0 30px 70px -34px #000}
+  .stage.a45{width:300px;height:375px}
+  .stage.a916{width:290px;height:516px}
+  .stage canvas{width:100%;height:100%;display:block}
+
+  .rtitle{text-align:center;font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .rtitle small{display:block;font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+  textarea.cap{width:100%;min-height:104px;resize:vertical;border-radius:14px;padding:11px 12px;
+    border:1px solid var(--line);background:#111739;color:#dee3fb;font-family:inherit;font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:var(--gold)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:12px;padding:10px 14px;
+    font-family:inherit;font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+  .btn-img{background:var(--gold);color:#2a1e00}
+  .btn-ghost{background:var(--navy2);color:#dee3fb;border:1px solid var(--line)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);opacity:0;
+    background:var(--navy);border:1.5px solid var(--gold);color:var(--text);padding:12px 22px;border-radius:14px;
+    font-size:13.5px;font-weight:700;box-shadow:0 20px 44px -14px #000;transition:.24s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:#727ab0;font-size:12.5px;margin-top:48px;line-height:1.8}
+
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(6,8,24,.86);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:min(430px,94vw);background:var(--navy);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 34px 80px -22px #000}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--navy2);color:var(--text);font-size:15px;cursor:pointer}
+  .mtitle{font-size:19px;font-weight:800;text-align:center;margin-bottom:14px}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia img{max-width:250px;max-height:445px;border-radius:18px;background:var(--deep);object-fit:contain}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <img class="logo" id="hlogo" alt="İsim Şehir Online" />
+      <div class="eyebrow">Teşekkür stüdyosu · eşik duyurusu</div>
+      <h1>10.000 <span>oyuncu</span></h1>
+      <p><b>On tasarım</b>, on ayrı sahne — hepsinde gerçek logo, <b>instagram · X · TikTok</b> hesabı
+      ve <b>App Store + Google Play</b> rozetleri. Her tasarım hem <b>4:5 feed</b> hem <b>9:16 story</b>
+      olarak üretiliyor. Metni düzenle, PNG'yi indir.</p>
+
+      <div class="filters" id="filters">
+        <button class="fbtn on" data-f="all" onclick="setFilter('all',this)">Hepsi</button>
+        <button class="fbtn" data-f="45" onclick="setFilter('45',this)">4:5 · feed</button>
+        <button class="fbtn" data-f="916" onclick="setFilter('916',this)">9:16 · story</button>
+      </div>
+
+      <div class="facts">
+        <div class="fact"><b>Gerçek logo</b><span>Kareler <i>app/assets/logo.png</i> ile çiziliyor — harf kısaltması yok.</span></div>
+        <div class="fact"><b>Künye</b><span>Her karede <i>instagram · X · TikTok → isimsehironline</i> + iki mağaza rozeti.</span></div>
+        <div class="fact"><b>Tek gerçek sayı</b><span>Yalnızca <i>10.000</i> geçiyor; uydurma maç/kelime istatistiği yok.</span></div>
+        <div class="fact"><b>20 çıktı</b><span>10 tasarım × 2 oran: <i>1080×1350</i> ve <i>1080×1920</i>.</span></div>
+      </div>
+
+      <div class="links">Diğer stüdyolar →
+        <a href="cevrimdisi-4.0.html">Çevrimdışı 4.0</a> ·
+        <a href="yeni-oyunlar.html">Yeni Oyunlar</a> ·
+        <a href="viral-3.0.html">Viral 3.0</a> ·
+        <a href="reels-2.0.html">Reels 2.0</a> ·
+        <a href="sosyal-medya-2.0.html">Sosyal Medya 2.0</a>
+      </div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer class="foot">
+      İsim Şehir Online · instagram · X · TikTok: @isimsehironline<br/>
+      Feed 1080×1350 · Story 1080×1920 · PNG
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Hazır</div>
+
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <button class="mclose" onclick="closeModal()" aria-label="Kapat">✕</button>
+      <div class="mtitle" id="mtitle">Hazır</div>
+      <div class="mmedia"><img id="resImg" alt="" /></div>
+      <div class="mbtns">
+        <a class="btn btn-img" id="resDl" download>İndir</a>
+        <button class="btn btn-ghost" id="resShare" onclick="shareResult()">Paylaş / Kaydet</button>
+      </div>
+      <p class="mhint" id="mhint"></p>
+    </div>
+  </div>
+
+<script>
+const N=10000, NTR="10.000";
+const HANDLE="isimsehironline";
+const APP_URL="https://apps.apple.com/app/isim-sehir-online/id6766661912";
+
+/* ══ palet — logodan türetildi ══ */
+const L={deep:"#0A0E2A",navy:"#141A4A",navy2:"#1E2A6B",line:"#2B3578",
+  gold:"#FFC63D",goldHi:"#FFE9A8",gold2:"#FF9E00",cream:"#FFF6E0",
+  text:"#F5F7FF",dim:"#9AA3D0",sky:"#4FC3F7",purple:"#9575CD",red:"#E53935",mint:"#4DD6A0"};
+/* oyunun kategori karo gradyanları (GameScreen.tsx) */
+const CATG=[["#9D7CFF","#6C4CFF"],["#7CD0FF","#2A95E0"],["#7CFFB7","#27A957"],
+            ["#FFE16B","#E8A820"],["#FF9D7B","#E04C29"],["#FF9DC1","#D8478A"]];
+
+/* ══ yardımcılar ══ */
+const clamp01=t=>Math.max(0,Math.min(1,t));
+function seeded(n){const s=Math.sin(n*99.13)*43758.5453;return s-Math.floor(s);}
+function hexA(hex,a){const h=hex.replace("#","");const n=parseInt(h.length===3?h.split("").map(c=>c+c).join(""):h,16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;}
+function shade(hex,amt){const n=parseInt(hex.replace("#",""),16);
+  const c=v=>Math.max(0,Math.min(255,v+amt));return `rgb(${c((n>>16)&255)},${c((n>>8)&255)},${c(n&255)})`;}
+function rr(ctx,x,y,w,h,r){r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);ctx.beginPath();ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function F(w,size){return `${w} ${Math.round(size)}px Inter, -apple-system, system-ui, sans-serif`;}
+function AN(size){return `400 ${Math.round(size)}px Anton, sans-serif`;}
+function HD(size){return `400 ${Math.round(size)}px 'Patrick Hand', cursive`;}
+function MK(size){return `800 ${Math.round(size)}px 'Shantell Sans','Patrick Hand', cursive`;}
+function CV(size){return `700 ${Math.round(size)}px 'Caveat', cursive`;}
+function MONO(w,size){return `${w} ${Math.round(size)}px ui-monospace, Menlo, 'SF Mono', Consolas, monospace`;}
+function txt(ctx,s,x,y,o){o=o||{};ctx.save();
+  ctx.font=o.font||F(o.w||"700",o.size||30);ctx.fillStyle=o.col||L.text;
+  ctx.textAlign=o.align||"left";ctx.textBaseline=o.base||"alphabetic";
+  if(o.ls!==undefined){try{ctx.letterSpacing=o.ls+"px";}catch(e){}}
+  if(o.shadow){ctx.shadowColor=o.shadow;ctx.shadowBlur=o.shadowBlur||18;ctx.shadowOffsetY=o.shadowY||6;}
+  ctx.fillText(String(s),x,y);ctx.restore();}
+function meas(ctx,s,o){o=o||{};ctx.save();ctx.font=o.font||F(o.w||"700",o.size||30);
+  if(o.ls!==undefined){try{ctx.letterSpacing=o.ls+"px";}catch(e){}}
+  const w=ctx.measureText(String(s)).width;ctx.restore();return w;}
+function up(s){return String(s).toLocaleUpperCase("tr-TR");}
+
+/* Anton'da İ yok — harfi I çizip noktayı elle koyuyoruz. */
+function antonTxt(ctx,s,x,y,size,fill,align){s=String(s);
+  ctx.save();ctx.font=AN(size);ctx.textAlign="left";ctx.textBaseline="alphabetic";ctx.fillStyle=fill;
+  const tw=ctx.measureText(s.replace(/İ/g,"I")).width;
+  let cx=align==="center"?x-tw/2:align==="right"?x-tw:x;
+  for(const ch of s){const g=ch==="İ"?"I":ch,w=ctx.measureText(g).width;
+    ctx.fillText(g,cx,y);
+    if(ch==="İ")ctx.fillRect(cx+w*0.14,y-size*0.97,w*0.72,size*0.14);
+    cx+=w;}
+  ctx.restore();return tw;}
+
+/* ══ logo ══ */
+const LOGO=new Image();LOGO.src=LOGO_DATA;
+function logo(ctx,cx,cy,size,o){o=o||{};if(!LOGO.complete||!LOGO.naturalWidth)return;
+  ctx.save();
+  if(o.glow){ctx.shadowColor=o.glow;ctx.shadowBlur=size*0.30;}
+  else{ctx.shadowColor="rgba(0,0,0,.55)";ctx.shadowBlur=size*0.16;ctx.shadowOffsetY=size*0.06;}
+  ctx.drawImage(LOGO,cx-size/2,cy-size/2,size,size);ctx.restore();}
+
+/* ══ ikonlar ══ */
+const APPLE_D="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z";
+const PLAY_D="M76.5 16.9C73 20.4 71 25.3 71 31v450c0 5.7 2 10.6 5.5 14.1l253.6-253.6L76.5 16.9zM104.6 13.4c-7-2.8-15-1.2-20.4 4.2l241.1 241.1 50.5-50.5L104.6 13.4zm344.6 216.7-71.2-41.1-55.9 55.9 55.9 55.9 71.2-41.1c20.6-12 20.6-43.7 0-55.8zM84.2 502.6c5.4 5.4 13.4 7 20.4 4.2l221-127.6-50.5-50.5L84.2 502.6z";
+const X_D="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z";
+const TT_D="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-2.59-2.6c.27 0 .53.04.78.12V9.66a5.7 5.7 0 1 0 4.9 5.64V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z";
+function glyph(ctx,d,vb,cx,cy,size,col){ctx.save();ctx.translate(cx-size/2,cy-size/2);
+  const s=size/vb;ctx.scale(s,s);ctx.fillStyle=col;ctx.fill(new Path2D(d));ctx.restore();}
+/* instagram — yol yerine çizimle: her boyutta net kalır */
+function igIcon(ctx,cx,cy,s,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=s*0.105;
+  rr(ctx,cx-s/2,cy-s/2,s,s,s*0.30);ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,s*0.235,0,7);ctx.stroke();
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(cx+s*0.275,cy-s*0.275,s*0.062,0,7);ctx.fill();ctx.restore();}
+
+/* ══ künye — her karede aynı, tek kaynak ══
+   satır 1: logo + ad · satır 2: sosyal ikonlar + hesap · satır 3: mağaza rozetleri */
+function socials(ctx,cx,y,col,s){
+  const gap=s*1.5, tw=meas(ctx,HANDLE,{size:s*0.98,w:"700"});
+  const total=gap*2+s+s*0.9+tw, x0=cx-total/2+s/2;
+  igIcon(ctx,x0,y,s*0.92,col);
+  glyph(ctx,X_D,24,x0+gap,y,s*0.86,col);
+  glyph(ctx,TT_D,24,x0+gap*2,y,s*0.94,col);
+  txt(ctx,HANDLE,x0+gap*2+s*0.9,y,{size:s*0.98,w:"700",col,base:"middle"});}
+
+function storeBadges(ctx,cx,y,o){o=o||{};const h=o.h||62,pad=h*0.42,ic=h*0.56,gap=16;
+  const items=[[APPLE_D,24,"App Store"],[PLAY_D,512,"Google Play"]];
+  const fs=h*0.36;
+  const ws=items.map(it=>pad+ic+10+meas(ctx,it[2],{size:fs,w:"800"})+pad);
+  let x=cx-(ws[0]+ws[1]+gap)/2;
+  items.forEach((it,i)=>{
+    rr(ctx,x,y-h/2,ws[i],h,h/2);
+    ctx.fillStyle=o.fill||hexA(L.text,.10);ctx.fill();
+    ctx.lineWidth=2;ctx.strokeStyle=o.stroke||hexA(L.text,.22);ctx.stroke();
+    glyph(ctx,it[0],it[1],x+pad+ic/2,y,ic,o.col||L.text);
+    txt(ctx,it[2],x+pad+ic+10,y+1,{size:fs,w:"800",col:o.col||L.text,base:"middle"});
+    x+=ws[i]+gap;});}
+
+/** Künyenin toplam yüksekliği ~186px. y = bloğun üst kenarı. */
+function colophon(ctx,R,y,o){o=o||{};
+  const col=o.col||L.text, dim=o.dim||hexA(col,.62), cx=R.W/2;
+  const name="İsim Şehir Online", ls=76;
+  const tw=meas(ctx,name,{size:34,w:"800"});
+  const x0=cx-(ls+18+tw)/2;
+  logo(ctx,x0+ls/2,y+ls/2,ls);
+  txt(ctx,name,x0+ls+18,y+ls/2+1,{size:34,w:"800",col,base:"middle"});
+  socials(ctx,cx,y+ls+34,dim,26);
+  storeBadges(ctx,cx,y+ls+104,{col,fill:o.chipFill||hexA(col,.09),stroke:o.chipStroke||hexA(col,.22)});
+  return 186;}
+
+/* ══ ortak sahne parçaları ══ */
+function band(R,h0){return Math.round((R.H-h0)/2);}
+
+/** altın gradyanlı dev rakam — setin imzası */
+function goldNumber(ctx,cx,y,size,s){s=s===undefined?NTR:s;
+  const g=ctx.createLinearGradient(0,y-size*0.78,0,y+size*0.06);
+  g.addColorStop(0,L.goldHi);g.addColorStop(.42,L.gold);g.addColorStop(1,L.gold2);
+  ctx.save();ctx.shadowColor=hexA(L.gold,.45);ctx.shadowBlur=size*0.30;
+  antonTxt(ctx,s,cx,y,size,g,"center");ctx.restore();}
+
+function deepBG(ctx,R,o){o=o||{};const W=R.W,H=R.H;
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,o.top||L.navy);g.addColorStop(.55,o.mid||L.deep);g.addColorStop(1,o.bot||"#070A20");
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const r=ctx.createRadialGradient(W/2,H*(o.gy||0.34),0,W/2,H*(o.gy||0.34),W*0.95);
+  r.addColorStop(0,hexA(o.glow||L.gold,o.ga===undefined?.14:o.ga));r.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=r;ctx.fillRect(0,0,W,H);}
+
+/** ışık huzmeleri — kutlama karelerinde logonun arkasında */
+function rays(ctx,cx,cy,R2,col,n,a){ctx.save();ctx.globalAlpha=a===undefined?.18:a;
+  for(let i=0;i<n;i++){const ang=i*Math.PI*2/n+0.2,wsp=Math.PI/n*0.55;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(ang-wsp)*R2,cy+Math.sin(ang-wsp)*R2);
+    ctx.lineTo(cx+Math.cos(ang+wsp)*R2,cy+Math.sin(ang+wsp)*R2);
+    ctx.closePath();ctx.fillStyle=col;ctx.fill();}
+  ctx.restore();}
+
+/** konfeti — logo renklerinden, sabit tohumlu */
+function confetti(ctx,R,n,o){o=o||{};const cols=[L.gold,L.sky,L.purple,L.red,"#FFFFFF",L.mint];
+  const y0=o.y0||0,y1=o.y1||R.H;
+  for(let i=0;i<n;i++){const x=seeded(i*1.31)*R.W,y=y0+seeded(i*2.17+5)*(y1-y0);
+    const w=8+seeded(i*3.7)*16,h=5+seeded(i*4.3)*9,rot=seeded(i*5.9)*Math.PI;
+    if(o.avoid&&Math.hypot(x-o.avoid.x,y-o.avoid.y)<o.avoid.r)continue;
+    ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.globalAlpha=.35+seeded(i*6.1)*.6;
+    ctx.fillStyle=cols[i%cols.length];
+    if(seeded(i*7.3)>.72){ctx.beginPath();ctx.arc(0,0,h*0.6,0,7);ctx.fill();}
+    else ctx.fillRect(-w/2,-h/2,w,h);
+    ctx.restore();}}
+
+const D={};
+
+/* ══ 1 · KONFETİ — klasik kutlama karesi; logo ışığın merkezinde ══ */
+D.konfeti={h0:1030,title:"Konfeti",sub:"kutlama · logo merkezde",
+render(ctx,R){
+  deepBG(ctx,R,{gy:.16,ga:.20});
+  const b=band(R,this.h0);
+  /* huzmeler logonun tam arkasından çıkmalı — bant kaymasıyla birlikte taşınır */
+  rays(ctx,R.W/2,b+190,1500,L.gold,18,.10);
+  confetti(ctx,R,120,{y0:0,y1:R.H,avoid:{x:R.W/2,y:b+190,r:230}});
+  ctx.save();ctx.translate(0,b);
+  logo(ctx,R.W/2,190,320,{glow:hexA(L.gold,.55)});
+  goldNumber(ctx,R.W/2,566,190);
+  txt(ctx,up("oyuncu"),R.W/2,626,{size:40,w:"800",col:L.text,align:"center",ls:18});
+  txt(ctx,"Teşekkürler!",R.W/2,742,{font:CV(102),col:L.cream,align:"center"});
+  colophon(ctx,R,806);
+  ctx.restore();
+}};
+
+/* ══ 2 · MADALYA — eşik bir ödül gibi; logo mührün içinde ══ */
+D.madalya={h0:1180,title:"Madalya",sub:"ödül mührü · kurdele",
+render(ctx,R){
+  deepBG(ctx,R,{gy:.26,ga:.16});
+  ctx.save();ctx.translate(0,band(R,this.h0));
+  const cx=R.W/2,cy=300,Rr=196;
+  /* kurdele uçları — madalyanın arkasından iner */
+  [[-1,L.red],[1,"#B71C1C"]].forEach(([d,c])=>{
+    ctx.save();ctx.fillStyle=c;ctx.beginPath();
+    ctx.moveTo(cx+d*54,cy+60);ctx.lineTo(cx+d*186,cy+60);
+    ctx.lineTo(cx+d*150,cy+330);ctx.lineTo(cx+d*104,cy+268);ctx.lineTo(cx+d*58,cy+330);
+    ctx.closePath();ctx.fill();ctx.restore();});
+  /* madalya gövdesi */
+  const g=ctx.createLinearGradient(cx-Rr,cy-Rr,cx+Rr,cy+Rr);
+  g.addColorStop(0,L.goldHi);g.addColorStop(.45,L.gold);g.addColorStop(1,L.gold2);
+  ctx.save();ctx.shadowColor="rgba(0,0,0,.6)";ctx.shadowBlur=60;ctx.shadowOffsetY=18;
+  ctx.beginPath();ctx.arc(cx,cy,Rr,0,7);ctx.fillStyle=g;ctx.fill();ctx.restore();
+  ctx.beginPath();ctx.arc(cx,cy,Rr*0.86,0,7);ctx.fillStyle=L.navy;ctx.fill();
+  ctx.lineWidth=5;ctx.strokeStyle=hexA(L.goldHi,.85);ctx.stroke();
+  /* çentikli kenar — mühür hissi */
+  ctx.save();ctx.strokeStyle=hexA("#7A4E00",.45);ctx.lineWidth=4;
+  for(let i=0;i<64;i++){const a=i*Math.PI*2/64;
+    ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*Rr*0.97,cy+Math.sin(a)*Rr*0.97);
+    ctx.lineTo(cx+Math.cos(a)*Rr,cy+Math.sin(a)*Rr);ctx.stroke();}ctx.restore();
+  logo(ctx,cx,cy,212);
+
+  goldNumber(ctx,cx,742,168);
+  txt(ctx,up("oyuncu eşiği geçildi"),cx,794,{size:27,w:"800",col:hexA(L.text,.8),align:"center",ls:7});
+  txt(ctx,"Teşekkürler!",cx,900,{font:CV(100),col:L.cream,align:"center"});
+  colophon(ctx,R,942);
+  ctx.restore();
+}};
+
+/* ══ 3 · KALABALIK — tam 10.000 nokta, halkalar hâlinde; ortada logo ══ */
+D.kalabalik={h0:1180,title:"Kalabalık",sub:"tam "+NTR+" nokta",
+render(ctx,R){
+  deepBG(ctx,R,{gy:.32,ga:.13});
+  ctx.save();ctx.translate(0,band(R,this.h0));
+  const cx=R.W/2,cy=436;
+  let left=N,ring=0;
+  for(let r=152;r<=452&&left>0;r+=7.2,ring++){
+    const cnt=Math.min(left,Math.round(2*Math.PI*r/7.0));
+    const off=seeded(ring*3.3)*Math.PI*2;
+    for(let i=0;i<cnt;i++){
+      const a=off+i*Math.PI*2/cnt,s=seeded(ring*17+i*1.7);
+      let col=hexA(L.sky,.34);
+      if(s>0.972)col=L.gold;else if(s>0.944)col=hexA(L.purple,.9);
+      else if(s>0.918)col=hexA(L.mint,.85);else if(s>0.72)col=hexA(L.sky,.62);
+      ctx.fillStyle=col;ctx.beginPath();
+      ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,3.1,0,7);ctx.fill();}
+    left-=cnt;}
+  /* merkez boşluğu — halkalar logonun etrafında açılıyor */
+  const hole=ctx.createRadialGradient(cx,cy,60,cx,cy,168);
+  hole.addColorStop(0,hexA(L.deep,.97));hole.addColorStop(1,hexA(L.deep,0));
+  ctx.fillStyle=hole;ctx.beginPath();ctx.arc(cx,cy,168,0,7);ctx.fill();
+  logo(ctx,cx,cy-52,196,{glow:hexA(L.sky,.5)});
+  goldNumber(ctx,cx,cy+96,116);
+  txt(ctx,up("oyuncu"),cx,cy+134,{size:23,w:"800",col:hexA(L.text,.8),align:"center",ls:11});
+
+  txt(ctx,"Her nokta bir oyuncu.",cx,946,{size:40,w:"800",col:L.text,align:"center"});
+  txt(ctx,"Yukarıda tam "+NTR+" nokta var — sayabilirsin.",cx,992,
+    {size:26,w:"600",col:hexA(L.text,.62),align:"center"});
+  colophon(ctx,R,1024);
+  ctx.restore();
+}};
+
+/* ══ 4 · BİLET — lacivert zeminde altın kenarlı davetiye ══ */
+D.bilet={h0:1150,title:"Bilet",sub:"altın kenar · perfore",
+render(ctx,R){
+  deepBG(ctx,R,{gy:.5,ga:.13});
+  confetti(ctx,R,46,{});
+  const ty=band(R,this.h0);
+  ctx.save();ctx.translate(0,ty);
+  const x=76,w=R.W-152,h=1150,notch=690;
+  ctx.save();ctx.shadowColor="rgba(0,0,0,.65)";ctx.shadowBlur=70;ctx.shadowOffsetY=26;
+  rr(ctx,x,0,w,h,34);ctx.fillStyle=L.cream;ctx.fill();ctx.restore();
+  /* altın kenar çizgisi */
+  rr(ctx,x+16,16,w-32,h-32,24);ctx.lineWidth=3;ctx.strokeStyle=hexA(L.gold2,.55);ctx.stroke();
+  /* perfore — zemini geri boyar, delik açmaz */
+  ctx.save();ctx.beginPath();ctx.arc(x,notch,34,0,7);ctx.arc(x+w,notch,34,0,7);ctx.clip();
+  ctx.setTransform(1,0,0,1,0,0);deepBG(ctx,R,{gy:.5,ga:.13});ctx.restore();
+  ctx.save();ctx.strokeStyle=hexA("#2A2110",.35);ctx.lineWidth=2;ctx.setLineDash([4,9]);
+  ctx.beginPath();ctx.moveTo(x+56,notch);ctx.lineTo(x+w-56,notch);ctx.stroke();ctx.restore();
+
+  const ink="#221A08",dim=hexA(ink,.55);
+  logo(ctx,x+118,120,132);
+  txt(ctx,"İsim Şehir Online",x+200,104,{size:34,w:"900",col:ink,base:"middle"});
+  txt(ctx,up("teşekkür bileti"),x+200,142,{size:22,w:"800",col:dim,ls:5,base:"middle"});
+  txt(ctx,"NO "+NTR,x+w-52,120,{font:MONO("700",26),col:L.red,align:"right",base:"middle",ls:3});
+  ctx.strokeStyle=hexA(ink,.2);ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(x+52,208);ctx.lineTo(x+w-52,208);ctx.stroke();
+
+  antonTxt(ctx,NTR,x+w/2,376,164,L.red,"center");
+  txt(ctx,up("oyuncu"),x+w/2,424,{size:28,w:"900",col:ink,align:"center",ls:14});
+
+  [["Koltuk","Masanın başı"],["Tarih","Eylül 2026"],["Geçerlilik","Süresiz"]].forEach((r,i)=>{
+    const ry=498+i*62;
+    txt(ctx,up(r[0]),x+52,ry,{font:MONO("700",23),col:dim,ls:3});
+    antonTxt(ctx,up(r[1]),x+w-52,ry+6,44,ink,"right");
+    ctx.save();ctx.strokeStyle=hexA(ink,.16);ctx.lineWidth=2;ctx.setLineDash([3,7]);
+    ctx.beginPath();ctx.moveTo(x+52,ry+24);ctx.lineTo(x+w-52,ry+24);ctx.stroke();ctx.restore();});
+
+  let bx=x+56;const bEnd=x+w-56;
+  while(bx<bEnd){const bw=2+Math.round(seeded(bx*0.37)*7);if(bx+bw>bEnd)break;
+    ctx.fillStyle=seeded(bx*0.91)>0.28?ink:"rgba(0,0,0,0)";ctx.fillRect(bx,752,bw,74);bx+=bw+3;}
+  socials(ctx,x+w/2,880,hexA(ink,.72),27);
+  storeBadges(ctx,x+w/2,952,{col:ink,fill:hexA(ink,.06),stroke:hexA(ink,.2),h:60});
+  txt(ctx,up("teşekkürler"),x+w/2,1046,{font:MONO("700",26),col:dim,align:"center",ls:8});
+  ctx.restore();
+}};
+
+/* ══ 5 · ŞEHİR — oyunun adındaki şehir; gökyüzünde havai fişek ══ */
+function firework(ctx,cx,cy,r,col,seed){ctx.save();ctx.globalAlpha=.9;
+  for(let i=0;i<26;i++){const a=i*Math.PI*2/26+seeded(seed)*1.7,rr2=r*(0.62+seeded(seed+i)*0.38);
+    const g=ctx.createLinearGradient(cx,cy,cx+Math.cos(a)*rr2,cy+Math.sin(a)*rr2);
+    g.addColorStop(0,hexA(col,0));g.addColorStop(1,col);
+    ctx.strokeStyle=g;ctx.lineWidth=2.6;ctx.lineCap="round";
+    ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*r*0.18,cy+Math.sin(a)*r*0.18);
+    ctx.lineTo(cx+Math.cos(a)*rr2,cy+Math.sin(a)*rr2);ctx.stroke();
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(cx+Math.cos(a)*rr2,cy+Math.sin(a)*rr2,2.6,0,7);ctx.fill();}
+  ctx.restore();}
+
+D.sehir={h0:1180,title:"Şehir",sub:"silüet · havai fişek",
+render(ctx,R){
+  deepBG(ctx,R,{top:"#1B2560",mid:"#0C1234",bot:"#05081C",gy:.2,ga:.10});
+  ctx.save();ctx.translate(0,band(R,this.h0));
+  for(let i=0;i<150;i++){const x=seeded(i*1.7)*R.W,y=seeded(i*2.9)*680;
+    ctx.fillStyle=hexA("#FFFFFF",.12+seeded(i*3.1)*.5);
+    ctx.beginPath();ctx.arc(x,y,seeded(i*4.3)*1.6+0.7,0,7);ctx.fill();}
+  firework(ctx,214,206,132,L.gold,3);
+  firework(ctx,876,282,108,L.sky,11);
+  firework(ctx,560,120,86,L.purple,7);
+
+  logo(ctx,R.W/2,336,268,{glow:hexA(L.gold,.45)});
+  goldNumber(ctx,R.W/2,606,178);
+  txt(ctx,up("oyuncu"),R.W/2,662,{size:36,w:"800",col:L.text,align:"center",ls:16});
+
+  /* silüet — binalar ve pencere ışıkları */
+  const base=940;
+  ctx.save();ctx.fillStyle="#05071A";
+  let bx=-30;let k=0;
+  while(bx<R.W+30){const bw=54+seeded(k*1.9)*76,bh=110+seeded(k*2.7)*220;
+    ctx.fillRect(bx,base-bh,bw,bh);
+    ctx.fillStyle=hexA(L.gold,.55);
+    for(let wy=base-bh+16;wy<base-16;wy+=22)
+      for(let wx=bx+10;wx<bx+bw-12;wx+=17)
+        if(seeded(wx*0.7+wy*1.3)>0.42)ctx.fillRect(wx,wy,7,10);
+    ctx.fillStyle="#05071A";bx+=bw+3;k++;}
+  ctx.restore();
+  const fade=ctx.createLinearGradient(0,base-70,0,base);
+  fade.addColorStop(0,"rgba(5,7,26,0)");fade.addColorStop(1,"#05071A");
+  ctx.fillStyle=fade;ctx.fillRect(0,base-70,R.W,70);
+
+  txt(ctx,"Şehir kalabalıklaştı — teşekkürler.",R.W/2,1000,
+    {size:34,w:"800",col:L.cream,align:"center"});
+  colophon(ctx,R,1034,{col:L.cream});
+  ctx.restore();
+}};
+
+/* ══ 6 · KAROLAR — oyunun kendi harf karoları TEŞEKKÜRLER yazıyor ══ */
+D.karolar={h0:1090,title:"Karolar",sub:"harf karoları · oyun dili",
+render(ctx,R){
+  deepBG(ctx,R,{top:"#1A1F52",gy:.30,glow:L.purple,ga:.18});
+  ctx.save();ctx.translate(0,band(R,this.h0));
+  logo(ctx,R.W/2,150,224,{glow:hexA(L.purple,.45)});
+
+  const word=[..."TEŞEKKÜRLER"],n=word.length;
+  const gap=10,side=Math.floor((R.W-140-gap*(n-1))/n),y=352;
+  let x=(R.W-(side*n+gap*(n-1)))/2;
+  word.forEach((ch,i)=>{
+    const [c1,c2]=CATG[i%CATG.length];
+    const g=ctx.createLinearGradient(x,y,x+side,y+side);
+    g.addColorStop(0,c1);g.addColorStop(1,c2);
+    ctx.save();ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=18;ctx.shadowOffsetY=8;
+    rr(ctx,x,y+(i%2?6:-6),side,side,side*0.24);ctx.fillStyle=g;ctx.fill();ctx.restore();
+    rr(ctx,x+3,y+(i%2?9:-3),side-6,side*0.42,side*0.18);
+    ctx.fillStyle="rgba(255,255,255,.16)";ctx.fill();
+    txt(ctx,ch,x+side/2,y+(i%2?6:-6)+side/2,
+      {size:side*0.52,w:"900",col:"#FFFFFF",align:"center",base:"middle",shadow:"rgba(0,0,0,.35)",shadowBlur:8,shadowY:3});
+    x+=side+gap;});
+
+  goldNumber(ctx,R.W/2,644,196);
+  txt(ctx,up("oyuncu · tek harften koca bir oyun"),R.W/2,700,
+    {size:29,w:"800",col:hexA(L.text,.78),align:"center",ls:4});
+  colophon(ctx,R,776);
+  ctx.restore();
+}};
+
+/* ══ 7 · BAŞARIM — uygulamanın kendi kartı; rozet açıldı ══ */
+D.basarim={h0:1060,title:"Başarım",sub:"uygulama dili · rozet kartı",
+render(ctx,R){
+  deepBG(ctx,R,{top:"#151B4E",gy:.36,ga:.13});
+  ctx.save();ctx.translate(0,band(R,this.h0));
+  const x=72,w=R.W-144,h=624;
+  ctx.save();ctx.shadowColor="rgba(0,0,0,.6)";ctx.shadowBlur=60;ctx.shadowOffsetY=22;
+  rr(ctx,x,0,w,h,42);
+  const cg=ctx.createLinearGradient(x,0,x+w,h);
+  cg.addColorStop(0,L.navy2);cg.addColorStop(1,L.navy);
+  ctx.fillStyle=cg;ctx.fill();ctx.restore();
+  rr(ctx,x,0,w,h,42);ctx.lineWidth=3;ctx.strokeStyle=hexA(L.gold,.42);ctx.stroke();
+
+  txt(ctx,up("başarım açıldı"),R.W/2,74,{size:26,w:"900",col:L.gold,align:"center",ls:10});
+
+  const cx=R.W/2,cy=250,Rr=118;
+  rays(ctx,cx,cy,300,L.gold,16,.10);
+  ctx.save();ctx.shadowColor=hexA(L.gold,.55);ctx.shadowBlur=48;
+  ctx.beginPath();ctx.arc(cx,cy,Rr,0,7);
+  const rg=ctx.createLinearGradient(cx-Rr,cy-Rr,cx+Rr,cy+Rr);
+  rg.addColorStop(0,L.goldHi);rg.addColorStop(1,L.gold2);ctx.fillStyle=rg;ctx.fill();ctx.restore();
+  ctx.beginPath();ctx.arc(cx,cy,Rr*0.87,0,7);ctx.fillStyle=L.deep;ctx.fill();
+  logo(ctx,cx,cy,182);
+
+  txt(ctx,NTR+" OYUNCU",cx,432,{size:52,w:"900",col:L.text,align:"center",ls:2});
+  txt(ctx,"İsim Şehir Online topluluğu bu eşiği geçti.",cx,478,
+    {size:27,w:"600",col:hexA(L.text,.62),align:"center"});
+
+  const bx=x+56,bw=w-112,by=530;
+  rr(ctx,bx,by,bw,18,9);ctx.fillStyle=hexA(L.text,.12);ctx.fill();
+  const pg=ctx.createLinearGradient(bx,0,bx+bw,0);
+  pg.addColorStop(0,L.gold2);pg.addColorStop(1,L.goldHi);
+  rr(ctx,bx,by,bw,18,9);ctx.fillStyle=pg;ctx.fill();
+  txt(ctx,"%100",bx,by+56,{size:24,w:"800",col:L.gold});
+  txt(ctx,NTR+" / "+NTR,bx+bw,by+56,{size:24,w:"800",col:hexA(L.text,.6),align:"right"});
+
+  txt(ctx,"Teşekkürler!",R.W/2,754,{font:CV(96),col:L.cream,align:"center"});
+  colophon(ctx,R,812);
+  ctx.restore();
+}};
+
+/* ══ 8 · ARCADE — CRT yüksek skor ekranı ══ */
+D.arcade={h0:1080,title:"Arcade",sub:"CRT · yüksek skor",
+render(ctx,R){
+  const g=ctx.createLinearGradient(0,0,0,R.H);
+  g.addColorStop(0,"#0B0424");g.addColorStop(.5,"#12063A");g.addColorStop(1,"#07021A");
+  ctx.fillStyle=g;ctx.fillRect(0,0,R.W,R.H);
+  /* perspektif ızgara */
+  ctx.save();ctx.strokeStyle=hexA("#FF3DBE",.28);ctx.lineWidth=2;
+  const hz=R.H*0.68;
+  for(let i=-14;i<=14;i++){ctx.beginPath();ctx.moveTo(R.W/2,hz);
+    ctx.lineTo(R.W/2+i*260,R.H);ctx.stroke();}
+  for(let i=1;i<16;i++){const yy=hz+Math.pow(i/16,2.4)*(R.H-hz);
+    ctx.globalAlpha=.28-i*0.012;ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(R.W,yy);ctx.stroke();}
+  ctx.restore();
+
+  ctx.save();ctx.translate(0,band(R,this.h0));
+  logo(ctx,R.W/2,168,244,{glow:hexA("#00E5FF",.6)});
+
+  const neon=(s,y,size,col,glow)=>{ctx.save();
+    ctx.shadowColor=glow;ctx.shadowBlur=size*0.42;
+    antonTxt(ctx,s,R.W/2,y,size,col,"center");
+    ctx.shadowBlur=size*0.9;antonTxt(ctx,s,R.W/2,y,size,col,"center");ctx.restore();};
+
+  neon(up("yüksek skor"),402,86,"#00E5FF","#00E5FF");
+  ctx.save();ctx.shadowColor="#FFD34D";ctx.shadowBlur=70;
+  antonTxt(ctx,NTR,R.W/2,606,214,"#FFD34D","center");ctx.restore();
+  neon(up("oyuncu"),684,62,"#FF3DBE","#FF3DBE");
+
+  txt(ctx,up("· player 10000 joined ·"),R.W/2,748,
+    {font:MONO("700",26),col:hexA("#00E5FF",.75),align:"center",ls:5});
+  colophon(ctx,R,802,{col:"#EAF6FF",chipFill:hexA("#00E5FF",.10),chipStroke:hexA("#00E5FF",.35)});
+  ctx.restore();
+
+  /* tarama çizgileri + vinyet — tüm kareyi kaplar */
+  ctx.save();ctx.globalAlpha=.16;ctx.fillStyle="#000";
+  for(let y=0;y<R.H;y+=4)ctx.fillRect(0,y,R.W,2);ctx.restore();
+  const v=ctx.createRadialGradient(R.W/2,R.H/2,R.H*0.30,R.W/2,R.H/2,R.H*0.78);
+  v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.62)");
+  ctx.fillStyle=v;ctx.fillRect(0,0,R.W,R.H);
+}};
+
+/* ══ 9 · BALON — logodaki konuşma balonları büyütülmüş ══ */
+D.balon={h0:1110,title:"Balon",sub:"konuşma balonları",
+render(ctx,R){
+  deepBG(ctx,R,{top:"#182055",gy:.30,glow:L.sky,ga:.16});
+  ctx.save();ctx.translate(0,band(R,this.h0));
+
+  /* arka plan balonları */
+  [[168,120,120,L.purple],[912,196,96,L.sky],[132,470,88,L.mint],[946,520,110,L.gold]]
+    .forEach(([bx,by,bs,bc],i)=>{
+      ctx.save();ctx.globalAlpha=.14;ctx.fillStyle=bc;
+      rr(ctx,bx-bs/2,by-bs*0.36,bs,bs*0.72,bs*0.26);ctx.fill();
+      ctx.beginPath();ctx.moveTo(bx-bs*0.14,by+bs*0.34);
+      ctx.lineTo(bx-bs*0.02,by+bs*0.56);ctx.lineTo(bx+bs*0.12,by+bs*0.34);
+      ctx.closePath();ctx.fill();ctx.restore();});
+
+  logo(ctx,R.W/2,168,236,{glow:hexA(L.sky,.5)});
+
+  /* ana balon */
+  const bw=R.W-176,bx=88,by=330,bh=326;
+  ctx.save();ctx.shadowColor="rgba(0,0,0,.55)";ctx.shadowBlur=50;ctx.shadowOffsetY=20;
+  rr(ctx,bx,by,bw,bh,54);
+  const bg=ctx.createLinearGradient(bx,by,bx+bw,by+bh);
+  bg.addColorStop(0,L.cream);bg.addColorStop(1,"#FFE9BE");ctx.fillStyle=bg;ctx.fill();
+  ctx.beginPath();ctx.moveTo(R.W/2-44,by+bh-2);ctx.lineTo(R.W/2-6,by+bh+58);
+  ctx.lineTo(R.W/2+46,by+bh-2);ctx.closePath();ctx.fill();ctx.restore();
+
+  antonTxt(ctx,NTR,R.W/2,by+188,190,"#1B1030","center");
+  txt(ctx,up("kişi oynuyor"),R.W/2,by+252,{size:34,w:"900",col:hexA("#1B1030",.62),align:"center",ls:10});
+
+  txt(ctx,"Sırada sen varsın.",R.W/2,772,{size:44,w:"800",col:L.cream,align:"center"});
+  txt(ctx,"Teşekkürler!",R.W/2,872,{font:CV(104),col:L.gold,align:"center"});
+  colophon(ctx,R,924);
+  ctx.restore();
+}};
+
+/* ══ 10 · KART — krem davetiye; altın varak ══ */
+D.kart={h0:1140,title:"Kart",sub:"krem kart · altın varak",
+render(ctx,R){
+  const g=ctx.createLinearGradient(0,0,0,R.H);
+  g.addColorStop(0,"#101636");g.addColorStop(1,"#070A20");
+  ctx.fillStyle=g;ctx.fillRect(0,0,R.W,R.H);
+  for(let i=0;i<70;i++){const x=seeded(i*1.9)*R.W,y=seeded(i*3.1)*R.H;
+    ctx.fillStyle=hexA(L.gold,.10+seeded(i*4.7)*.16);
+    ctx.beginPath();ctx.arc(x,y,seeded(i*5.3)*2.4+1,0,7);ctx.fill();}
+
+  ctx.save();ctx.translate(0,band(R,this.h0));
+  const x=64,w=R.W-128,h=1140;
+  ctx.save();ctx.shadowColor="rgba(0,0,0,.66)";ctx.shadowBlur=70;ctx.shadowOffsetY=26;
+  rr(ctx,x,0,w,h,20);
+  const cg=ctx.createLinearGradient(x,0,x+w,h);
+  cg.addColorStop(0,"#FFFBEF");cg.addColorStop(1,"#F6E9CC");ctx.fillStyle=cg;ctx.fill();ctx.restore();
+
+  /* çift altın çerçeve + köşe süsleri */
+  const fg=ctx.createLinearGradient(x,0,x+w,h);
+  fg.addColorStop(0,L.gold2);fg.addColorStop(.5,L.goldHi);fg.addColorStop(1,L.gold2);
+  rr(ctx,x+28,28,w-56,h-56,10);ctx.lineWidth=4;ctx.strokeStyle=fg;ctx.stroke();
+  rr(ctx,x+42,42,w-84,h-84,6);ctx.lineWidth=1.5;ctx.strokeStyle=hexA(L.gold2,.55);ctx.stroke();
+  [[x+28,28,1,1],[x+w-28,28,-1,1],[x+28,h-28,1,-1],[x+w-28,h-28,-1,-1]].forEach(([px,py,sx,sy])=>{
+    ctx.save();ctx.strokeStyle=fg;ctx.lineWidth=4;ctx.beginPath();
+    ctx.moveTo(px+sx*54,py);ctx.lineTo(px+sx*22,py);
+    ctx.quadraticCurveTo(px,py,px,py+sy*22);ctx.lineTo(px,py+sy*54);ctx.stroke();ctx.restore();});
+
+  const ink="#241A06",dim=hexA(ink,.55);
+  logo(ctx,R.W/2,238,268);
+  ctx.save();ctx.strokeStyle=hexA(L.gold2,.5);ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x+150,404);ctx.lineTo(R.W/2-46,404);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(R.W/2+46,404);ctx.lineTo(x+w-150,404);ctx.stroke();ctx.restore();
+  ctx.save();ctx.translate(R.W/2,404);ctx.rotate(Math.PI/4);
+  ctx.fillStyle=L.gold2;ctx.fillRect(-9,-9,18,18);ctx.restore();
+
+  txt(ctx,"Teşekkürler",R.W/2,540,{font:CV(150),col:ink,align:"center"});
+  txt(ctx,up("i̇sim şehir online ailesi"),R.W/2,624,{size:27,w:"800",col:dim,align:"center",ls:9});
+
+  ctx.save();
+  const ng=ctx.createLinearGradient(0,660,0,830);
+  ng.addColorStop(0,L.gold2);ng.addColorStop(.45,"#C98A00");ng.addColorStop(1,L.gold2);
+  antonTxt(ctx,NTR,R.W/2,820,206,ng,"center");ctx.restore();
+  txt(ctx,up("oyuncu"),R.W/2,876,{size:34,w:"900",col:ink,align:"center",ls:18});
+
+  ctx.save();ctx.strokeStyle=hexA(ink,.18);ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x+140,928);ctx.lineTo(x+w-140,928);ctx.stroke();ctx.restore();
+
+  txt(ctx,"İsim Şehir Online",R.W/2,982,{size:36,w:"800",col:ink,align:"center",base:"middle"});
+  socials(ctx,R.W/2,1030,dim,27);
+  storeBadges(ctx,R.W/2,1090,{col:ink,fill:hexA(ink,.05),stroke:hexA(ink,.2),h:60});
+  ctx.restore();
+}};
+
+/* ══════════════════════════════════════════════════════════════════
+   ITEMS — tek veri kaynağı. 10 tasarım × 2 oran = 20 çıktı.
+   ══════════════════════════════════════════════════════════════════ */
+const ORDER=["konfeti","madalya","kalabalik","bilet","sehir","karolar","basarim","arcade","balon","kart"];
+const TAGS="\n\n#isimsehir #isimsehironline #isimşehir #oyun #mobiloyun #kelimeoyunu #türkçeoyun";
+const CAPS={
+  konfeti:"10.000 oyuncu. 🎉\nBir kelime oyunu için kalabalık bir masa.\nHer birinize teşekkürler — sıradaki tur sizinle.",
+  madalya:"Bu madalya bizim değil, sizin. 🏅\n10.000 oyuncu İsim Şehir Online'da buluştu.\nTeşekkürler!",
+  kalabalik:"Yukarıdaki her nokta bir oyuncu. Tam 10.000 tane. ✨\nSayabilirsiniz — biz saydık.\nTeşekkürler!",
+  bilet:"10.000 numaralı bilet kesildi. 🎟️\nKoltuk: masanın başı. Geçerlilik: süresiz.\nAramıza hoş geldiniz, teşekkürler!",
+  sehir:"İsim de vardı, şehir de. Şimdi 10.000 oyuncu var. 🌃\nGökyüzü sizin için aydınlandı — teşekkürler!",
+  karolar:"T-E-Ş-E-K-K-Ü-R-L-E-R.\n10.000 oyuncu, tek tek harflerle kurulan koca bir oyun. 💜",
+  basarim:"Başarım açıldı: 10.000 Oyuncu ✅\nBu rozet topluluğun. Teşekkürler!",
+  arcade:"YÜKSEK SKOR: 10.000 OYUNCU 🕹️\nPLAYER 10000 JOINED.\nTeşekkürler!",
+  balon:"10.000 kişi oynuyor. Sırada sen varsın. 💬\nTeşekkürler!",
+  kart:"Elle yazılmış gibi olsun istedik: Teşekkürler. 🤍\n10.000 oyuncu — İsim Şehir Online ailesi."
+};
+const RATIOS=[{key:"45",W:1080,H:1350,label:"4:5 · feed"},{key:"916",W:1080,H:1920,label:"9:16 · story"}];
+
+const ITEMS=[];
+ORDER.forEach(k=>{const d=D[k];RATIOS.forEach(r=>{
+  ITEMS.push({id:k+"-"+r.key,design:k,ratio:r.key,W:r.W,H:r.H,
+    title:d.title,sub:d.sub+" · "+r.label,cap:CAPS[k]+TAGS,
+    file:"isimsehir-10bin-"+k+"-"+r.key+".png"});});});
+
+/* ══ çizim ══ */
+function drawItem(it,cv){
+  const ctx=cv.getContext("2d");
+  const R={W:it.W,H:it.H,story:it.ratio==="916"};
+  ctx.save();ctx.clearRect(0,0,R.W,R.H);
+  D[it.design].render(ctx,R);
+  ctx.restore();}
+
+/* ══ kartlar ══ */
+function build(){
+  const grid=document.getElementById("grid");grid.innerHTML="";
+  ITEMS.forEach(it=>{
+    const card=document.createElement("div");
+    card.className="card";card.dataset.ratio=it.ratio;
+    card.innerHTML=
+      '<span class="kind a'+it.ratio+'">'+(it.ratio==="45"?"4:5 · 1080×1350":"9:16 · 1080×1920")+'</span>'+
+      '<div class="stage a'+it.ratio+'"><canvas id="cv-'+it.id+'" width="'+it.W+'" height="'+it.H+'"></canvas></div>'+
+      '<div class="rtitle">'+it.title+'<small>'+it.sub+'</small></div>'+
+      '<textarea class="cap" id="cap-'+it.id+'"></textarea>'+
+      '<div class="btns">'+
+        '<button class="btn btn-img" onclick="exportImage(\''+it.id+'\')">PNG indir</button>'+
+        '<button class="btn btn-ghost" onclick="copyCap(\''+it.id+'\')">Metni kopyala</button>'+
+      '</div>';
+    grid.appendChild(card);
+    document.getElementById("cap-"+it.id).value=it.cap;
+    drawItem(it,card.querySelector("canvas"));});}
+
+function setFilter(f,btn){
+  document.querySelectorAll("#filters .fbtn").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  document.querySelectorAll(".grid .card").forEach(c=>{
+    c.style.display=(f==="all"||c.dataset.ratio===f)?"":"none";});}
+
+/* ══ dışa aktarım ══ */
+let LAST=null;
+function exportImage(id){
+  const it=ITEMS.find(i=>i.id===id);
+  const cv=document.getElementById("cv-"+id);
+  toast("PNG hazırlanıyor…");
+  cv.toBlob(b=>{
+    LAST={blob:b,name:it.file,type:"image/png"};
+    showResult(it.title+" · PNG",URL.createObjectURL(b),it.file,
+      "Telefonda «Paylaş / Kaydet» ile doğrudan Instagram'a atabilirsin.");
+  },"image/png");}
+
+function showResult(title,url,file,hint){
+  document.getElementById("mtitle").textContent=title;
+  const img=document.getElementById("resImg");img.src=url;
+  const dl=document.getElementById("resDl");dl.href=url;dl.download=file;
+  document.getElementById("mhint").textContent=hint||"";
+  document.getElementById("resShare").style.display=
+    (navigator.canShare&&LAST)?"":"none";
+  document.getElementById("modal").classList.add("show");}
+
+async function shareResult(){
+  if(!LAST)return;
+  try{
+    const f=new File([LAST.blob],LAST.name,{type:LAST.type});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){
+      await navigator.share({files:[f],title:"İsim Şehir Online · 10.000 oyuncu"});
+      toast("Paylaşıldı");
+    }else toast("Bu tarayıcı paylaşımı desteklemiyor — İndir'i kullan");
+  }catch(e){if(e&&e.name!=="AbortError")toast("Paylaşılamadı");}}
+
+function closeModal(){document.getElementById("modal").classList.remove("show");}
+document.getElementById("modal").addEventListener("click",e=>{
+  if(e.target.id==="modal")closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+
+function copyCap(id){
+  const t=document.getElementById("cap-"+id);
+  navigator.clipboard.writeText(t.value).then(()=>toast("Metin kopyalandı"),
+    ()=>{t.select();document.execCommand("copy");toast("Metin kopyalandı");});}
+
+let TT;
+function toast(m){const el=document.getElementById("toast");
+  el.textContent=m;el.classList.add("show");
+  clearTimeout(TT);TT=setTimeout(()=>el.classList.remove("show"),2100);}
+
+/* ══ solo — ?solo=<tasarım>-<oran> tek kareyi gerçek pikselde basar (ekran görüntüsü için) ══ */
+function soloMode(id){
+  const it=ITEMS.find(i=>i.id===id);if(!it)return false;
+  document.body.innerHTML="";
+  document.body.style.cssText="margin:0;padding:0;background:#000";
+  const cv=document.createElement("canvas");
+  cv.width=it.W;cv.height=it.H;cv.style.cssText="display:block;width:"+it.W+"px;height:"+it.H+"px";
+  document.body.appendChild(cv);drawItem(it,cv);return true;}
+
+/* ══ açılış — yazı tipleri ve logo hazır olmadan çizme ══ */
+function loadLogo(){
+  return new Promise(res=>{
+    if(LOGO.complete&&LOGO.naturalWidth)return res();
+    LOGO.onload=()=>res();LOGO.onerror=()=>res();});}
+
+async function boot(){
+  const hl=document.getElementById("hlogo");if(hl)hl.src=LOGO_DATA;
+  try{
+    await Promise.all([
+      document.fonts.load("400 100px Anton"),
+      document.fonts.load("900 40px Inter"),
+      document.fonts.load("800 40px Inter"),
+      document.fonts.load("700 40px Inter"),
+      document.fonts.load("600 40px Inter"),
+      document.fonts.load("700 60px Caveat"),
+      document.fonts.ready
+    ]);
+  }catch(e){}
+  await loadLogo();
+  const solo=new URLSearchParams(location.search).get("solo");
+  if(solo&&soloMode(solo))return;
+  build();}
+boot();
+</script>
+</body>
+</html>
