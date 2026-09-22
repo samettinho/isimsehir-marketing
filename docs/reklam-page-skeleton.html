@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!--
+  reklam-page-skeleton.html — örnek sayfa iskeleti (Ajan CORE tarafından yazıldı).
+
+  Bu dosya ÇALIŞTIRILMAZ / yayınlanmaz — yalnızca reklam-story.html, reklam-post.html,
+  reklam-carousel.html, reklam-video.html yazacak ajanlar için kopyalanacak bir örnektir.
+  CSS bloğu cevrimdisi-4.0.html'in stüdyo CSS'inden birebir alınmıştır (page CSS core'dan
+  gelmez — her sayfa kendi <style>'ını taşır), yalnızca .filters bloğu YOK (brif: hub'da
+  filtre yok; alt sayfalarda da tutarlılık için burada örneklenmiyor — sayfa ajanı kendi
+  format tek olduğu için filtreye ihtiyaç duymaz).
+
+  Script yükleme sırası ZORUNLU: logo.js → gif.js → mp4-muxer.min.js → reklam-core.js →
+  sayfanın kendi <script>'i (ITEMS tanımı + RK.mount({...})).
+-->
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · Reklam Stüdyosu — [FORMAT ADI]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Anton&family=Caveat:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet" />
+<script src="logo.js"></script>
+<script src="gif.js"></script>
+<script src="mp4-muxer.min.js"></script>
+<script src="reklam-core.js"></script>
+<style>
+  :root{
+    --ink:#0F1226;--panel:#1A1E3B;--panel2:#242963;--line:#2E3470;
+    --text:#F4F5FF;--dim:#9AA0CF;--violet:#7C5CFF;--sky:#4DC3FF;
+    --mint:#37D399;--gold:#F0C24B;--rose:#FF5C7A;--warn:#FFB347;--bot:#5BA8E8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:var(--text);background:var(--ink);
+    min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(70% 45% at 50% -8%,rgba(124,92,255,.20),transparent 62%)}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+
+  header.top{padding:60px 0 8px;text-align:center}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  header.top h1{font-size:clamp(34px,5.4vw,58px);font-weight:900;letter-spacing:-.03em;line-height:1.02;margin:14px 0 0}
+  header.top h1 span{color:var(--mint)}
+  header.top p{color:#c2c7ec;font-size:15px;max-width:660px;margin:16px auto 0;line-height:1.65}
+  header.top p b{color:var(--text);font-weight:700}
+
+  .facts{margin:26px auto 0;max-width:920px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .fact{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px 15px;text-align:left}
+  .fact b{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+  .fact span{font-size:13px;line-height:1.55;color:#dfe2f8}
+  .fact span i{font-style:normal;color:var(--gold);font-weight:700}
+
+  .links{margin:20px 0 30px;text-align:center;font-size:12.5px;color:var(--dim)}
+  .links a{color:var(--sky);text-decoration:none}
+  .links a:hover{text-decoration:underline}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:26px;align-items:start}
+  .card{border:1px solid var(--line);background:var(--panel);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .kind{align-self:flex-start;font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .kind.v{background:rgba(124,92,255,.16);color:#b9a6ff;border:1px solid rgba(124,92,255,.45)}
+  .kind.i{background:rgba(77,195,255,.14);color:#95dbff;border:1px solid rgba(77,195,255,.4)}
+  .stage{position:relative;border-radius:26px;overflow:hidden;background:var(--ink);border:6px solid #191d3a;
+    box-shadow:0 30px 70px -34px #000}
+  .stage.v{width:290px;height:516px}
+  .stage.i{width:300px;height:375px}
+  .stage canvas{width:100%;height:100%;display:block}
+  .stage .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
+  .stage .play span{width:66px;height:66px;border-radius:50%;background:rgba(15,18,38,.55);backdrop-filter:blur(6px);
+    display:grid;place-items:center;font-size:24px;color:#fff;border:1.5px solid rgba(244,245,255,.35);opacity:0;transition:.18s}
+  .stage.v:hover .play span{opacity:1}
+
+  .rtitle{text-align:center;font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .rtitle small{display:block;font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+  textarea.cap{width:100%;min-height:104px;resize:vertical;border-radius:14px;padding:11px 12px;
+    border:1px solid var(--line);background:#141833;color:#dfe2f8;font-family:inherit;font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:var(--violet)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:12px;padding:10px 14px;
+    font-family:inherit;font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+  .btn-pri{background:var(--violet);color:#fff}
+  .btn-img{background:var(--sky);color:#062033}
+  .btn-gif{background:var(--mint);color:#03271a}
+  .btn-ghost{background:var(--panel2);color:#dfe2f8;border:1px solid var(--line)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);opacity:0;
+    background:var(--panel);border:1.5px solid var(--violet);color:var(--text);padding:12px 22px;border-radius:14px;
+    font-size:13.5px;font-weight:700;box-shadow:0 20px 44px -14px #000;transition:.24s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:#6f76a8;font-size:12.5px;margin-top:48px;line-height:1.8}
+
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(8,10,24,.86);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:min(430px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 34px 80px -22px #000}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:15px;cursor:pointer}
+  .mtitle{font-size:19px;font-weight:800;text-align:center;margin-bottom:14px}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia video,.mmedia img{max-width:250px;max-height:445px;border-radius:18px;background:var(--ink);object-fit:contain;display:none}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="eyebrow">Reklam Stüdyosu · [FORMAT ADI]</div>
+      <h1>[Kanca <span>Başlık</span>]</h1>
+      <p>[Kısa açıklama — bu sayfanın ürettiği format, boyut, adet.]</p>
+
+      <div class="facts" id="facts"><!-- RK.mount cfg.facts ile doldurur --></div>
+
+      <div class="links" id="links"><!-- RK.mount cfg.links ile doldurur --></div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer class="foot">
+      İsim Şehir Online · @isimsehironline · App Store &amp; Google Play
+    </footer>
+  </div>
+
+  <script>
+    /* Sayfanın kendi ITEMS'ı + RK.mount çağrısı — reklam-core.js'ten SONRA yüklenir. */
+    const ITEMS = [
+      {
+        id: "x1",
+        title: "Örnek başlık",
+        sub: "Örnek alt satır",
+        caption: "Örnek reklam metni. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920, // veya post/carousel için 1080x1350
+        render(ctx, R) {
+          RK.bg(ctx, R);
+          RK.hook(ctx, R, ["Örnek kanca."], { font: "anton", size: RK.P(56) });
+          RK.adCTA(ctx, R, {});
+        },
+      },
+    ];
+
+    RK.mount({
+      key: "skeleton",
+      kind: "image", // veya "carousel" / "video"
+      title: "[FORMAT ADI]",
+      sub: "örnek",
+      ITEMS,
+      filePrefix: "isimsehir-reklam",
+      facts: [
+        { b: "Örnek", t: "facts alanı §2'deki gerçeklerden seçilir." },
+      ],
+      links: [
+        { href: "reklam.html", label: "Reklam Stüdyosu" },
+        { href: "reklam-story.html", label: "Story" },
+        { href: "reklam-post.html", label: "Post" },
+        { href: "reklam-carousel.html", label: "Carousel" },
+        { href: "reklam-video.html", label: "Video" },
+      ],
+    });
+  </script>
+</body>
+</html>

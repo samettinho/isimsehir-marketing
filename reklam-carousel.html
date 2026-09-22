@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · Reklam Stüdyosu — Carousel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Anton&family=Caveat:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet" />
+<script src="logo.js"></script>
+<script src="gif.js"></script>
+<script src="mp4-muxer.min.js"></script>
+<script src="reklam-core.js"></script>
+<style>
+  :root{
+    --ink:#0F1226;--panel:#1A1E3B;--panel2:#242963;--line:#2E3470;
+    --text:#F4F5FF;--dim:#9AA0CF;--violet:#7C5CFF;--sky:#4DC3FF;
+    --mint:#37D399;--gold:#F0C24B;--rose:#FF5C7A;--warn:#FFB347;--bot:#5BA8E8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:var(--text);background:var(--ink);
+    min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(70% 45% at 50% -8%,rgba(124,92,255,.20),transparent 62%)}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+
+  header.top{padding:60px 0 8px;text-align:center}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  header.top h1{font-size:clamp(34px,5.4vw,58px);font-weight:900;letter-spacing:-.03em;line-height:1.02;margin:14px 0 0}
+  header.top h1 span{color:var(--mint)}
+  header.top p{color:#c2c7ec;font-size:15px;max-width:660px;margin:16px auto 0;line-height:1.65}
+  header.top p b{color:var(--text);font-weight:700}
+
+  .facts{margin:26px auto 0;max-width:920px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .fact{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px 15px;text-align:left}
+  .fact b{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+  .fact span{font-size:13px;line-height:1.55;color:#dfe2f8}
+  .fact span i{font-style:normal;color:var(--gold);font-weight:700}
+
+  .links{margin:20px 0 30px;text-align:center;font-size:12.5px;color:var(--dim)}
+  .links a{color:var(--sky);text-decoration:none}
+  .links a:hover{text-decoration:underline}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:26px;align-items:start}
+  .card{border:1px solid var(--line);background:var(--panel);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .kind{align-self:flex-start;font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .kind.v{background:rgba(124,92,255,.16);color:#b9a6ff;border:1px solid rgba(124,92,255,.45)}
+  .kind.i{background:rgba(77,195,255,.14);color:#95dbff;border:1px solid rgba(77,195,255,.4)}
+  .stage{position:relative;border-radius:26px;overflow:hidden;background:var(--ink);border:6px solid #191d3a;
+    box-shadow:0 30px 70px -34px #000}
+  .stage.v{width:290px;height:516px}
+  .stage.i{width:300px;height:375px}
+  .stage canvas{width:100%;height:100%;display:block}
+  .stage .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
+  .stage .play span{width:66px;height:66px;border-radius:50%;background:rgba(15,18,38,.55);backdrop-filter:blur(6px);
+    display:grid;place-items:center;font-size:24px;color:#fff;border:1.5px solid rgba(244,245,255,.35);opacity:0;transition:.18s}
+  .stage.v:hover .play span{opacity:1}
+
+  .rtitle{text-align:center;font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .rtitle small{display:block;font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+  textarea.cap{width:100%;min-height:104px;resize:vertical;border-radius:14px;padding:11px 12px;
+    border:1px solid var(--line);background:#141833;color:#dfe2f8;font-family:inherit;font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:var(--violet)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:12px;padding:10px 14px;
+    font-family:inherit;font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+  .btn-pri{background:var(--violet);color:#fff}
+  .btn-img{background:var(--sky);color:#062033}
+  .btn-gif{background:var(--mint);color:#03271a}
+  .btn-ghost{background:var(--panel2);color:#dfe2f8;border:1px solid var(--line)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);opacity:0;
+    background:var(--panel);border:1.5px solid var(--violet);color:var(--text);padding:12px 22px;border-radius:14px;
+    font-size:13.5px;font-weight:700;box-shadow:0 20px 44px -14px #000;transition:.24s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:#6f76a8;font-size:12.5px;margin-top:48px;line-height:1.8}
+
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(8,10,24,.86);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:min(430px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 34px 80px -22px #000}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:15px;cursor:pointer}
+  .mtitle{font-size:19px;font-weight:800;text-align:center;margin-bottom:14px}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia video,.mmedia img{max-width:250px;max-height:445px;border-radius:18px;background:var(--ink);object-fit:contain;display:none}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="eyebrow">Reklam stüdyosu · 4:5 × slayt</div>
+      <h1>Carousel <span>Reklamları</span></h1>
+      <p>1080×1350, 4–5 slaytlık <b>5 carousel</b>. İlk slayt kancayı atar, son slayt CTA'yı taşır,
+      aradaki her slaytta ekranın bir kenarından taşıp diğer slaytta devam eden <b>tek bir sürekli
+      eleman</b> var — kaydırırken bir bütün gibi akar.</p>
+
+      <div class="facts" id="facts"><!-- RK.mount cfg.facts ile doldurur --></div>
+
+      <div class="links" id="links"><!-- RK.mount cfg.links ile doldurur --></div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer class="foot">
+      İsim Şehir Online · @isimsehironline · App Store &amp; Google Play
+    </footer>
+  </div>
+
+  <script>
+    /* ────────────────────────────────────────────────────────────────
+       Sayfa-özel yardımcılar (core'a girmez — brif §5.3: "ortak bir
+       yardımcı fonksiyonla (edgeLink(ctx,R,i,n)) sayfa içinde kur").
+       ──────────────────────────────────────────────────────────────── */
+
+    /** Sol üstte "i/n" hapı — her slaytta aynı konumda. */
+    function topPill(ctx, R, i, n) {
+      RK.pill(ctx, 36, 36, i + "/" + n, RK.C.text, {
+        fill: "rgba(10,12,30,.55)", h: 44, padX: 18, size: 20,
+      });
+    }
+
+    /**
+     * Slaytlar arası kenar sürekliliği. Tüm carousel'lar aynı fonksiyonu
+     * çağırır, görünüm `o.type` ile seçilir:
+     *  - "bar"   → üstte 1→n ilerleyen çizgi (c1: "Nasıl oynanır")
+     *  - "dots"  → altta N-nokta sekme göstergesi (c3: "Tek uygulama üç oyun")
+     *  - "chevron" (varsayılan) → bir ok, sağ kenardan taşıp bir sonraki
+     *    slaytta soldan devam eder; aynı renk/ikon her slaytta tekrar
+     *    edilerek dikişte kesintisiz görünür (c2/c4/c5).
+     */
+    function edgeLink(ctx, R, i, n, o) {
+      o = o || {};
+      const type = o.type || "chevron";
+
+      if (type === "bar") {
+        const y = o.y !== undefined ? o.y : 96, x = 64, w = R.W - 128, h = 10;
+        RK.rr(ctx, x, y, w, h, h / 2); ctx.fillStyle = "rgba(244,245,255,.14)"; ctx.fill();
+        const fw = Math.max(h, w * (i / n));
+        RK.rr(ctx, x, y, fw, h, h / 2); ctx.fillStyle = o.color || RK.C.mint; ctx.fill();
+        for (let s = 1; s <= n; s++) {
+          const tx = x + w * (s / n);
+          ctx.beginPath(); ctx.arc(tx, y + h / 2, 9, 0, Math.PI * 2);
+          ctx.fillStyle = s <= i ? (o.color || RK.C.mint) : "rgba(244,245,255,.28)";
+          ctx.fill();
+        }
+        return;
+      }
+
+      if (type === "dots") {
+        const count = o.count || 3, active = o.active === undefined ? -1 : o.active, all = !!o.all;
+        const y = o.y !== undefined ? o.y : R.H - 56, gap = 40, tw = (count - 1) * gap;
+        let x = R.W / 2 - tw / 2;
+        for (let d = 0; d < count; d++) {
+          const on = all || d === active;
+          ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2);
+          ctx.fillStyle = on ? (o.color || RK.C.mint) : "rgba(244,245,255,.25)";
+          ctx.fill();
+          if (on) { ctx.lineWidth = 3; ctx.strokeStyle = o.color || RK.C.mint; ctx.stroke(); }
+          x += gap;
+        }
+        return;
+      }
+
+      // "chevron": sağ kenardan taşan ok + soldan devam eden aynı ok
+      const y = o.y !== undefined ? o.y : R.H * 0.52, size = o.size || 64, col = o.color || RK.C.mint;
+      function chev(cx) {
+        ctx.save(); ctx.translate(cx, y);
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.26, -size * 0.5);
+        ctx.lineTo(size * 0.26, 0);
+        ctx.lineTo(-size * 0.26, size * 0.5);
+        ctx.strokeStyle = col; ctx.lineWidth = 10; ctx.lineCap = "round"; ctx.lineJoin = "round";
+        ctx.stroke();
+        ctx.restore();
+      }
+      if (i < n) chev(R.W);
+      if (i > 1) chev(0);
+      if (o.icon) {
+        if (i < n) RK.emoji(ctx, o.icon, R.W - 8, y - size * 0.8, 44);
+        if (i > 1) RK.emoji(ctx, o.icon, 8, y - size * 0.8, 44);
+      }
+    }
+
+    /* ────────────────────────────────────────────────────────────────
+       c1 — nasil (5 slayt): Nasıl oynanır
+       ──────────────────────────────────────────────────────────────── */
+    const c1 = {
+      id: "nasil",
+      title: "Nasıl oynanır",
+      sub: "Harf → yazma → DUR → sözlük → puan",
+      caption: "Harf düşer, herkes aynı anda yazar, ilk biten DUR der. Sözlük karar verir, puanlar düşer. Ücretsiz indir.",
+      tags: "#isimşehir #kelimeoyunu #nasıloynanır",
+      W: 1080, H: 1350,
+      slides: [
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 1, 5);
+            edgeLink(ctx, R, 1, 5, { type: "bar" });
+            RK.hook(ctx, R, ["Harf düşer."], { font: "anton", size: 108, y: 230 });
+            RK.letterTile(ctx, R.W / 2 - 190, 420, 380, "K", RK.CATG[0]);
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 2, 5);
+            edgeLink(ctx, R, 2, 5, { type: "bar" });
+            RK.hook(ctx, R, ["Herkes aynı anda", "yazar."], {
+              font: "anton", size: 78, y: 200, accent: { line: 1, col: RK.C.gold },
+            });
+            let y = 260;
+            const cats = [
+              { i: 1, cat: "İsim", val: "Kerem", grad: RK.CATG[0], focus: false, caret: false },
+              { i: 2, cat: "Şehir", val: "", grad: RK.CATG[1], focus: true, caret: true },
+              { i: 3, cat: "Hayvan", val: "", grad: RK.CATG[2], focus: false, caret: false },
+            ];
+            cats.forEach((d) => {
+              const h = RK.catField(ctx, R, 40, y, R.W - 80, {
+                i: d.i, cat: d.cat, letter: "K", val: d.val, grad: d.grad, focus: d.focus, caret: d.caret,
+              });
+              y += h + 14;
+            });
+            RK.playerStrip(ctx, R, y + 6, [
+              { e: "🙂", n: "Sen", fill: 0.6, me: true },
+              { e: "😎", n: "Elif", fill: 0.4 },
+              { e: "🤖", n: "Bot", fill: 0.3, bot: true },
+            ]);
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 3, 5);
+            edgeLink(ctx, R, 3, 5, { type: "bar" });
+            RK.hook(ctx, R, ["İlk biten", "DUR der."], {
+              font: "anton", size: 88, y: 210, accent: { line: 1, col: RK.C.rose },
+            });
+            RK.durButton(ctx, R.W / 2, 800, 200, {});
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 4, 5);
+            edgeLink(ctx, R, 4, 5, { type: "bar" });
+            RK.hook(ctx, R, ["Sözlük karar verir."], { font: "anton", size: 72, y: 200 });
+            RK.card(ctx, 60, 340, 440, 360, 24, {});
+            RK.txt(ctx, "ZÜRAFA", 280, 420, { size: 34, w: "800", col: RK.C.text, align: "center" });
+            RK.stamp(ctx, 280, 560, "SÖZLÜKTE ✓", RK.C.mint, -0.06);
+            RK.card(ctx, 580, 340, 440, 360, 24, {});
+            RK.txt(ctx, "KAKAPO", 800, 420, { size: 34, w: "800", col: RK.C.text, align: "center" });
+            RK.pill(ctx, 650, 470, "✓ ✓ ✓", RK.C.mint, { size: 22, h: 44, padX: 16 });
+            RK.pill(ctx, 860, 470, "✗", RK.C.rose, { size: 22, h: 44, padX: 16 });
+            RK.stamp(ctx, 800, 600, "KABUL", RK.C.gold, 0.05);
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 5, 5);
+            edgeLink(ctx, R, 5, 5, { type: "bar" });
+            RK.hook(ctx, R, ["Puanlar düşer."], { font: "anton", size: 86, y: 190 });
+            const chips = [
+              ["+20", RK.C.gold, "kimsenin yazmadığı"],
+              ["+10", RK.C.mint, "geçerli kelime"],
+              ["+5", RK.C.sky, "aynı kelimeyi yazanlar"],
+            ];
+            let x = 60;
+            chips.forEach((c) => {
+              RK.card(ctx, x, 340, 300, 220, 22, {});
+              RK.antonTxt(ctx, c[0], x + 150, 440, 64, c[1], "center");
+              RK.txtWrap(ctx, c[2], x + 150, 490, { size: 15, w: "600", col: RK.C.dim, align: "center" }, 250, 20);
+              x += 320;
+            });
+            RK.adCTA(ctx, R, { compact: true });
+          } },
+      ],
+    };
+
+    /* ────────────────────────────────────────────────────────────────
+       c2 — kagit (4 slayt): Kağıttan telefona
+       ──────────────────────────────────────────────────────────────── */
+    const c2 = {
+      id: "kagit",
+      title: "Kağıttan telefona",
+      sub: "Aynı oyun, kavgasız hali",
+      caption: "Kağıtta kavga, telefonda sözlük karar veriyor. Aynı oyun, cebinde. Ücretsiz indir.",
+      tags: "#isimşehir #kelimeoyunu #kağıtvsuygulama",
+      W: 1080, H: 1350,
+      slides: [
+        { render(ctx, R) {
+            RK.paperBg(ctx, 0, 0, R.W, R.H);
+            topPill(ctx, R, 1, 4);
+            edgeLink(ctx, R, 1, 4, { type: "chevron", color: RK.C.gold, icon: "📄" });
+            RK.hook(ctx, R, ["Bunu hatırlıyor", "musun?"], {
+              font: "anton", size: 76, y: 220, col: "#2b2210",
+            });
+            RK.handText(ctx, "K — Kedi, Konya,\nKerem, Kekik…", 90, 560, 46, "#2b2b2b");
+          } },
+        { render(ctx, R) {
+            RK.paperBg(ctx, 0, 0, R.W, R.H);
+            topPill(ctx, R, 2, 4);
+            edgeLink(ctx, R, 2, 4, { type: "chevron", color: RK.C.gold, icon: "📄" });
+            RK.hook(ctx, R, ["Kavga bölümü."], { font: "anton", size: 78, y: 210, col: "#2b2210" });
+            RK.handText(ctx, "K — Kedi, Konya,\nKerem, Kekik…", 90, 480, 46, "#2b2b2b");
+            ctx.save();
+            ctx.translate(160, 780); ctx.rotate(-0.07);
+            RK.handText(ctx, "KAKAPO YOK\nÖYLE BİR ŞEY!!", -20, 0, 54, "#C0272B");
+            ctx.restore();
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 3, 4);
+            edgeLink(ctx, R, 3, 4, { type: "chevron", color: RK.C.gold, icon: "📄" });
+            RK.hook(ctx, R, ["Artık sözlük", "karar veriyor."], {
+              font: "anton", size: 72, y: 200, accent: { line: 1, col: RK.C.mint },
+            });
+            RK.card(ctx, 140, 380, 800, 420, 28, {});
+            RK.txt(ctx, "KAKAPO", R.W / 2, 500, { size: 46, w: "800", col: RK.C.text, align: "center" });
+            RK.stamp(ctx, R.W / 2 - 130, 640, "SÖZLÜKTE ✓", RK.C.mint, -0.05);
+            RK.stamp(ctx, R.W / 2 + 150, 640, "+20", RK.C.gold, 0.06);
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 4, 4);
+            edgeLink(ctx, R, 4, 4, { type: "chevron", color: RK.C.gold, icon: "📄" });
+            RK.hook(ctx, R, ["Aynı oyun,", "cebinde."], { font: "anton", size: 92, y: 230 });
+            RK.logo(ctx, R.W / 2, 620, 260, {});
+            RK.txt(ctx, "İsim Şehir Online", R.W / 2, 800, { size: 26, w: "800", col: RK.C.text, align: "center" });
+            RK.adCTA(ctx, R, { compact: true });
+          } },
+      ],
+    };
+
+    /* ────────────────────────────────────────────────────────────────
+       c3 — ucoyun (5 slayt): Tek uygulama üç oyun
+       ──────────────────────────────────────────────────────────────── */
+    const c3 = {
+      id: "ucoyun",
+      title: "Tek uygulama üç oyun",
+      sub: "İsim Şehir · Wordle · Popüler Cevap",
+      caption: "İsim Şehir, Türkçe Wordle ve Popüler Cevap — hepsi tek uygulamada, hepsi ücretsiz. Ücretsiz indir.",
+      tags: "#isimşehir #wordle #popülercevap",
+      W: 1080, H: 1350,
+      slides: [
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 1, 5);
+            edgeLink(ctx, R, 1, 5, { type: "dots", count: 3, active: -1 });
+            RK.hook(ctx, R, ["Üç oyun."], { font: "anton", size: 130, y: 260 });
+            const iconSize = 180, gap = 40, totalW = iconSize * 3 + gap * 2;
+            let ix = R.W / 2 - totalW / 2, iy = 460;
+            RK.letterTile(ctx, ix, iy, iconSize, "K", RK.CATG[0]);
+            ix += iconSize + gap;
+            RK.wTile(ctx, ix, iy, iconSize, "H", "correct");
+            ix += iconSize + gap;
+            RK.card(ctx, ix, iy, iconSize, iconSize, iconSize * 0.26, { fill: RK.C.panel2, stroke: RK.C.gold });
+            RK.emoji(ctx, "🗳️", ix + iconSize / 2, iy + iconSize / 2, iconSize * 0.42);
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 2, 5);
+            edgeLink(ctx, R, 2, 5, { type: "dots", count: 3, active: 0 });
+            RK.hook(ctx, R, ["İsim Şehir."], { font: "anton", size: 92, y: 210 });
+            let y = 320;
+            const cats = [
+              { i: 1, cat: "İsim", val: "Kerem", grad: RK.CATG[0], focus: false, caret: false },
+              { i: 2, cat: "Şehir", val: "", grad: RK.CATG[1], focus: true, caret: true },
+            ];
+            cats.forEach((d) => {
+              const h = RK.catField(ctx, R, 40, y, R.W - 80, {
+                i: d.i, cat: d.cat, letter: "K", val: d.val, grad: d.grad, focus: d.focus, caret: d.caret,
+              });
+              y += h + 14;
+            });
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 3, 5);
+            edgeLink(ctx, R, 3, 5, { type: "dots", count: 3, active: 1 });
+            RK.hook(ctx, R, ["Wordle."], { font: "anton", size: 110, y: 210 });
+            RK.wordleGrid(ctx, R.W / 2, 340, 130, 12, [
+              [{ l: "T", s: "absent" }, { l: "E", s: "present" }, { l: "M", s: "absent" }, { l: "A", s: "absent" }, { l: "S", s: "present" }],
+              [{ l: "K", s: "absent" }, { l: "E", s: "present" }, { l: "S", s: "present" }, { l: "E", s: "absent" }, { l: "R", s: "absent" }],
+              [{ l: "H", s: "correct" }, { l: "İ", s: "correct" }, { l: "S", s: "correct" }, { l: "S", s: "correct" }, { l: "E", s: "correct" }],
+            ], {});
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 4, 5);
+            edgeLink(ctx, R, 4, 5, { type: "dots", count: 3, active: 2 });
+            RK.hook(ctx, R, ["Popüler Cevap."], { font: "anton", size: 76, y: 200 });
+            RK.popBoard(ctx, 60, 260, R.W - 120, ["Kedi", "Köpek", "Kartal", "Kaplan", "Kanarya"], { reveal: 2 });
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 5, 5);
+            edgeLink(ctx, R, 5, 5, { type: "dots", count: 3, all: true });
+            RK.hook(ctx, R, ["Tek uygulama,", "üç oyun."], {
+              font: "anton", size: 76, y: 210, accent: { line: 1, col: RK.C.mint },
+            });
+            RK.adCTA(ctx, R, { compact: true });
+          } },
+      ],
+    };
+
+    /* ────────────────────────────────────────────────────────────────
+       c4 — sinyal (4 slayt): Sinyal yokken
+       ──────────────────────────────────────────────────────────────── */
+    const c4 = {
+      id: "sinyal",
+      title: "Sinyal yokken",
+      sub: "Metro · uçak · köy yolu",
+      caption: "Sinyal yok, oyun var — bota karşı çevrimdışı oynanır. Günde 1 maç bedava. Ücretsiz indir.",
+      tags: "#isimşehir #çevrimdışı #bot",
+      W: 1080, H: 1350,
+      slides: [
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            RK.statusBar(ctx, R, { time: "18:12", sig: 0, plane: false, batt: 0.55 });
+            topPill(ctx, R, 1, 4);
+            edgeLink(ctx, R, 1, 4, { type: "chevron", color: RK.C.sky, icon: "📶" });
+            RK.hook(ctx, R, ["Metroda."], { font: "anton", size: 100, y: 300 });
+            RK.catField(ctx, R, 40, 440, R.W - 80, {
+              i: 1, cat: "Eşya", letter: "K", val: "", grad: RK.CATG[4], focus: true, caret: true,
+            });
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            RK.statusBar(ctx, R, { time: "09:41", sig: 4, plane: true, batt: 0.8 });
+            topPill(ctx, R, 2, 4);
+            edgeLink(ctx, R, 2, 4, { type: "chevron", color: RK.C.sky, icon: "📶" });
+            RK.hook(ctx, R, ["Uçakta."], { font: "anton", size: 100, y: 300 });
+            let x = 60;
+            [{ e: "🤖", n: "Çaylak" }, { e: "🤖", n: "Orta" }, { e: "🤖", n: "Usta" }].forEach((d) => {
+              const s = RK.botCard(ctx, x, 460, d);
+              x += s.w + 24;
+            });
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            RK.statusBar(ctx, R, { time: "16:05", sig: 0, plane: false, batt: 0.32 });
+            RK.pill(ctx, R.W - 260, 130, "ÇEVRİMDIŞI", RK.C.warn, { size: 16, h: 36, padX: 14 });
+            topPill(ctx, R, 3, 4);
+            edgeLink(ctx, R, 3, 4, { type: "chevron", color: RK.C.sky, icon: "📶" });
+            RK.hook(ctx, R, ["Köy yolunda."], { font: "anton", size: 88, y: 300 });
+            RK.boardRows(ctx, R, 60, 440, R.W - 120, [
+              { e: "🙂", n: "Sen", score: 85, me: true },
+              { e: "🤖", n: "Usta Bot", score: 60, bot: true },
+            ], 1);
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 4, 4);
+            edgeLink(ctx, R, 4, 4, { type: "chevron", color: RK.C.sky, icon: "📶" });
+            RK.hook(ctx, R, ["Günde 1 maç", "bedava."], {
+              font: "anton", size: 84, y: 230, accent: { line: 1, col: RK.C.bot },
+            });
+            RK.txt(ctx, "Bota karşı, internetsiz.", R.W / 2, 560, { size: 24, w: "700", col: RK.C.dim, align: "center" });
+            RK.adCTA(ctx, R, { compact: true });
+          } },
+      ],
+    };
+
+    /* ────────────────────────────────────────────────────────────────
+       c5 — hangisi (5 slayt): Masada sen hangisisin?
+       ──────────────────────────────────────────────────────────────── */
+    const c5 = {
+      id: "hangisi",
+      title: "Masada sen hangisisin?",
+      sub: "4 oyuncu tipi",
+      caption: "Kakapo yazan mı, ilk DUR diyen mi, itiraz eden mi? Masada hepsine yer var. Ücretsiz indir.",
+      tags: "#isimşehir #kelimeoyunu #masaoyunu",
+      W: 1080, H: 1350,
+      slides: [
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 1, 5);
+            edgeLink(ctx, R, 1, 5, { type: "chevron", color: RK.C.rose, icon: "🎭" });
+            RK.hook(ctx, R, ["Kakapo yazan."], { font: "anton", size: 92, y: 210 });
+            RK.card(ctx, 240, 360, 600, 560, 32, {});
+            RK.emoji(ctx, "🦜", R.W / 2, 560, 260);
+            RK.stamp(ctx, R.W / 2, 780, "+20", RK.C.gold, -0.05);
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 2, 5);
+            edgeLink(ctx, R, 2, 5, { type: "chevron", color: RK.C.rose, icon: "🎭" });
+            RK.hook(ctx, R, ["Kedi yazan."], { font: "anton", size: 92, y: 210 });
+            RK.card(ctx, 240, 360, 600, 560, 32, {});
+            RK.emoji(ctx, "🐱", R.W / 2, 540, 260);
+            RK.stamp(ctx, R.W / 2, 760, "+5", RK.C.sky, -0.05);
+            RK.txt(ctx, "üç kişi daha", R.W / 2, 850, { size: 22, w: "600", col: RK.C.dim, align: "center" });
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 3, 5);
+            edgeLink(ctx, R, 3, 5, { type: "chevron", color: RK.C.rose, icon: "🎭" });
+            RK.hook(ctx, R, ["İlk DUR", "diyen."], {
+              font: "anton", size: 90, y: 200, accent: { line: 1, col: RK.C.rose },
+            });
+            RK.durButton(ctx, R.W / 2, 800, 200, {});
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 4, 5);
+            edgeLink(ctx, R, 4, 5, { type: "chevron", color: RK.C.rose, icon: "🎭" });
+            RK.hook(ctx, R, ["İtiraz eden."], { font: "anton", size: 92, y: 210 });
+            RK.pill(ctx, 400, 420, "✓ ✓", RK.C.mint, { size: 28, h: 56, padX: 22 });
+            RK.pill(ctx, 620, 420, "✗", RK.C.rose, { size: 28, h: 56, padX: 22 });
+            RK.btn(ctx, 290, 560, 500, "İTİRAZ ET", "pri", { h: 90 });
+          } },
+        { render(ctx, R) {
+            RK.bg(ctx, R);
+            topPill(ctx, R, 5, 5);
+            edgeLink(ctx, R, 5, 5, { type: "chevron", color: RK.C.rose, icon: "🎭" });
+            RK.hook(ctx, R, ["Masada hepsine", "yer var."], {
+              font: "anton", size: 74, y: 210, accent: { line: 1, col: RK.C.mint },
+            });
+            const em = ["🦜", "🐱", "✋", "🙋"];
+            let x = R.W / 2 - (em.length * 130) / 2 + 65;
+            em.forEach((e) => {
+              ctx.save();
+              ctx.beginPath(); ctx.arc(x, 460, 60, 0, Math.PI * 2);
+              ctx.fillStyle = RK.C.panel2; ctx.fill();
+              ctx.lineWidth = 2; ctx.strokeStyle = RK.C.line; ctx.stroke();
+              ctx.restore();
+              RK.emoji(ctx, e, x, 460, 60);
+              x += 130;
+            });
+            RK.adCTA(ctx, R, { compact: true });
+          } },
+      ],
+    };
+
+    const ITEMS = [c1, c2, c3, c4, c5];
+
+    RK.mount({
+      key: "carousel",
+      kind: "carousel",
+      title: "Carousel Reklamları",
+      sub: "5 carousel · 4–5 slayt · 1080×1350",
+      ITEMS,
+      filePrefix: "isimsehir-reklam-carousel",
+      facts: [
+        { b: "Oyunlar", t: "<i>İsim Şehir</i> (harf çekilir, kategoriler dolar), <i>Wordle</i> (günün Türkçe kelimesi, 6 hak), <i>Popüler Cevap</i> (çoğunluğun ne yazdığını tahmin et)." },
+        { b: "Puan", t: "Kimsenin yazmadığı kelime <i>+20</i>, geçerli kelime <i>+10</i>, aynı kelimeyi yazanlar <i>+5</i>. Önce sözlük, sonra masa oylar." },
+        { b: "Bot & çevrimdışı", t: "<i>5 zorluk</i> — Çaylak · Acemi · Orta · İyi · Usta. Sözlük cihazda; sinyal olmadan da oynanır. Günde <i>1 maç ücretsiz</i>." },
+        { b: "Fiyat", t: "Bütün özellikler ücretsiz. Satılan tek şey: <i>Reklamsız</i> (tek seferlik)." },
+        { b: "Format", t: "1080×1350 PNG × 4–5 slayt. Son slayt CTA'yı taşır, aradaki her slaytta bir kenar sürekliliği elemanı var." },
+      ],
+      links: [
+        { href: "reklam.html", label: "Reklam Stüdyosu" },
+        { href: "reklam-story.html", label: "Story" },
+        { href: "reklam-post.html", label: "Post" },
+        { href: "reklam-video.html", label: "Video" },
+        { href: "index.html", label: "Tüm stüdyolar" },
+      ],
+    });
+  </script>
+</body>
+</html>

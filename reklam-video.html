@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · Reklam Stüdyosu — Video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Anton&family=Caveat:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet" />
+<script src="logo.js"></script>
+<script src="gif.js"></script>
+<script src="mp4-muxer.min.js"></script>
+<script src="reklam-core.js"></script>
+<style>
+  :root{
+    --ink:#0F1226;--panel:#1A1E3B;--panel2:#242963;--line:#2E3470;
+    --text:#F4F5FF;--dim:#9AA0CF;--violet:#7C5CFF;--sky:#4DC3FF;
+    --mint:#37D399;--gold:#F0C24B;--rose:#FF5C7A;--warn:#FFB347;--bot:#5BA8E8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:var(--text);background:var(--ink);
+    min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(70% 45% at 50% -8%,rgba(124,92,255,.20),transparent 62%)}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+
+  header.top{padding:60px 0 8px;text-align:center}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  header.top h1{font-size:clamp(34px,5.4vw,58px);font-weight:900;letter-spacing:-.03em;line-height:1.02;margin:14px 0 0}
+  header.top h1 span{color:var(--mint)}
+  header.top p{color:#c2c7ec;font-size:15px;max-width:660px;margin:16px auto 0;line-height:1.65}
+  header.top p b{color:var(--text);font-weight:700}
+
+  .facts{margin:26px auto 0;max-width:920px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .fact{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px 15px;text-align:left}
+  .fact b{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+  .fact span{font-size:13px;line-height:1.55;color:#dfe2f8}
+  .fact span i{font-style:normal;color:var(--gold);font-weight:700}
+
+  .links{margin:20px 0 30px;text-align:center;font-size:12.5px;color:var(--dim)}
+  .links a{color:var(--sky);text-decoration:none}
+  .links a:hover{text-decoration:underline}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:26px;align-items:start}
+  .card{border:1px solid var(--line);background:var(--panel);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .kind{align-self:flex-start;font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .kind.v{background:rgba(124,92,255,.16);color:#b9a6ff;border:1px solid rgba(124,92,255,.45)}
+  .kind.i{background:rgba(77,195,255,.14);color:#95dbff;border:1px solid rgba(77,195,255,.4)}
+  .stage{position:relative;border-radius:26px;overflow:hidden;background:var(--ink);border:6px solid #191d3a;
+    box-shadow:0 30px 70px -34px #000}
+  .stage.v{width:290px;height:516px}
+  .stage.i{width:300px;height:375px}
+  .stage canvas{width:100%;height:100%;display:block}
+  .stage .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
+  .stage .play span{width:66px;height:66px;border-radius:50%;background:rgba(15,18,38,.55);backdrop-filter:blur(6px);
+    display:grid;place-items:center;font-size:24px;color:#fff;border:1.5px solid rgba(244,245,255,.35);opacity:0;transition:.18s}
+  .stage.v:hover .play span{opacity:1}
+
+  .rtitle{text-align:center;font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .rtitle small{display:block;font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+  textarea.cap{width:100%;min-height:104px;resize:vertical;border-radius:14px;padding:11px 12px;
+    border:1px solid var(--line);background:#141833;color:#dfe2f8;font-family:inherit;font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:var(--violet)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:12px;padding:10px 14px;
+    font-family:inherit;font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+  .btn-pri{background:var(--violet);color:#fff}
+  .btn-img{background:var(--sky);color:#062033}
+  .btn-gif{background:var(--mint);color:#03271a}
+  .btn-ghost{background:var(--panel2);color:#dfe2f8;border:1px solid var(--line)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);opacity:0;
+    background:var(--panel);border:1.5px solid var(--violet);color:var(--text);padding:12px 22px;border-radius:14px;
+    font-size:13.5px;font-weight:700;box-shadow:0 20px 44px -14px #000;transition:.24s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:#6f76a8;font-size:12.5px;margin-top:48px;line-height:1.8}
+
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(8,10,24,.86);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:min(430px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 34px 80px -22px #000}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:15px;cursor:pointer}
+  .mtitle{font-size:19px;font-weight:800;text-align:center;margin-bottom:14px}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia video,.mmedia img{max-width:250px;max-height:445px;border-radius:18px;background:var(--ink);object-fit:contain;display:none}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="eyebrow">Reklam stüdyosu · 9:16 · sessiz</div>
+      <h1>Video <span>Reklamları</span></h1>
+      <p>10 video, <b>10 farklı mekanik</b> — şablon yok. Sessiz izlenir, her şey ekran içi yazıyla anlaşılır.
+      İlk 1.5 saniyede kanca, ilk 5 saniyede sık kesme, son 2.5 saniye CTA kartı. Görsel dil uygulamanın
+      kendi arayüzü — ekran kaydı hissi.</p>
+
+      <div class="facts" id="facts"></div>
+
+      <div class="links" id="links"></div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer class="foot">
+      İsim Şehir Online · @isimsehironline · App Store &amp; Google Play
+    </footer>
+  </div>
+
+  <script>
+  /* ══════════════════════════════════════════════════════════════════════
+     reklam-video.html — 10 video, 10 farklı mekanik.
+     Sayfa CSS'i core'dan gelmez (yukarıdaki <style> cevrimdisi-4.0'ın stüdyo
+     kimliğini taşır). Aşağıdaki fonksiyonlar RK.* ATOMLARINDAN kurulan
+     SAHNE KOMPOZİSYONLARI — RK'nın kendi helper'ları (card/txt/emoji/...)
+     buraya kopyalanmadı, yalnızca RK'yı çağırarak yeni bileşik ekranlar
+     (gameScreen, lobbyScreen, boardScreen, lockNotifFlow, chatScreen,
+     receiptScene, slotLetter, splitDuo, shareSheet, crowdDots, touchRipple,
+     avatarCard) kuruldu — brif §5.4 notu.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* ── statusBar + screenHead birleşik başlık ── */
+  function phoneHead(ctx,R,o){
+    RK.statusBar(ctx,R,{time:o.time||"21:04",sig:o.sig===undefined?4:o.sig,plane:o.plane,batt:o.batt});
+    return RK.screenHead(ctx,R,{eyebrow:o.eyebrow,eyebrowCol:o.eyebrowCol,title:o.title,offline:o.offline,coins:o.coins,timer:o.timer});
+  }
+
+  /* ── oyun ekranı: başlık + oyuncu şeridi + kategori kartları (yazma animasyonlu) ── */
+  function gameScreen(ctx,R,o,lp){
+    let y=phoneHead(ctx,R,o);
+    if(o.players)y=RK.playerStrip(ctx,R,y,o.players);
+    y+=RK.P(14);
+    const x=RK.P(14),w=R.W-RK.P(28);
+    (o.rows||[]).forEach((row,i)=>{
+      const d=Object.assign({i:i+1,grad:RK.CATG[i%RK.CATG.length]},row);
+      if(row.type){
+        const n=Math.floor(RK.clamp01((lp-row.typeStart)/row.typeLen)*row.full.length);
+        d.val=row.full.slice(0,Math.max(0,n));
+        d.focus=true;
+        d.caret=(Math.floor(lp*10)%2===0)||n<row.full.length;
+      }
+      y+=RK.catField(ctx,R,x,y,w,d)+RK.P(9);
+    });
+    return y;
+  }
+
+  /* ── arkadaş/insan avatar kartı (botCard'a benzer ama "BOT" rozetsiz) ── */
+  function avatarCard(ctx,x,y,d){
+    const w=RK.P(96),h=RK.P(112);
+    RK.card(ctx,x,y,w,h,RK.P(16),{fill:RK.hexA(RK.C.violet,.09),stroke:RK.hexA(RK.C.violet,.4)});
+    ctx.save();ctx.beginPath();ctx.arc(x+w/2,y+RK.P(32),RK.P(23),0,7);ctx.fillStyle=RK.C.panel2;ctx.fill();
+    ctx.lineWidth=RK.P(2);ctx.strokeStyle=RK.C.violet;ctx.stroke();ctx.restore();
+    RK.emoji(ctx,d.e,x+w/2,y+RK.P(32),RK.P(30));
+    RK.txt(ctx,d.n,x+w/2,y+RK.P(66),{size:RK.P(12.5),w:"700",col:RK.C.text,align:"center",base:"middle"});
+    if(d.host){
+      const pw=RK.meas(ctx,"KURUCU",{size:RK.P(8),w:"900"})+RK.P(14);
+      RK.pill(ctx,x+w/2-pw/2,y+RK.P(76),"KURUCU",RK.C.gold,{size:RK.P(8),h:RK.P(15),padX:RK.P(7)});
+    }else{
+      RK.txt(ctx,"● hazır",x+w/2,y+RK.P(92),{size:RK.P(10.5),w:"700",col:RK.C.mint,align:"center",base:"middle"});
+    }
+    return {w,h};
+  }
+
+  /* ── lobi ekranı: avatarlar kademeli pop-in (count 0..o.list.length arası, lp ile büyür) ── */
+  function lobbyScreen(ctx,R,o,lp){
+    let y=phoneHead(ctx,R,o);
+    y+=RK.P(14);
+    RK.label(ctx,o.label||"Masada",RK.P(14),y+RK.P(10));
+    y+=RK.P(26);
+    const x=RK.P(14),cols=Math.min(4,o.list.length);
+    o.list.forEach((p,i)=>{
+      const start=i*(o.stagger||0.15);
+      const pop=RK.eBack(RK.clamp01((lp-start)/0.4));
+      if(pop<=0.01)return;
+      const bx=x+(i%cols)*(RK.P(96)+RK.P(10)),by=y+Math.floor(i/cols)*(RK.P(112)+RK.P(10));
+      ctx.save();
+      ctx.translate(bx+RK.P(48),by+RK.P(56));ctx.scale(Math.max(.01,pop),Math.max(.01,pop));ctx.translate(-(bx+RK.P(48)),-(by+RK.P(56)));
+      avatarCard(ctx,bx,by,p);
+      ctx.restore();
+    });
+    return y+Math.ceil(o.list.length/cols)*(RK.P(112)+RK.P(10));
+  }
+
+  /* ── tur/maç tablosu ekranı ── */
+  function boardScreen(ctx,R,o,lp){
+    let y=phoneHead(ctx,R,o);
+    y+=RK.P(16);
+    RK.boardRows(ctx,R,RK.P(14),y,R.W-RK.P(28),o.rows,o.grow===undefined?RK.eOut(lp):o.grow);
+  }
+
+  /* ── kilit ekranı + düşen bildirim akışı + parmak dokunma çemberi ── */
+  function lockNotifFlow(ctx,R,o,lp){
+    RK.lockScreen(ctx,R,{time:o.time,date:o.date});
+    let y=RK.P(300);
+    (o.notifs||[]).forEach((n,i)=>{
+      const start=i*(o.stagger||0.28);
+      const pop=RK.clamp01((lp-start)/0.22);
+      const h=RK.notif(ctx,RK.P(20),y,R.W-RK.P(40),Object.assign({},n,{pop}));
+      y+=h+RK.P(14);
+    });
+    if(o.touch&&lp>o.touch.at)touchRipple(ctx,o.touch.x,o.touch.y,RK.clamp01((lp-o.touch.at)/(o.touch.len||0.3)));
+  }
+
+  /* ── parmak dokunma çemberi (genişleyip solan halka) ── */
+  function touchRipple(ctx,x,y,p){
+    if(p<=0)return;
+    ctx.save();
+    ctx.globalAlpha=Math.max(0,1-p);
+    ctx.beginPath();ctx.arc(x,y,RK.P(14)+p*RK.P(90),0,7);
+    ctx.lineWidth=RK.P(3);ctx.strokeStyle=RK.C.mint;ctx.stroke();
+    ctx.beginPath();ctx.arc(x,y,RK.P(8),0,7);ctx.fillStyle=RK.hexA(RK.C.mint,.85);ctx.fill();
+    ctx.restore();
+  }
+
+  /* ── sohbet ekranı: başlık + balonlar kademeli beliriyor ── */
+  function chatScreen(ctx,R,o,lp){
+    let y=RK.chatHeader(ctx,R,{name:o.name,sub:o.sub});
+    y+=RK.P(20);
+    (o.msgs||[]).forEach((m,i)=>{
+      const start=i*(o.stagger||0.16);
+      const a=RK.clamp01((lp-start)/0.28);
+      if(a<=0.01)return;
+      ctx.save();
+      ctx.globalAlpha=a;ctx.translate(0,(1-RK.eOut(a))*RK.P(10));
+      const bx=m.me?R.W-RK.P(20):RK.P(20);
+      const bb=RK.chatBubble(ctx,bx,y,RK.P(560),m);
+      ctx.restore();
+      y+=bb.h+RK.P(14);
+    });
+    return y;
+  }
+
+  /* ── harf makarası (slotspin, yeni-oyunlar.html'den uyarlandı — RK atomlarıyla) ── */
+  function slotLetter(ctx,cx,y,w,h,target,lp){
+    const letters="ABCÇDEFGHIİJKLMNOÖPRSŞTUÜVYZ";
+    const idx=Math.max(0,letters.indexOf(target));
+    const total=idx+3*letters.length;
+    const pos=total*RK.eOut(RK.clamp01(lp));
+    RK.card(ctx,cx-w/2,y,w,h,RK.P(24),{fill:RK.C.panel2});
+    ctx.save();
+    RK.rr(ctx,cx-w/2+RK.P(6),y+RK.P(6),w-RK.P(12),h-RK.P(12),RK.P(18));ctx.clip();
+    const rowH=h*0.62,base=Math.floor(pos),frac=pos-base;
+    for(let k=-1;k<=1;k++){
+      const li=base+k;
+      const letter=letters[((li%letters.length)+letters.length)%letters.length];
+      const yy=y+h/2+(k-frac)*rowH;
+      ctx.save();
+      ctx.globalAlpha=Math.max(0.14,1-Math.abs(yy-(y+h/2))/rowH);
+      RK.antonTxt(ctx,letter,cx,yy+RK.P(30),RK.P(84),(k===0&&lp>0.94)?RK.C.gold:RK.C.text,"center");
+      ctx.restore();
+    }
+    ctx.restore();
+    ctx.save();
+    ctx.strokeStyle=RK.hexA(RK.C.gold,.7);ctx.lineWidth=RK.P(2);
+    ctx.strokeRect(cx-w/2,y+h/2-rowH/2,w,rowH);
+    ctx.restore();
+  }
+
+  /* ── yatay bölünmüş ekran (duo) — üst/alt iki mini oyun kartı ── */
+  function splitDuo(ctx,R,o){
+    const divY=RK.P(360);
+    RK.statusBar(ctx,R,{time:"21:04",sig:4});
+    RK.label(ctx,o.topLabel,RK.P(20),RK.P(92),RK.C.violet);
+    RK.txt(ctx,o.topName,RK.P(20),RK.P(120),{size:RK.P(19),w:"800",col:RK.C.text});
+    RK.catField(ctx,R,RK.P(14),RK.P(142),R.W-RK.P(28),o.topField);
+    ctx.save();
+    RK.card(ctx,0,divY,R.W,RK.P(6),0,{fill:RK.C.violet,stroke:"transparent"});
+    RK.txt(ctx,"VS",R.W/2,divY+RK.P(3),{size:RK.P(13),w:"900",col:"#fff",align:"center",base:"middle"});
+    ctx.restore();
+    RK.label(ctx,o.bottomLabel,RK.P(20),divY+RK.P(58),RK.C.bot);
+    RK.txt(ctx,o.bottomName,RK.P(20),divY+RK.P(86),{size:RK.P(19),w:"800",col:RK.C.text});
+    RK.catField(ctx,R,RK.P(14),divY+RK.P(108),R.W-RK.P(28),o.bottomField);
+    return divY+RK.P(108)+RK.P(122);
+  }
+
+  /* ── iOS paylaşım sayfası (sonuç önizleme + uygulama ikonları) ── */
+  function shareSheet(ctx,R,lp,o){
+    const pop=RK.eBack(RK.clamp01(lp/0.45));
+    const w=R.W-RK.P(56),x=RK.P(28),h=RK.P(360),y=RK.P(420);
+    ctx.save();
+    ctx.translate(x+w/2,y+h/2);ctx.scale(Math.max(.01,pop),Math.max(.01,pop));ctx.translate(-(x+w/2),-(y+h/2));
+    RK.card(ctx,x,y,w,h,RK.P(24),{fill:RK.C.panel,stroke:RK.hexA(RK.C.text,.16)});
+    RK.txt(ctx,"Paylaş",x+w/2,y+RK.P(34),{size:RK.P(16),w:"800",col:RK.C.text,align:"center",base:"middle"});
+    const gx=x+RK.P(24),gy=y+RK.P(58);
+    RK.card(ctx,gx,gy,w-RK.P(48),RK.P(122),RK.P(16),{fill:RK.C.panel2});
+    RK.txt(ctx,"İsim Şehir Wordle · "+(o.result||"4/6"),gx+RK.P(16),gy+RK.P(24),{size:RK.P(12.5),w:"800",col:RK.C.text,base:"middle"});
+    (o.grid||[]).forEach((row,i)=>RK.txt(ctx,row,gx+RK.P(16),gy+RK.P(50)+i*RK.P(18),{size:RK.P(14),w:"700",col:RK.C.text,base:"middle"}));
+    const icons=[["💬","Mesajlar"],["📷","Instagram"],["🔗","Kopyala"]];
+    const iw=(w-RK.P(48))/3;
+    icons.forEach((ic,i)=>{
+      const cx=x+RK.P(24)+iw*i+iw/2,cy=y+RK.P(250);
+      ctx.save();ctx.beginPath();ctx.arc(cx,cy,RK.P(30),0,7);ctx.fillStyle=RK.C.panel2;ctx.fill();ctx.restore();
+      RK.emoji(ctx,ic[0],cx,cy,RK.P(26));
+      RK.txt(ctx,ic[1],cx,cy+RK.P(46),{size:RK.P(11),w:"600",col:RK.C.dim,align:"center",base:"middle"});
+    });
+    ctx.restore();
+  }
+
+  /* ── puan fişi: satırlar tek tek düşer, her birine RK.stamp ── */
+  function receiptScene(ctx,R,rows,revealed){
+    const x=RK.P(40),w=R.W-RK.P(80),lh=RK.P(58);
+    const h=RK.P(70)+rows.length*lh+RK.P(66),y=RK.P(150);
+    ctx.save();
+    RK.rr(ctx,x,y,w,h,RK.P(6));ctx.fillStyle="#FBF3DD";ctx.fill();
+    ctx.restore();
+    RK.txt(ctx,"TUR FİŞİ",x+w/2,y+RK.P(36),{font:RK.MONO("800",RK.P(17)),col:"#7a6a3a",align:"center"});
+    ctx.save();ctx.strokeStyle="rgba(0,0,0,.16)";ctx.setLineDash([RK.P(5),RK.P(5)]);
+    ctx.beginPath();ctx.moveTo(x+RK.P(16),y+RK.P(56));ctx.lineTo(x+w-RK.P(16),y+RK.P(56));ctx.stroke();ctx.restore();
+    let yy=y+RK.P(56)+RK.P(30),total=0;
+    rows.forEach((r,i)=>{
+      if(i>=revealed)return;
+      total+=r.pt;
+      RK.txt(ctx,r.w,x+RK.P(24),yy,{font:RK.MONO("700",RK.P(17)),col:"#2a2210"});
+      RK.txt(ctx,"+"+r.pt,x+w-RK.P(24),yy,{font:RK.MONO("800",RK.P(17)),col:"#1b6b3a",align:"right"});
+      if(i===revealed-1){
+        const tone=r.pt>=20?RK.C.mint:(r.pt>=10?RK.C.gold:RK.C.dim);
+        RK.stamp(ctx,x+w-RK.P(96),yy-RK.P(6),"+"+r.pt,tone,-0.1);
+      }
+      yy+=lh;
+    });
+    ctx.save();ctx.strokeStyle="rgba(0,0,0,.16)";ctx.setLineDash([RK.P(5),RK.P(5)]);
+    ctx.beginPath();ctx.moveTo(x+RK.P(16),yy+RK.P(4));ctx.lineTo(x+w-RK.P(16),yy+RK.P(4));ctx.stroke();ctx.restore();
+    RK.txt(ctx,"TOPLAM",x+RK.P(24),yy+RK.P(38),{font:RK.MONO("900",RK.P(18)),col:"#1b1206"});
+    RK.txt(ctx,String(total),x+w-RK.P(24),yy+RK.P(38),{font:RK.MONO("900",RK.P(26)),col:"#1b6b3a",align:"right"});
+    return {x,y,w,h,total,bottom:yy+RK.P(38)};
+  }
+
+  /* ── 10.000 kalabalığı — nokta halkaları (tesekkur-10bin.html "kalabalik"tan uyarlandı) ── */
+  function crowdDots(ctx,cx,cy,progress,total){
+    total=total||10000;
+    let left=Math.round(total*RK.clamp01(progress)),ring=0;
+    for(let r=RK.P(58);r<=RK.P(172)&&left>0;r+=RK.P(2.6),ring++){
+      const cnt=Math.min(left,Math.round(2*Math.PI*r/RK.P(2.6)));
+      const off=RK.seeded(ring*3.3)*Math.PI*2;
+      for(let i=0;i<cnt;i++){
+        const a=off+i*Math.PI*2/cnt,s=RK.seeded(ring*17+i*1.7);
+        let col=RK.hexA(RK.C.sky,.34);
+        if(s>0.972)col=RK.C.gold;else if(s>0.944)col=RK.hexA(RK.C.violet,.9);
+        else if(s>0.918)col=RK.hexA(RK.C.mint,.85);else if(s>0.72)col=RK.hexA(RK.C.sky,.62);
+        ctx.fillStyle=col;ctx.beginPath();
+        ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,RK.P(1.7),0,7);ctx.fill();
+      }
+      left-=cnt;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     ITEMS — 10 video, brif §5.4 sahne akışı ve say metinleri birebir.
+     ══════════════════════════════════════════════════════════════════════ */
+  const ITEMS = [
+
+    /* v1 — canli: harf makarası → yazma → DUR → tablo */
+    {
+      id:"canli",title:"Canlı tur",sub:"harf makarası · yazma · DUR · tablo",
+      caption:"Harf düşer, herkes aynı anda yazar, DUR diyen turu kapatır. Kimsenin bilmediği kelime en çok puanı alır. Ücretsiz indir.",
+      tags:"#isimşehir #kelimeoyunu",
+      W:1080,H:1920,
+      scenes:[
+        { dur:1500,
+          say:{t1:"Harf düşüyor…",tone:RK.C.gold,big:true},
+          render(ctx,R,lp){
+            RK.label(ctx,"TUR 1 · HARF ÇEKİLİYOR",RK.P(20),RK.P(70));
+            slotLetter(ctx,R.W/2,RK.P(180),RK.P(340),RK.P(300),"K",lp);
+          } },
+        { dur:5500,
+          say:{t1:"Herkes aynı anda yazıyor.",tone:RK.C.violet},
+          render(ctx,R,lp){
+            gameScreen(ctx,R,{
+              eyebrow:"Tur 1",title:"3 kategori",timer:Math.round(90-6*RK.clamp01(lp)),coins:120,
+              players:[{e:"🙂",n:"Sen",fill:0.7,me:true},{e:"😄",n:"Elif",fill:0.5},{e:"🙃",n:"Mert",fill:0.4}],
+              rows:[
+                {cat:"Bitki",letter:"K",type:true,full:"Kakapo",typeStart:0,typeLen:0.55},
+                {cat:"Hayvan",letter:"K",type:true,full:"Kivi",typeStart:0.1,typeLen:0.5},
+                {cat:"Eşya",letter:"K",val:"",focus:false},
+              ],
+            },lp);
+          } },
+        { dur:2000,
+          say:{t1:"DUR!",tone:RK.C.rose,big:true},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Tur 1",title:"İlk biten turu kapatır"});
+            RK.durButton(ctx,R.W/2,RK.P(340),RK.P(120),{press:lp>0.4});
+          } },
+        { dur:5000,
+          say:{t1:"Kakapo +20, Kedi +5.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            boardScreen(ctx,R,{
+              eyebrow:"Tur 1 sonucu",title:"Puanlar düştü",
+              rows:[{e:"🙂",n:"Sen",score:20,me:true},{e:"😄",n:"Elif",score:5},{e:"🙃",n:"Mert",score:5}],
+            },lp);
+          } },
+        RK.ctaScene({dur:3000,items:["Kimsenin yazmadığı kelime +20","2-15 kişi, süreli ya da ilk-bitiren"]}),
+      ],
+    },
+
+    /* v2 — bildirim: kilit ekranı → dokunma → lobi → oyun başlar */
+    {
+      id:"bildirim",title:"Bildirim POV",sub:"kilit ekranı · dokunma · lobi",
+      caption:"Elif seni davet etti, masa 5 dakikada kuruldu. Herkese açık ya da özel — sen seç. Ücretsiz indir.",
+      tags:"#isimşehir #arkadaşlarla",
+      W:1080,H:1920,
+      scenes:[
+        { dur:3000,
+          say:{t1:"Elif seni davet etti.",tone:RK.C.violet,big:true},
+          render(ctx,R,lp){
+            lockNotifFlow(ctx,R,{
+              time:"21:04",date:"Salı 23 Eylül",
+              notifs:[
+                {title:"İsim Şehir",body:"Elif seni odaya davet etti",time:"şimdi"},
+                {title:"İsim Şehir",body:"Tur 3 başladı — sıra sende",time:"1dk"},
+                {title:"İsim Şehir",body:"Günün kelimesi hazır",time:"3dk"},
+              ],
+            },lp);
+          } },
+        { dur:1500,
+          say:{t1:"Masa kuruluyor…",tone:RK.C.mint},
+          render(ctx,R,lp){
+            lockNotifFlow(ctx,R,{
+              time:"21:04",date:"Salı 23 Eylül",
+              notifs:[
+                {title:"İsim Şehir",body:"Elif seni odaya davet etti",time:"şimdi",pop:1},
+                {title:"İsim Şehir",body:"Tur 3 başladı — sıra sende",time:"1dk",pop:1},
+                {title:"İsim Şehir",body:"Günün kelimesi hazır",time:"3dk",pop:1},
+              ],
+              touch:{x:R.W/2,y:RK.P(340),at:0.15,len:0.7},
+            },lp);
+          } },
+        { dur:5500,
+          say:{t1:"Masa kuruluyor…",tone:RK.C.mint},
+          render(ctx,R,lp){
+            const n=2+Math.round(3*RK.eOut(RK.clamp01(lp)));
+            lobbyScreen(ctx,R,{
+              eyebrow:"aile grubu",title:"Masa kuruluyor",label:"Katılanlar",
+              list:[
+                {e:"🙂",n:"Sen",host:true},{e:"😄",n:"Elif"},{e:"🙃",n:"Mert"},
+                {e:"😊",n:"Zeynep"},{e:"😎",n:"Kerem"},
+              ].slice(0,n),
+            },lp);
+          } },
+        { dur:4000,
+          say:{t1:"Harf K. Başladı.",tone:RK.C.gold},
+          render(ctx,R,lp){
+            gameScreen(ctx,R,{
+              eyebrow:"Tur 1",title:"5 kişi masada",
+              rows:[{cat:"Bitki",letter:"K",val:"",focus:true,caret:true}],
+            },lp);
+          } },
+        RK.ctaScene({dur:3000,items:["5 dakikada masa kurulur","Arkadaşını davet et, kod paylaş"]}),
+      ],
+    },
+
+    /* v3 — pes: geri sayım → 0 puan → harf al → yazılır */
+    {
+      id:"pes",title:"Pes ettim",sub:"geri sayım · 0 puan · Harf Al · yazılır",
+      caption:"Aklına gelmiyor mu? Jetonla harf al, kategori bomboş kalmasın. Ücretsiz indir.",
+      tags:"#isimşehir #kelimeoyunu",
+      W:1080,H:1920,
+      scenes:[
+        { dur:5000,
+          say:{t1:"Ş ile ünlü… aklına gelmiyor.",tone:RK.C.rose,big:true},
+          render(ctx,R,lp){
+            const timer=Math.max(0,Math.ceil(10*(1-lp)));
+            gameScreen(ctx,R,{
+              eyebrow:"Tur 2",title:"1 kategori kaldı",timer,coins:120,
+              rows:[{cat:"Ünlü",letter:"Ş",val:"",focus:true,caret:(Math.floor(lp*10)%2===0)}],
+            },lp);
+          } },
+        { dur:2000,
+          say:{t1:"0 puan.",tone:RK.C.rose,big:true},
+          render(ctx,R,lp){
+            gameScreen(ctx,R,{eyebrow:"Tur 2",title:"Süre doldu",
+              rows:[{cat:"Ünlü",letter:"Ş",val:"",err:true}]},lp);
+            const pop=RK.eBack(RK.clamp01(lp/0.5));
+            ctx.save();ctx.translate(R.W/2,RK.P(420));ctx.scale(Math.max(.01,pop),Math.max(.01,pop));
+            RK.stamp(ctx,0,0,"0 PUAN",RK.C.rose,-0.08);ctx.restore();
+          } },
+        { dur:3000,
+          say:{t1:"Harf Al · 🪙15",tone:RK.C.gold},
+          render(ctx,R,lp){
+            gameScreen(ctx,R,{eyebrow:"Tur 2",title:"Kategori bomboş",coins:120,
+              rows:[{cat:"Ünlü",letter:"Ş",val:"",focus:true,hints:true,glow:lp>0.3?"harf":null}]},lp);
+          } },
+        { dur:4000,
+          say:{t1:"Kategori doldu.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            gameScreen(ctx,R,{eyebrow:"Tur 2",title:"Kategori doldu",coins:105,
+              rows:[{cat:"Ünlü",letter:"Ş",type:true,full:"Şener Şen",typeStart:0,typeLen:0.7,coinUsed:true}]},lp);
+            if(lp>0.75){
+              const pop=RK.eBack(RK.clamp01((lp-0.75)/0.25));
+              ctx.save();ctx.translate(R.W-RK.P(90),RK.P(220));ctx.scale(Math.max(.01,pop),Math.max(.01,pop));
+              RK.stamp(ctx,0,0,"+10",RK.C.mint,0.06);ctx.restore();
+            }
+          } },
+        RK.ctaScene({dur:3000,items:["Harf Al 🪙15 · Kelime Al 🪙50","Jeton puanı düşürmez"]}),
+      ],
+    },
+
+    /* v4 — duo: split ekran, aynı harf aynı kategori */
+    {
+      id:"duo",title:"Kakapo vs Kedi",sub:"split ekran · aynı harf · damga",
+      caption:"Aynı harf, aynı kategori — kimin cevabı kimsenin aklına gelmedi? Ücretsiz indir.",
+      tags:"#isimşehir #kelimeoyunu",
+      W:1080,H:1920,
+      scenes:[
+        { dur:2000,
+          say:{t1:"Aynı harf, aynı kategori.",tone:RK.C.violet,big:true},
+          render(ctx,R,lp){
+            const a=RK.eOut(RK.clamp01(lp));
+            ctx.save();ctx.globalAlpha=a;
+            splitDuo(ctx,R,{
+              topLabel:"SEN",topName:"Hayvan · K",topField:{cat:"Hayvan",letter:"K",val:"",focus:true},
+              bottomLabel:"ELİF",bottomName:"Hayvan · K",bottomField:{cat:"Hayvan",letter:"K",val:"",focus:true},
+            });
+            ctx.restore();
+          } },
+        { dur:6000,
+          say:{t1:"Kimsenin yazmadığını yaz.",tone:RK.C.violet},
+          render(ctx,R,lp){
+            const t1=RK.clamp01(lp/0.85)*"Kakapo".length|0;
+            const t2=RK.clamp01(lp/0.7)*"Kedi".length|0;
+            splitDuo(ctx,R,{
+              topLabel:"SEN",topName:"Hayvan · K",
+              topField:{cat:"Hayvan",letter:"K",val:"Kakapo".slice(0,t1),focus:true,caret:(Math.floor(lp*10)%2===0)},
+              bottomLabel:"ELİF",bottomName:"Hayvan · K",
+              bottomField:{cat:"Hayvan",letter:"K",val:"Kedi".slice(0,t2),focus:true,caret:(Math.floor(lp*10)%2===0)},
+            });
+          } },
+        { dur:3000,
+          say:{t1:"Kakapo +20 · Kedi +5",tone:RK.C.mint,big:true},
+          render(ctx,R,lp){
+            splitDuo(ctx,R,{
+              topLabel:"SEN",topName:"Hayvan · K",topField:{cat:"Hayvan",letter:"K",val:"Kakapo"},
+              bottomLabel:"ELİF",bottomName:"Hayvan · K",bottomField:{cat:"Hayvan",letter:"K",val:"Kedi"},
+            });
+            const p1=RK.eBack(RK.clamp01(lp/0.5)),p2=RK.eBack(RK.clamp01((lp-0.2)/0.5));
+            ctx.save();ctx.translate(R.W-RK.P(90),RK.P(150));ctx.scale(Math.max(.01,p1),Math.max(.01,p1));
+            RK.stamp(ctx,0,0,"+20",RK.C.mint,-0.1);ctx.restore();
+            ctx.save();ctx.translate(R.W-RK.P(90),RK.P(510));ctx.scale(Math.max(.01,p2),Math.max(.01,p2));
+            RK.stamp(ctx,0,0,"+5",RK.C.gold,0.08);ctx.restore();
+          } },
+        { dur:3000,
+          say:{t1:"20 · 5 fark yaratır.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            boardScreen(ctx,R,{eyebrow:"Tur sonucu",title:"Skor",
+              rows:[{e:"🙂",n:"Sen",score:20,me:true},{e:"😄",n:"Elif",score:5}]},lp);
+          } },
+        RK.ctaScene({dur:3000,items:["Kimsenin yazmadığı kelime +20","Aynı kelimeyi yazanlar +5"]}),
+      ],
+    },
+
+    /* v5 — flip: wordle karo çevirme + paylaşım sheet + balon */
+    {
+      id:"flip",title:"Wordle flip",sub:"karo çevirme · paylaşım · balon",
+      caption:"Türkçe Wordle. Günde bir kelime, altı hak, sonucu spoiler'sız paylaş. Ücretsiz indir.",
+      tags:"#isimşehir #wordle",
+      W:1080,H:1920,
+      scenes:[
+        { dur:8000,
+          say:{t1:"Türkçe Wordle.",tone:RK.C.mint,big:true},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"günün kelimesi",title:"5. tahmin"});
+            const rows=[
+              [{l:"T",s:"absent"},{l:"E",s:"present"},{l:"M",s:"absent"},{l:"A",s:"absent"},{l:"S",s:"absent"}],
+              [{l:"K",s:"absent"},{l:"E",s:"present"},{l:"S",s:"correct"},{l:"E",s:"present"},{l:"R",s:"absent"}],
+              [{l:"K",s:"absent"},{l:"İ",s:"present"},{l:"T",s:"absent"},{l:"A",s:"absent"},{l:"P",s:"absent"}],
+              [{l:"H",s:"correct"},{l:"İ",s:"correct"},{l:"S",s:"correct"},{l:"S",s:"correct"},{l:"E",s:"correct"}],
+            ];
+            const elapsed=lp*8000,rowDur=2000,ri=Math.min(3,Math.floor(elapsed/rowDur));
+            RK.wordleGrid(ctx,R.W/2,RK.P(180),RK.P(52),RK.P(8),rows,{
+              flipRow:ri,flipAt:0.4,lp:(elapsed-ri*rowDur)/rowDur,
+            });
+          } },
+        { dur:3000,
+          say:{t1:"4/6.",tone:RK.C.sky,big:true},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"günün kelimesi",title:"Çözüldü — HİSSE"});
+            shareSheet(ctx,R,lp,{result:"4/6",grid:["🟨⬛🟩🟨⬛","⬛🟨🟩🟨⬛","⬛🟨⬛⬛⬛","🟩🟩🟩🟩🟩"]});
+          } },
+        { dur:3000,
+          say:{t1:"Spoiler'sız paylaş.",tone:RK.C.violet},
+          render(ctx,R,lp){
+            RK.chatHeader(ctx,R,{name:"Aile 👨‍👩‍👧‍👦",sub:"Elif, Mert, Zeynep, sen"});
+            const fly=RK.eOut(RK.clamp01(lp));
+            const x=R.W-RK.P(20)-(1-fly)*RK.P(80),y=RK.P(160)+fly*RK.P(40);
+            ctx.save();ctx.globalAlpha=RK.clamp01(lp*2);
+            RK.chatBubble(ctx,x,y,RK.P(420),{text:"İsim Şehir Wordle · 4/6\n🟨🟨🟩🟨⬛\n⬛🟨🟩🟨⬛\n⬛🟨⬛⬛⬛\n🟩🟩🟩🟩🟩",me:true});
+            ctx.restore();
+          } },
+        RK.ctaScene({dur:3000,items:["Günde bir kelime, altı hak","Sonucu paylaş, serini büyüt"]}),
+      ],
+    },
+
+    /* v6 — board: popüler cevap alttan üste açılış */
+    {
+      id:"board",title:"Popüler Cevap",sub:"alttan üste açılış · vurgulanan cevap",
+      caption:"Çoğunluk ne yazdı? Kalabalıkla aynı düşün, puan al. Sayı yok — sadece sıra. Ücretsiz indir.",
+      tags:"#isimşehir #populercevap",
+      W:1080,H:1920,
+      scenes:[
+        { dur:2000,
+          say:{t1:"Çoğunluk ne yazdı?",tone:RK.C.gold,big:true},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Popüler Cevap",title:"Hayvan · K"});
+            RK.catField(ctx,R,RK.P(14),RK.P(140),R.W-RK.P(28),{cat:"Hayvan",letter:"K",val:"",focus:true,caret:true});
+          } },
+        { dur:3000,
+          say:{t1:"Kedi.",tone:RK.C.gold,big:true},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Popüler Cevap",title:"Hayvan · K"});
+            const n=Math.floor(RK.clamp01(lp/0.8)*"Kedi".length);
+            RK.catField(ctx,R,RK.P(14),RK.P(140),R.W-RK.P(28),{cat:"Hayvan",letter:"K",val:"Kedi".slice(0,n),focus:true,caret:true});
+          } },
+        { dur:7000,
+          say:{t1:"Kalabalıkla aynı düşün, puan al.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Popüler Cevap",title:"Hayvan · K"});
+            const reveal=Math.round(5*RK.clamp01(lp/0.9));
+            RK.popBoard(ctx,RK.P(14),RK.P(150),R.W-RK.P(28),["Kedi","Köpek","Kartal","Kaplan","Kanarya"],{reveal});
+          } },
+        { dur:2000,
+          say:{t1:"Kalabalıkla aynı düşün, puan al.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Popüler Cevap",title:"Hayvan · K"});
+            RK.popBoard(ctx,RK.P(14),RK.P(150),R.W-RK.P(28),["Kedi","Köpek","Kartal","Kaplan","Kanarya"],{reveal:5});
+            const p=RK.eOut(RK.clamp01(lp));
+            ctx.save();ctx.globalAlpha=p;ctx.strokeStyle=RK.C.gold;ctx.lineWidth=RK.P(3);
+            RK.rr(ctx,RK.P(10),RK.P(146),R.W-RK.P(20),RK.P(72),RK.P(20));ctx.stroke();ctx.restore();
+            RK.pill(ctx,RK.P(14),RK.P(232),"seninki 1. sırada",RK.C.gold,{size:RK.P(11),h:RK.P(24),padX:RK.P(10)});
+          } },
+        RK.ctaScene({dur:3000,items:["Puan kaç kişinin aynı şeyi düşündüğüne göre","Sayı/yüzde yok — sıra ve cevap"]}),
+      ],
+    },
+
+    /* v7 — speedrun: kronometre + kurulum + kod + lobi */
+    {
+      id:"speedrun",title:"10 saniyede oda",sub:"kronometre · kurulum · kod · lobi",
+      caption:"Oda kurmak kaç saniye sürer? Kategoriler, süre, tur — hepsi birkaç dokunuş. Ücretsiz indir.",
+      tags:"#isimşehir #kelimeoyunu",
+      W:1080,H:1920,
+      scenes:[
+        { dur:1000,
+          say:{t1:"Oda kurmak kaç saniye?",tone:RK.C.mint,big:true},
+          render(ctx,R,lp,t){
+            phoneHead(ctx,R,{eyebrow:"yeni oda",title:"Oda kur"});
+            RK.stopwatch(ctx,RK.P(20),RK.P(120),t);
+          } },
+        { dur:7000,
+          say:{t1:"Kategoriler ✓ süre ✓",tone:RK.C.sky},
+          render(ctx,R,lp,t){
+            phoneHead(ctx,R,{eyebrow:"yeni oda",title:"Oda kur"});
+            RK.stopwatch(ctx,RK.P(20),RK.P(120),t);
+            const steps=["6 kategori","Süreli · 90 sn","3 tur"];
+            const on=Math.min(steps.length,Math.floor(lp*(steps.length+0.4)));
+            let y=RK.P(180);
+            steps.forEach((s,i)=>{RK.opt(ctx,RK.P(14),y,R.W-RK.P(28),RK.P(56),{title:s,on:i<on});y+=RK.P(64);});
+          } },
+        { dur:2000,
+          say:{t1:"9.8 saniye.",tone:RK.C.gold,big:true},
+          render(ctx,R,lp,t){
+            phoneHead(ctx,R,{eyebrow:"yeni oda",title:"Oda hazır"});
+            RK.stopwatch(ctx,RK.P(20),RK.P(120),Math.min(t,9800));
+            RK.card(ctx,RK.P(14),RK.P(180),R.W-RK.P(28),RK.P(90),RK.P(18),{fill:RK.hexA(RK.C.gold,.1),stroke:RK.C.gold});
+            RK.antonTxt(ctx,"7F3K",R.W/2,RK.P(240),RK.P(48),RK.C.gold,"center");
+            if(lp>0.4)RK.pill(ctx,R.W/2-RK.P(58),RK.P(300),"kopyalandı ✓",RK.C.mint,{size:RK.P(11),h:RK.P(24),padX:RK.P(10)});
+          } },
+        { dur:4000,
+          say:{t1:"Kategoriler ✓ süre ✓",tone:RK.C.sky},
+          render(ctx,R,lp){
+            const n=1+Math.round(3*RK.eOut(RK.clamp01(lp)));
+            lobbyScreen(ctx,R,{
+              eyebrow:"oda 7F3K",title:"Masa doluyor",label:"Katılanlar",
+              list:[{e:"🙂",n:"Sen",host:true},{e:"😄",n:"Elif"},{e:"🙃",n:"Mert"},{e:"😊",n:"Zeynep"}].slice(0,n),
+            },lp);
+          } },
+        RK.ctaScene({dur:3000,items:["Oda şablonları · 5'e kadar","Herkese açık oda ya da kodla davet"]}),
+      ],
+    },
+
+    /* v8 — fis: puan fişi uzar, her kelimeye damga */
+    {
+      id:"fis",title:"Puan fişi",sub:"fiş uzaması · damga · toplam",
+      caption:"Tur bitti, puanlar tek tek düşüyor. Kimsenin yazmadığı kelime en çok kazandırır. Ücretsiz indir.",
+      tags:"#isimşehir #kelimeoyunu",
+      W:1080,H:1920,
+      scenes:[
+        { dur:2000,
+          say:{t1:"Tur bitti, puanlar düşüyor.",tone:RK.C.violet,big:true},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Tur 3",title:"Tur bitti"});
+            const p=RK.eBack(RK.clamp01(lp/0.6));
+            ctx.save();ctx.translate(R.W/2,RK.P(260));ctx.scale(Math.max(.01,p),Math.max(.01,p));
+            RK.antonTxt(ctx,"TUR BİTTİ",0,0,RK.P(52),RK.C.text,"center");ctx.restore();
+          } },
+        { dur:9000,
+          say:{t1:"Kimsenin yazmadığı +20.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Tur 3",title:"Puan fişi"});
+            const rows=[{w:"Kakapo",pt:20},{w:"Zürafa",pt:20},{w:"Kivi",pt:10},{w:"Kedi",pt:5},{w:"Aslan",pt:10},{w:"Papağan",pt:20}];
+            const revealed=Math.min(rows.length,Math.floor(RK.clamp01(lp)*rows.length*1.05));
+            receiptScene(ctx,R,rows,revealed);
+          } },
+        { dur:3000,
+          say:{t1:"Toplam 85.",tone:RK.C.gold,big:true},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"Tur 3",title:"Puan fişi"});
+            const rows=[{w:"Kakapo",pt:20},{w:"Zürafa",pt:20},{w:"Kivi",pt:10},{w:"Kedi",pt:5},{w:"Aslan",pt:10},{w:"Papağan",pt:20}];
+            const r=receiptScene(ctx,R,rows,rows.length);
+            const total=Math.round(85*RK.eOut(RK.clamp01(lp)));
+            RK.antonTxt(ctx,String(total),R.W/2,r.bottom+RK.P(84),RK.P(64),RK.C.gold,"center");
+          } },
+        RK.ctaScene({dur:3000,items:["Kimsenin yazmadığı kelime +20","Jeton puanı düşürmez"]}),
+      ],
+    },
+
+    /* v9 — grup: aile sohbeti + lobi dolumu */
+    {
+      id:"grup",title:"Aile grubu",sub:"sohbet · kod · lobi dolumu",
+      caption:"Aile grubuna kodu at, 5 dakikada masa dolar. Herkes aynı anda oynar. Ücretsiz indir.",
+      tags:"#isimşehir #arkadaşlarla",
+      W:1080,H:1920,
+      scenes:[
+        { dur:6000,
+          say:{t1:"bu akşam isim şehir?",tone:RK.C.violet,big:true},
+          render(ctx,R,lp){
+            chatScreen(ctx,R,{
+              name:"Aile 👨‍👩‍👧‍👦",sub:"Elif, Mert, Zeynep, sen",
+              msgs:[
+                {text:"bu akşam isim şehir?",name:"Elif",time:"21:02"},
+                {text:"kodu at",me:true,time:"21:03"},
+                {text:"7F3K",me:true,time:"21:03"},
+                {text:"geldim 😎",name:"Mert",time:"21:04"},
+              ],
+            },lp);
+          } },
+        { dur:1000,
+          say:{t1:"kodu at",tone:RK.C.gold},
+          render(ctx,R,lp){
+            chatScreen(ctx,R,{
+              name:"Aile 👨‍👩‍👧‍👦",sub:"Elif, Mert, Zeynep, sen",
+              msgs:[
+                {text:"bu akşam isim şehir?",name:"Elif",time:"21:02"},
+                {text:"kodu at",me:true,time:"21:03"},
+                {text:"7F3K",me:true,time:"21:03"},
+                {text:"geldim 😎",name:"Mert",time:"21:04"},
+              ],
+            },1);
+            if(lp>0.3)RK.pill(ctx,RK.P(20),RK.P(80),"7F3K kopyalandı ✓",RK.C.mint,{size:RK.P(11),h:RK.P(24),padX:RK.P(10)});
+          } },
+        { dur:5000,
+          say:{t1:"6 kişi masada.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            const n=1+Math.round(5*RK.eOut(RK.clamp01(lp)));
+            lobbyScreen(ctx,R,{
+              eyebrow:"oda 7F3K",title:"Masa doluyor",label:"Katılanlar",
+              list:[
+                {e:"🙂",n:"Sen",host:true},{e:"😄",n:"Elif"},{e:"🙃",n:"Mert"},
+                {e:"😊",n:"Zeynep"},{e:"😎",n:"Kerem"},{e:"😉",n:"Buse"},
+              ].slice(0,n),
+            },lp);
+          } },
+        { dur:2000,
+          say:{t1:"6 kişi masada.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            phoneHead(ctx,R,{eyebrow:"oda 7F3K",title:"6 kişi hazır"});
+            RK.btn(ctx,RK.P(14),RK.P(200),R.W-RK.P(28),"Oyunu başlat","ok",{press:lp>0.5});
+          } },
+        RK.ctaScene({dur:3000,items:["5 izleyiciye kadar odaya katılabilir","Oda şablonları · özel kategori sınırsız"]}),
+      ],
+    },
+
+    /* v10 — onbin: odometer 0→10.000 → +1 */
+    {
+      id:"onbin",title:"10.001",sub:"odometer · kalabalık · +1",
+      caption:"10.000 oyuncu masada — bir sandalye hâlâ boş. Ücretsiz indir.",
+      tags:"#isimşehir #10bin",
+      W:1080,H:1920,
+      scenes:[
+        { dur:4000,
+          say:{t1:"10.000 oyuncu masada.",tone:RK.C.gold,big:true},
+          render(ctx,R,lp){
+            const p=RK.eOut(RK.clamp01(lp));
+            crowdDots(ctx,R.W/2,RK.P(360),p*0.6);
+            RK.logo(ctx,R.W/2,RK.P(300),RK.P(90),{glow:RK.hexA(RK.C.violet,.5)});
+            RK.odometer(ctx,R.W/2,RK.P(430),RK.P(52),Math.round(10000*p));
+          } },
+        { dur:3000,
+          say:{t1:"10.000 oyuncu masada.",tone:RK.C.gold,big:true},
+          render(ctx,R,lp){
+            crowdDots(ctx,R.W/2,RK.P(360),0.6+0.4*RK.clamp01(lp));
+            RK.logo(ctx,R.W/2,RK.P(300),RK.P(90),{glow:RK.hexA(RK.C.violet,.5)});
+            RK.odometer(ctx,R.W/2,RK.P(430),RK.P(52),10000);
+          } },
+        { dur:4000,
+          say:{t1:"10.001?",tone:RK.C.mint,big:true},
+          render(ctx,R,lp){
+            crowdDots(ctx,R.W/2,RK.P(360),1);
+            RK.logo(ctx,R.W/2,RK.P(300),RK.P(90),{glow:RK.hexA(RK.C.violet,.5)});
+            RK.odometer(ctx,R.W/2,RK.P(430),RK.P(52),lp>0.45?10001:10000);
+            if(lp>0.45){
+              const p=RK.eBack(RK.clamp01((lp-0.45)/0.5));
+              ctx.save();ctx.translate(R.W/2+RK.P(150),RK.P(360));ctx.scale(Math.max(.01,p),Math.max(.01,p));
+              ctx.beginPath();ctx.arc(0,0,RK.P(14),0,7);ctx.fillStyle=RK.C.mint;ctx.fill();
+              RK.emoji(ctx,"🙂",0,0,RK.P(16));
+              ctx.restore();
+            }
+          } },
+        { dur:3000,
+          say:{t1:"Bir sandalye boş.",tone:RK.C.mint},
+          render(ctx,R,lp){
+            crowdDots(ctx,R.W/2,RK.P(360),1);
+            RK.logo(ctx,R.W/2,RK.P(300),RK.P(90),{glow:RK.hexA(RK.C.violet,.5)});
+            RK.odometer(ctx,R.W/2,RK.P(430),RK.P(52),10001);
+            const a=0.5+0.5*Math.sin(lp*Math.PI*6);
+            ctx.save();ctx.globalAlpha=a;ctx.strokeStyle=RK.C.mint;ctx.lineWidth=RK.P(3);
+            ctx.beginPath();ctx.arc(R.W/2+RK.P(150),RK.P(360),RK.P(20),0,7);ctx.stroke();ctx.restore();
+          } },
+        RK.ctaScene({dur:3000,items:["10.000 oyuncu eşiği geçildi","Bir sandalye senin"]}),
+      ],
+    },
+
+  ];
+
+  RK.mount({
+    key:"video",
+    kind:"video",
+    title:"Video Reklamları",
+    sub:"10 video · 10 farklı mekanik",
+    ITEMS,
+    filePrefix:"isimsehir-reklam-video",
+    facts:[
+      {b:"Süre",t:"1080×1920 MP4, 30fps, 15–22 saniye, <i>sessiz</i> — her şey yazıyla anlaşılır."},
+      {b:"Güvenli alan",t:"Anlatım şeridi alt <i>340px</i>'in üstünde, üst <i>250px</i> boş bırakılır."},
+      {b:"10 farklı mekanik",t:"Şablon yok — her video <i>tek</i> bir mekanik anlatır."},
+      {b:"İndirme",t:"MP4 (WebCodecs) → WebM → GIF sırasıyla dener, tarayıcıda üretilir."},
+    ],
+    links:[
+      {href:"reklam.html",label:"Reklam Stüdyosu"},
+      {href:"reklam-story.html",label:"Story"},
+      {href:"reklam-post.html",label:"Post"},
+      {href:"reklam-carousel.html",label:"Carousel"},
+      {href:"index.html",label:"Tüm stüdyolar"},
+    ],
+  });
+  </script>
+</body>
+</html>

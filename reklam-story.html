@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · Reklam Stüdyosu — Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Anton&family=Caveat:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet" />
+<script src="logo.js"></script>
+<script src="gif.js"></script>
+<script src="mp4-muxer.min.js"></script>
+<script src="reklam-core.js"></script>
+<style>
+  :root{
+    --ink:#0F1226;--panel:#1A1E3B;--panel2:#242963;--line:#2E3470;
+    --text:#F4F5FF;--dim:#9AA0CF;--violet:#7C5CFF;--sky:#4DC3FF;
+    --mint:#37D399;--gold:#F0C24B;--rose:#FF5C7A;--warn:#FFB347;--bot:#5BA8E8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:var(--text);background:var(--ink);
+    min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(70% 45% at 50% -8%,rgba(124,92,255,.20),transparent 62%)}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+
+  header.top{padding:60px 0 8px;text-align:center}
+  .eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  header.top h1{font-size:clamp(34px,5.4vw,58px);font-weight:900;letter-spacing:-.03em;line-height:1.02;margin:14px 0 0}
+  header.top h1 span{color:var(--mint)}
+  header.top p{color:#c2c7ec;font-size:15px;max-width:660px;margin:16px auto 0;line-height:1.65}
+  header.top p b{color:var(--text);font-weight:700}
+
+  .facts{margin:26px auto 0;max-width:920px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .fact{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px 15px;text-align:left}
+  .fact b{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+  .fact span{font-size:13px;line-height:1.55;color:#dfe2f8}
+  .fact span i{font-style:normal;color:var(--gold);font-weight:700}
+
+  .links{margin:20px 0 30px;text-align:center;font-size:12.5px;color:var(--dim)}
+  .links a{color:var(--sky);text-decoration:none}
+  .links a:hover{text-decoration:underline}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:26px;align-items:start}
+  .card{border:1px solid var(--line);background:var(--panel);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .kind{align-self:flex-start;font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+  .kind.v{background:rgba(124,92,255,.16);color:#b9a6ff;border:1px solid rgba(124,92,255,.45)}
+  .kind.i{background:rgba(77,195,255,.14);color:#95dbff;border:1px solid rgba(77,195,255,.4)}
+  .stage{position:relative;border-radius:26px;overflow:hidden;background:var(--ink);border:6px solid #191d3a;
+    box-shadow:0 30px 70px -34px #000}
+  .stage.v{width:290px;height:516px}
+  .stage.i{width:300px;height:375px}
+  .stage canvas{width:100%;height:100%;display:block}
+  .stage .play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;border:none;background:transparent;z-index:3}
+  .stage .play span{width:66px;height:66px;border-radius:50%;background:rgba(15,18,38,.55);backdrop-filter:blur(6px);
+    display:grid;place-items:center;font-size:24px;color:#fff;border:1.5px solid rgba(244,245,255,.35);opacity:0;transition:.18s}
+  .stage.v:hover .play span{opacity:1}
+
+  .rtitle{text-align:center;font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .rtitle small{display:block;font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+  textarea.cap{width:100%;min-height:104px;resize:vertical;border-radius:14px;padding:11px 12px;
+    border:1px solid var(--line);background:#141833;color:#dfe2f8;font-family:inherit;font-size:12.5px;line-height:1.55}
+  textarea.cap:focus{outline:none;border-color:var(--violet)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:12px;padding:10px 14px;
+    font-family:inherit;font-weight:800;font-size:12.5px;transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+  .btn-pri{background:var(--violet);color:#fff}
+  .btn-img{background:var(--sky);color:#062033}
+  .btn-gif{background:var(--mint);color:#03271a}
+  .btn-ghost{background:var(--panel2);color:#dfe2f8;border:1px solid var(--line)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);opacity:0;
+    background:var(--panel);border:1.5px solid var(--violet);color:var(--text);padding:12px 22px;border-radius:14px;
+    font-size:13.5px;font-weight:700;box-shadow:0 20px 44px -14px #000;transition:.24s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:#6f76a8;font-size:12.5px;margin-top:48px;line-height:1.8}
+
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(8,10,24,.86);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:min(430px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 34px 80px -22px #000}
+  .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:15px;cursor:pointer}
+  .mtitle{font-size:19px;font-weight:800;text-align:center;margin-bottom:14px}
+  .mmedia{display:flex;justify-content:center;margin-bottom:16px}
+  .mmedia video,.mmedia img{max-width:250px;max-height:445px;border-radius:18px;background:var(--ink);object-fit:contain;display:none}
+  .mbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .mbtns .btn{text-decoration:none}
+  .mhint{margin-top:12px;text-align:center;font-size:12px;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="eyebrow">Reklam stüdyosu · 9:16</div>
+      <h1>Story <span>Reklamları</span></h1>
+      <p>10 kare, <b>1080×1920 PNG</b>. Görsel dil uygulamanın kendi ekran kaydı — üstüne tek bir kanca yazısı
+      ve tek bir CTA katmanı biner. Üst <b>250px</b> ve alt <b>340px</b> her karede boş kalır (Instagram/TikTok
+      arayüzü o alanı kaplar).</p>
+
+      <div class="facts" id="facts"><!-- RK.mount cfg.facts ile doldurur --></div>
+
+      <div class="links" id="links"><!-- RK.mount cfg.links ile doldurur --></div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <footer class="foot">
+      İsim Şehir Online · @isimsehironline · App Store &amp; Google Play
+    </footer>
+  </div>
+
+  <script>
+    const C = RK.C;
+
+    /* Basit, sayfaya özel yardımcı: kimliksiz nokta halkası (tesekkur-10bin 'kalabalık' hissi,
+       RK atomlarından değil — brif §5.1 s8'in kendine özgü kompozisyonu, kod kopyalanmadı). */
+    function dotRing(ctx, cx, cy, rMin, rMax, count, col) {
+      ctx.save();
+      for (let i = 0; i < count; i++) {
+        const a = RK.seeded(i * 3.1) * Math.PI * 2;
+        const rr = rMin + RK.seeded(i * 7.7 + 1) * (rMax - rMin);
+        const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr * 0.94;
+        const s = 3 + RK.seeded(i * 5.3 + 2) * 4;
+        ctx.globalAlpha = 0.35 + RK.seeded(i * 9.1 + 3) * 0.5;
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(x, y, s, 0, 7); ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    /* Basit avatar dairesi (chatBubble/botCard'ın üstlenmediği "lobi oyuncu" hissi). */
+    function miniAvatar(ctx, cx, cy, r, emoji, ring) {
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fillStyle = C.panel2; ctx.fill();
+      ctx.lineWidth = 2.5; ctx.strokeStyle = ring || C.line; ctx.stroke();
+      ctx.restore();
+      RK.emoji(ctx, emoji, cx, cy, r * 1.05);
+    }
+
+    const ITEMS = [
+      /* s1 — harf: dev letterTile "K" + 3 boş catField (yan yana) + 3sn geri sayım. */
+      {
+        id: "harf", title: "Harf: K", sub: "Dev harf karosu · 3 boş kategori · 3 saniye",
+        caption: "Harf düşer, üç kategori dolar, üç saniyen var. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          RK.statusBar(ctx, R, { time: "21:04", sig: 4 });
+          let y = RK.screenHead(ctx, R, { eyebrow: "Tur 1", title: "3/6 kategori dolu", timer: 3 });
+
+          const hookY = y + RK.P(22);
+          RK.hook(ctx, R, ["K ile bir bitki söyle."], {
+            font: "anton", size: RK.P(50), col: C.text, accent: { line: 0, col: C.gold }, y: hookY,
+          });
+          const altY = hookY + RK.P(50);
+          RK.txt(ctx, "3 saniyen var.", R.W / 2, altY, { size: RK.P(24), w: "600", col: C.dim, align: "center" });
+
+          const tileSize = 420;
+          const tx = R.W / 2 - tileSize / 2, ty = altY + RK.P(18);
+          RK.letterTile(ctx, tx, ty, tileSize, "K", RK.CATG[2]);
+
+          const fy = ty + tileSize + RK.P(24);
+          const gap = RK.P(14), fw = (R.W - RK.P(80) - 2 * gap) / 3;
+          ["Bitki", "Ünlü", "Eşya"].forEach((cat, i) => {
+            RK.catField(ctx, R, RK.P(40) + i * (fw + gap), fy, fw, {
+              i: i + 1, cat, letter: "K", val: "", grad: RK.CATG[i % RK.CATG.length], focus: i === 0, caret: i === 0,
+            });
+          });
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s2 — bildirim: lockScreen + 3 notif üst üste. Kanca istisnası: brif Caveat/gold istiyor
+         (RK.hook yalnızca "inter"|"anton" destekler — burada RK.txt + RK.CV ile birebir uygulanır). */
+      {
+        id: "bildirim", title: "Bildirim yığını", sub: "Kilit ekranı · 3 bildirim",
+        caption: "Sıra sana geldiğinde telefonun haber verir. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.lockScreen(ctx, R, { time: "21:04", date: "Salı 23 Eylül" });
+
+          const hookY = RK.P(300);
+          RK.txt(ctx, "telefonun artık böyle çalıyor", R.W / 2, hookY, {
+            font: RK.CV(RK.P(66)), col: C.gold, align: "center",
+          });
+
+          const startY = hookY + RK.P(40);
+          RK.setScale(1.5);
+          const items = [
+            { title: "İsim Şehir", body: "Elif seni odaya davet etti", time: "şimdi" },
+            { title: "İsim Şehir", body: "Tur 3 başladı — sıra sende", time: "1dk" },
+            { title: "İsim Şehir", body: "Günün kelimesi hazır", time: "3dk" },
+          ];
+          let y = startY;
+          const x = RK.P(40), w = R.W - RK.P(80);
+          items.forEach((n) => { const h = RK.notif(ctx, x, y, w, Object.assign({ pop: 1 }, n)); y += h + RK.P(12); });
+          RK.resetScale();
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s3 — puan: üç kart satırı, her birine stamp. Ekran/screenHead yok — poster kompozisyonu. */
+      {
+        id: "puan", title: "+20 / +10 / +5", sub: "Kimsenin yazmadığı kelime en çok puanı getirir",
+        caption: "Kimsenin yazmadığı kelime en çok puanı getirir. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          const hookY = RK.P(200);
+          RK.hook(ctx, R, ["Herkesin yazdığı 'Kedi' 5 puan."], {
+            font: "inter", size: RK.P(46), col: C.text, y: hookY,
+          });
+          const altY = hookY + RK.P(52);
+          RK.txt(ctx, "Kimsenin bilmediği 'Kakapo' 20.", R.W / 2, altY, {
+            size: RK.P(24), w: "700", col: C.gold, align: "center",
+          });
+
+          const rows = [
+            { word: "Kakapo", note: "kimsenin yazmadığı", val: "+20", col: C.gold },
+            { word: "Zürafa", note: "geçerli kelime", val: "+10", col: C.mint },
+            { word: "Kedi", note: "üç kişi yazdı", val: "+5", col: C.sky },
+          ];
+          const x = RK.P(40), w = R.W - RK.P(80), h = 130;
+          let y = altY + RK.P(40);
+          rows.forEach((r) => {
+            RK.card(ctx, x, y, w, h, RK.P(20), {});
+            RK.txt(ctx, r.word, x + RK.P(28), y + h * 0.42, { size: RK.P(34), w: "900", col: C.text, base: "middle" });
+            RK.txt(ctx, r.note, x + RK.P(28), y + h * 0.72, { size: RK.P(16), w: "600", col: C.dim, base: "middle" });
+            RK.stamp(ctx, x + w - RK.P(90), y + h / 2, r.val, r.col, -0.08);
+            y += h + RK.P(14);
+          });
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s4 — sinyal: uçak modu + ÇEVRİMDIŞI + bot lobisi + "Oyunu başlat" butonu. */
+      {
+        id: "sinyal", title: "Sinyal yok", sub: "Uçak modu · bot lobisi · bedava maç",
+        caption: "İnternet olmasa da bota karşı oynanır, günde bir maç bedava. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          RK.statusBar(ctx, R, { time: "21:04", sig: 0, plane: true });
+          let y = RK.screenHead(ctx, R, { eyebrow: "bota karşı oyna", title: "Sinyal yok, oyun devam", offline: true });
+
+          const hookY = y + RK.P(30);
+          RK.hook(ctx, R, ["Sinyal yok.", "Oyun var."], {
+            font: "anton", size: RK.P(50), col: C.text, accent: { line: 1, col: C.gold }, y: hookY,
+          });
+          const altY = hookY + RK.P(50) * 1.02 + RK.P(46);
+          RK.txt(ctx, "Bota karşı, internetsiz.", R.W / 2, altY, { size: RK.P(24), w: "600", col: C.dim, align: "center" });
+
+          const bots = [{ e: "🤖", n: "Çaylak Bot" }, { e: "🦾", n: "Orta Bot" }, { e: "🧠", n: "Usta Bot" }];
+          const rowW = RK.P(96) * 3 + RK.P(20) * 2;
+          let bx = R.W / 2 - rowW / 2;
+          const by = altY + RK.P(36);
+          bots.forEach((b) => { const s = RK.botCard(ctx, bx, by, b); bx += s.w + RK.P(20); });
+
+          const btnY = by + RK.P(112) + RK.P(30);
+          RK.btn(ctx, RK.P(40), btnY, R.W - RK.P(80), "Oyunu başlat · günün bedava maçı", "bot", { h: RK.P(56) });
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s5 — wordle: screenHead + 🔥 seri pill (sayı yok) + 6 satırlık wordleGrid. */
+      {
+        id: "wordle", title: "Türkçe Wordle", sub: "6 satır · günün kelimesi",
+        caption: "Günün Türkçe kelimesini altı hakta bul. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          RK.statusBar(ctx, R, { time: "21:04", sig: 4 });
+          let y = RK.screenHead(ctx, R, { eyebrow: "Günün kelimesi", title: "Wordle" });
+          RK.pill(ctx, RK.P(16), y + RK.P(10), "🔥 Seri devam", C.gold, {});
+          y += RK.P(20) + RK.P(20);
+
+          const hookY = y + RK.P(20);
+          RK.hook(ctx, R, ["Türkçe Wordle burada."], { font: "anton", size: RK.P(48), col: C.text, y: hookY });
+          const altY = hookY + RK.P(46);
+          RK.txt(ctx, "Günde bir kelime, altı hak.", R.W / 2, altY, { size: RK.P(24), w: "600", col: C.dim, align: "center" });
+
+          const rows = [
+            [{ l: "T", s: "absent" }, { l: "E", s: "present" }, { l: "M", s: "absent" }, { l: "A", s: "absent" }, { l: "S", s: "absent" }],
+            [{ l: "K", s: "absent" }, { l: "E", s: "present" }, { l: "S", s: "absent" }, { l: "E", s: "absent" }, { l: "R", s: "absent" }],
+            [{ l: "K", s: "absent" }, { l: "İ", s: "correct" }, { l: "T", s: "absent" }, { l: "A", s: "present" }, { l: "P", s: "absent" }],
+            [{ l: "H", s: "correct" }, { l: "İ", s: "correct" }, { l: "S", s: "correct" }, { l: "S", s: "correct" }, { l: "E", s: "correct" }],
+            [{}, {}, {}, {}, {}],
+            [{}, {}, {}, {}, {}],
+          ];
+          RK.wordleGrid(ctx, R.W / 2, altY + RK.P(40), 58, 10, rows, {});
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s6 — populer: popBoard 5 satır (hepsi kapalı) + boş catField. Sayı/yüzde yok. */
+      {
+        id: "populer", title: "Popüler Cevap", sub: "Hayvan · K — çoğunluk ne yazdı?",
+        caption: "K ile hayvan deyince çoğunluk ne yazdı, tahmin et. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          const hookY = RK.P(180);
+          RK.hook(ctx, R, ["K ile hayvan deyince"], { font: "anton", size: RK.P(50), col: C.text, y: hookY });
+          const altY = hookY + RK.P(48);
+          RK.txt(ctx, "çoğunluk ne yazdı?", R.W / 2, altY, { size: RK.P(26), w: "700", col: C.gold, align: "center" });
+
+          RK.setScale(1.3);
+          const boardY = altY + RK.P(50);
+          const bx = RK.P(40), bw = R.W - RK.P(80);
+          const boardBottom = RK.popBoard(ctx, bx, boardY, bw, ["?????", "?????", "?????", "?????", "?????"], { reveal: 0 });
+          const fieldY = boardBottom + RK.P(20);
+          RK.catField(ctx, R, bx, fieldY, bw, { i: 1, cat: "Hayvan", letter: "K", val: "", grad: RK.CATG[2], focus: true, caret: true });
+          RK.resetScale();
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s7 — ucretsiz: 6 mint tik satırı + 1 gri "reklamsız" satırı. */
+      {
+        id: "ucretsiz", title: "Hepsi ücretsiz", sub: "6 özellik ücretsiz, tek satılan reklamsız",
+        caption: "Herkese açık odalar, bot, Wordle, Popüler Cevap — hepsi ücretsiz. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          const hookY = RK.P(160);
+          RK.hook(ctx, R, ["Her şey ücretsiz."], { font: "anton", size: RK.P(54), col: C.text, accent: { line: 0, col: C.mint }, y: hookY });
+          const altY = hookY + RK.P(48);
+          RK.txt(ctx, "Satılan tek şey: reklamsız.", R.W / 2, altY, { size: RK.P(24), w: "600", col: C.dim, align: "center" });
+
+          const rows = ["Herkese açık odalar", "Arkadaş + DM", "Bot & çevrimdışı", "Wordle", "Popüler Cevap", "İstatistikler"];
+          const x = RK.P(60);
+          let y = altY + RK.P(70);
+          rows.forEach((r) => {
+            RK.emoji(ctx, "✅", x, y, RK.P(20));
+            RK.txt(ctx, r, x + RK.P(30), y, { size: RK.P(22), w: "700", col: C.text, base: "middle" });
+            y += RK.P(30);
+          });
+          y += RK.P(14);
+          RK.txt(ctx, "•", x, y, { size: RK.P(22), w: "700", col: C.dim, base: "middle" });
+          RK.txt(ctx, "Reklamsız — satılan tek şey", x + RK.P(30), y, { size: RK.P(21), w: "600", col: C.dim, base: "middle" });
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s8 — onbin: nokta kalabalığı halkası + ortada logo + RK.odometer("10.000", gerçek sayı). */
+      {
+        id: "onbin", title: "10.000", sub: "Gerçek topluluk sayısı",
+        caption: "10.000 oyuncu masada, bir sandalye boş kaldı. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          const hookY = RK.P(180);
+          RK.hook(ctx, R, ["10.000 oyuncu masada."], { font: "anton", size: RK.P(46), col: C.text, accent: { line: 0, col: C.gold }, y: hookY });
+          const altY = hookY + RK.P(46);
+          RK.txt(ctx, "Bir sandalye boş.", R.W / 2, altY, { size: RK.P(24), w: "600", col: C.dim, align: "center" });
+
+          const cy = altY + 260;
+          dotRing(ctx, R.W / 2, cy, 140, 250, 260, C.mint);
+          dotRing(ctx, R.W / 2, cy, 50, 120, 90, C.violet);
+          RK.logo(ctx, R.W / 2, cy - 90, RK.P(130), { glow: true });
+          RK.odometer(ctx, R.W / 2, cy + 170, 132, 10000);
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s9 — oda: chatHeader + 4 chatBubble + 5 avatarlı lobi ("👑 Kurucu"). */
+      {
+        id: "oda", title: "Aile grubu", sub: "Sohbet + kod + lobi",
+        caption: "Kodu aile grubuna at, beş dakikada masa kurulur. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          let y = RK.chatHeader(ctx, R, { name: "Aile 👨‍👩‍👧‍👦", sub: "Elif, Mert, Zeynep, sen" });
+
+          const hookY = y + RK.P(60);
+          RK.hook(ctx, R, ["Aile grubuna at."], { font: "anton", size: RK.P(46), col: C.text, accent: { line: 0, col: C.mint }, y: hookY });
+          const altY = hookY + RK.P(44);
+          RK.txt(ctx, "5 dakikada masa kurulur.", R.W / 2, altY, { size: RK.P(22), w: "600", col: C.dim, align: "center" });
+
+          RK.setScale(1.35);
+          let by = altY + RK.P(40);
+          const bubbles = [
+            { name: "Elif", text: "bu akşam isim şehir?", me: false },
+            { name: "Mert", text: "kodu at", me: false },
+            { text: "7F3K", me: true },
+            { name: "Zeynep", text: "geldim 😎", me: false },
+          ];
+          bubbles.forEach((b) => {
+            const bx = b.me ? R.W - RK.P(40) : RK.P(40);
+            const r = RK.chatBubble(ctx, bx, by, RK.P(420), b);
+            by += r.h + RK.P(14);
+          });
+          RK.resetScale();
+
+          const avatars = [
+            { e: "🦊", n: "Elif", crown: true }, { e: "🐼", n: "Mert" }, { e: "🐧", n: "Zeynep" },
+            { e: "🦁", n: "Sen" }, { e: "🐨", n: "Kerem" },
+          ];
+          const ar = RK.P(34), step = R.W / avatars.length;
+          const ay = by + RK.P(10);
+          avatars.forEach((a, i) => {
+            const cx = step * i + step / 2;
+            miniAvatar(ctx, cx, ay, ar, a.e, a.crown ? C.gold : C.line);
+            RK.txt(ctx, a.crown ? "👑 Kurucu" : a.n, cx, ay + ar + RK.P(24), { size: RK.P(14), w: "700", col: a.crown ? C.gold : C.dim, align: "center" });
+          });
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+
+      /* s10 — sozluk: iki satır — sözlükte kabul (stamp) + masa oylaması (çipler + KABUL). */
+      {
+        id: "sozluk", title: "Kavga bitti", sub: "Önce sözlük, sonra masa oylar",
+        caption: "Kelime kavgalarına önce sözlük, sonra masa karar verir. Ücretsiz indir.",
+        tags: "#isimşehir #kelimeoyunu",
+        W: 1080, H: 1920,
+        render(ctx, R) {
+          RK.resetScale();
+          RK.bg(ctx, R);
+          const hookY = RK.P(180);
+          RK.hook(ctx, R, ["Kağıttaki kavgalar bitti."], { font: "anton", size: RK.P(44), col: C.text, y: hookY });
+          const altY = hookY + RK.P(46);
+          RK.txt(ctx, "Önce sözlük, sonra masa oylar.", R.W / 2, altY, { size: RK.P(22), w: "600", col: C.dim, align: "center" });
+
+          const x = RK.P(40), w = R.W - RK.P(80);
+
+          const h1 = 190, y1 = altY + RK.P(60);
+          RK.card(ctx, x, y1, w, h1, RK.P(20), {});
+          RK.txt(ctx, "ZÜRAFA", x + RK.P(28), y1 + h1 * 0.4, { size: RK.P(40), w: "900", col: C.text, base: "middle" });
+          RK.stamp(ctx, x + w - RK.P(110), y1 + h1 * 0.55, "SÖZLÜKTE ✓", C.mint, -0.06);
+
+          const h2 = 220, y2 = y1 + h1 + RK.P(16);
+          RK.card(ctx, x, y2, w, h2, RK.P(20), {});
+          RK.txt(ctx, "KAKAPO", x + RK.P(28), y2 + h2 * 0.3, { size: RK.P(40), w: "900", col: C.text, base: "middle" });
+          const chipTexts = ["✓", "✓", "✓", "✗"];
+          let cx = x + RK.P(28);
+          const cy = y2 + h2 * 0.62;
+          chipTexts.forEach((t, i) => {
+            const on = t === "✓";
+            ctx.save();
+            ctx.beginPath(); ctx.arc(cx + RK.P(22), cy, RK.P(22), 0, 7);
+            ctx.fillStyle = RK.hexA(on ? C.mint : C.rose, 0.16); ctx.fill();
+            ctx.lineWidth = 2; ctx.strokeStyle = on ? C.mint : C.rose; ctx.stroke();
+            ctx.restore();
+            RK.txt(ctx, t, cx + RK.P(22), cy, { size: RK.P(22), w: "900", col: on ? C.mint : C.rose, align: "center", base: "middle" });
+            cx += RK.P(56);
+          });
+          RK.pill(ctx, cx + RK.P(10), cy - RK.P(14), "KABUL", C.gold, { size: RK.P(14), h: RK.P(30), padX: RK.P(14) });
+
+          RK.adCTA(ctx, R, {});
+        },
+      },
+    ];
+
+    RK.mount({
+      key: "story",
+      kind: "image",
+      title: "Story Reklamları",
+      sub: "10 × 1080×1920",
+      ITEMS,
+      filePrefix: "isimsehir-reklam-story",
+      facts: [
+        { b: "Güvenli alan", t: "Üst <i>250px</i> ve alt <i>340px</i> boş — Instagram/TikTok arayüzü (profil, CTA, yanıt kutusu) o alanı kaplar." },
+        { b: "10 kare", t: "Her biri <i>1080×1920</i> PNG, tek mekanik + tek kanca + tek CTA." },
+        { b: "Tek mesaj", t: "İlk 1 saniyede kanca atılır; her kare en fazla <i>6 kelimelik</i> dev bir kancayla anlaşılır." },
+        { b: "Gerçek logo", t: "Her karede gerçek uygulama logosu + App Store/Google Play rozetleri + <i>@isimsehironline</i>." },
+      ],
+      links: [
+        { href: "reklam.html", label: "Reklam Stüdyosu" },
+        { href: "reklam-post.html", label: "Post" },
+        { href: "reklam-carousel.html", label: "Carousel" },
+        { href: "reklam-video.html", label: "Video" },
+        { href: "index.html", label: "Ana sayfa" },
+      ],
+    });
+  </script>
+</body>
+</html>

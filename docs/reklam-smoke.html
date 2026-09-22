@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!--
+  reklam-smoke.html — duman testi (Ajan CORE).
+
+  Amaç: reklam-core.js'in RK API yüzeyinin genişçe bir bölümünü en az bir kez çağıran
+  minimal bir sayfa. NOT ÇALIŞTIRILMADI / tarayıcıda AÇILMADI — koordinatörün talimatı
+  gereği doğrulama yalnızca (1) `node --check reklam-core.js` ve (2) burada kullanılan
+  fonksiyon adlarının reklam-core.js'te tanımlı olduğunun `grep` ile statik eşleştirilmesi
+  yoluyla yapıldı. Bu dosya yalnızca kaynak/referans amaçlıdır.
+
+  Kapsam (E maddesi):
+    - 1 story item  → adCTA + hook + catField + notif  (+ lockScreen, statusBar, screenHead)
+    - 1 post item   → paperBg + handText + stamp + popBoard + wordleGrid + odometer +
+                       stopwatch + chatBubble + durButton
+    - 1 carousel (2 slayt) → letterTile + boardRows + adCTA(compact)
+    - 1 video (3 sahne + ctaScene) → chatHeader + chatBubble + botCard + screenHead +
+                       playerStrip + wTile + tileWord + hintChip + boardRows + opt +
+                       settingRow + coinPill + pill + label
+-->
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>İsim Şehir · Reklam Stüdyosu — Duman Testi (RK API)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Anton&family=Caveat:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet" />
+<script src="../logo.js"></script>
+<script src="../gif.js"></script>
+<script src="../mp4-muxer.min.js"></script>
+<script src="../reklam-core.js"></script>
+<style>
+  body{margin:0;background:#0F1226;color:#F4F5FF;font-family:Inter,sans-serif;padding:20px}
+  .grid{display:flex;flex-wrap:wrap;gap:18px}
+  .card{border:1px solid #2E3470;border-radius:16px;padding:12px;background:#1A1E3B}
+  canvas{max-width:260px;display:block;border-radius:10px}
+  .toast,.modal{display:none}
+</style>
+</head>
+<body>
+  <h1 style="font-size:18px">RK API duman testi</h1>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    /* Story item — adCTA + hook + catField + notif (+ lockScreen/statusBar/screenHead). */
+    const storyItem = {
+      id: "smoke-s1",
+      title: "Duman — Story",
+      sub: "adCTA · hook · catField · notif",
+      caption: "Duman testi story karesi.",
+      tags: "#test",
+      W: 1080, H: 1920,
+      render(ctx, R) {
+        RK.lockScreen(ctx, R, { time: "21:04", date: "Salı 23 Eylül" });
+        RK.statusBar(ctx, R, { time: "21:04", sig: 3, plane: false, batt: 0.7 });
+        RK.screenHead(ctx, R, { eyebrow: "Duman Testi", title: "Story", coins: 120 });
+        RK.hook(ctx, R, ["Duman testi", "kancası."], { font: "anton", size: RK.P(56), col: RK.C.text, accent: { line: 1, col: RK.C.gold } });
+        RK.catField(ctx, R, RK.P(20), RK.P(700), R.W - RK.P(40), {
+          i: 1, cat: "Bitki", letter: "K", val: "", grad: RK.CATG[0], focus: true, caret: true,
+        });
+        RK.notif(ctx, RK.P(20), RK.P(880), R.W - RK.P(40), { title: "İsim Şehir", body: "Elif seni odaya davet etti", time: "şimdi", pop: 1 });
+        RK.notif(ctx, RK.P(20), RK.P(960), R.W - RK.P(40), { title: "İsim Şehir", body: "Tur 3 başladı — sıra sende", time: "1dk", pop: 1 });
+        RK.adCTA(ctx, R, {});
+      },
+    };
+
+    /* Post item — paperBg + handText + stamp + popBoard + wordleGrid + odometer +
+       stopwatch + chatBubble + durButton (tek karede yoğun duman testi, tasarım amaçlı değil). */
+    const postItem = {
+      id: "smoke-p1",
+      title: "Duman — Post",
+      sub: "paperBg · handText · stamp · popBoard · wordleGrid · odometer · stopwatch · chatBubble · durButton",
+      caption: "Duman testi post karesi.",
+      tags: "#test",
+      W: 1080, H: 1350,
+      render(ctx, R) {
+        RK.bg(ctx, R);
+        RK.paperBg(ctx, RK.P(20), RK.P(20), R.W / 2 - RK.P(30), RK.P(300));
+        RK.handText(ctx, "K — Kedi, Konya,\nKerem, Kekik…", RK.P(40), RK.P(70), RK.P(34), "#2b2b2b");
+        RK.stamp(ctx, RK.P(700), RK.P(90), "+20 SÖZLÜKTE", RK.C.mint, -0.08);
+        RK.popBoard(ctx, RK.P(20), RK.P(340), R.W - RK.P(40), ["Kedi", "Köpek", "Kartal", "Kaplan", "Kanarya"], { reveal: 2 });
+        RK.wordleGrid(ctx, R.W / 2, RK.P(700), RK.P(48), RK.P(8), [
+          [{ l: "T", s: "absent" }, { l: "E", s: "present" }, { l: "M", s: "absent" }, { l: "A", s: "absent" }, { l: "S", s: "absent" }],
+          [{ l: "H", s: "correct" }, { l: "İ", s: "correct" }, { l: "S", s: "correct" }, { l: "S", s: "correct" }, { l: "E", s: "correct" }],
+        ], {});
+        RK.odometer(ctx, R.W / 2, RK.P(960), RK.P(64), 10000);
+        RK.stopwatch(ctx, RK.P(40), RK.P(1080), 9840);
+        RK.chatBubble(ctx, RK.P(40), RK.P(1120), RK.P(420), { text: "bu akşam isim şehir?", name: "Elif", time: "21:03" });
+        RK.durButton(ctx, R.W - RK.P(120), RK.P(1180), RK.P(70), {});
+        RK.adCTA(ctx, R, { compact: true });
+      },
+    };
+
+    /* Carousel — 2 slayt: letterTile + boardRows + adCTA(compact, son slaytta). */
+    const carouselItem = {
+      id: "smoke-c1",
+      title: "Duman — Carousel",
+      sub: "letterTile · boardRows",
+      caption: "Duman testi carousel.",
+      tags: "#test",
+      W: 1080, H: 1350,
+      slides: [
+        {
+          render(ctx, R) {
+            RK.bg(ctx, R);
+            RK.label(ctx, "Slayt 1", RK.P(20), RK.P(30));
+            RK.letterTile(ctx, R.W / 2 - RK.P(90), RK.P(120), RK.P(180), "K", RK.CATG[2]);
+            RK.hook(ctx, R, ["Harf düşer."], { font: "anton", size: RK.P(48) });
+          },
+        },
+        {
+          render(ctx, R) {
+            RK.bg(ctx, R);
+            RK.label(ctx, "Slayt 2", RK.P(20), RK.P(30));
+            RK.boardRows(ctx, R, RK.P(20), RK.P(80), R.W - RK.P(40), [
+              { e: "🦜", n: "Sen", score: 45, me: true },
+              { e: "🤖", n: "Bot", score: 30, bot: true },
+            ], 1);
+            RK.adCTA(ctx, R, { compact: true });
+          },
+        },
+      ],
+    };
+
+    /* Video — 3 sahne + ctaScene. Sahneler: chatHeader/chatBubble/botCard,
+       screenHead/playerStrip/wTile/tileWord/hintChip, boardRows/opt/settingRow/coinPill/pill. */
+    const videoItem = {
+      id: "smoke-v1",
+      title: "Duman — Video",
+      sub: "chatHeader · botCard · wTile · tileWord · hintChip · opt · settingRow · coinPill · pill · ctaScene",
+      caption: "Duman testi video.",
+      tags: "#test",
+      W: 1080, H: 1920,
+      scenes: [
+        {
+          dur: 5000,
+          say: { t1: "bu akşam isim şehir?", t2: "Aile grubunda kod atıldı." },
+          render(ctx, R) {
+            RK.chatHeader(ctx, R, { name: "Aile 👨‍👩‍👧‍👦", sub: "Elif, Mert, Zeynep, sen" });
+            RK.chatBubble(ctx, RK.P(30), RK.P(200), RK.P(500), { text: "bu akşam isim şehir?", name: "Elif" });
+            RK.chatBubble(ctx, R.W - RK.P(30), RK.P(280), RK.P(500), { text: "kodu at", me: true });
+            RK.botCard(ctx, RK.P(30), RK.P(420), { e: "🤖", n: "Usta Bot" });
+          },
+        },
+        {
+          dur: 5000,
+          say: { t1: "Kategoriler dolu, süre işliyor.", t2: "90 saniye, 3 kategori." },
+          render(ctx, R) {
+            RK.screenHead(ctx, R, { eyebrow: "Tur 1", title: "İsim Şehir", timer: 84, coins: 120 });
+            RK.playerStrip(ctx, R, RK.P(120), [
+              { e: "🙂", n: "Sen", fill: 0.8, me: true },
+              { e: "🤖", n: "Bot", fill: 0.5, bot: true },
+            ]);
+            RK.tileWord(ctx, R.W / 2, RK.P(300), "KEDİ", RK.P(70));
+            const t = RK.wTile;
+            t(ctx, RK.P(60), RK.P(420), RK.P(80), "K", "correct");
+            RK.hintChip(ctx, RK.P(60), RK.P(540), "Harf Al", 15, { glow: true });
+          },
+        },
+        {
+          dur: 4000,
+          say: { t1: "Tur bitti, puanlar düşüyor." },
+          render(ctx, R) {
+            RK.boardRows(ctx, R, RK.P(20), RK.P(120), R.W - RK.P(40), [
+              { e: "🙂", n: "Sen", score: 85, me: true },
+              { e: "🤖", n: "Bot", score: 60, bot: true },
+            ], 1);
+            RK.opt(ctx, RK.P(20), RK.P(400), R.W / 2 - RK.P(30), RK.P(90), { title: "Süreli", desc: "90 sn", on: true });
+            RK.settingRow(ctx, RK.P(20), RK.P(540), R.W - RK.P(40), "Kategori sayısı", "6");
+            RK.coinPill(ctx, R.W - RK.P(20), RK.P(600), 120, {});
+            RK.pill(ctx, RK.P(20), RK.P(660), "SÖZLÜKTE", RK.C.mint, {});
+          },
+        },
+        RK.ctaScene({ items: ["Bota karşı 5 zorluk", "Çevrimdışı çalışır"] }),
+      ],
+    };
+
+    /* Yalnızca ITEMS'ı bildirir — RK.mount çağrılmaz (bu sayfa tarayıcıda açılmıyor).
+       Statik doğrulama: yukarıda kullanılan tüm RK.* adlarının reklam-core.js'te
+       tanımlı olduğu `grep` ile teyit edildi (bkz. görev raporu). */
+    const ITEMS_STORY = [storyItem];
+    const ITEMS_POST = [postItem];
+    const ITEMS_CAROUSEL = [carouselItem];
+    const ITEMS_VIDEO = [videoItem];
+  </script>
+</body>
+</html>
