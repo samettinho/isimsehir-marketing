@@ -105,6 +105,23 @@ Yükleme sırası: `logo.js` → `gif.js` → `mp4-muxer.min.js` → `reklam-cor
 - `RK.stopwatch(ctx,x,y,ms)` → `number` (genişlik). `ms` milisaniyeyi `"0:09.84"` mono formatında (mint) çizer.
 - `RK.odometer(ctx,cx,y,size,value)` → `number` (genişlik). `value`'yu Türkçe binlik ayırıcıyla (`10.000`) haneleri karo gibi çizerek gösterir.
 
+## 4.0.0 eklentileri — Düello + Wordle ekstra (yeni-oyunlar-4.html)
+
+Eklemeli; mevcut export'lar değişmedi. Tümü `P()` ölçeğine uyar (`setScale` ile küçültülebilir).
+
+| Fonksiyon | Açıklama |
+|---|---|
+| `avatar(ctx,cx,cy,r,e,ring,o{glow})` | Emoji avatar, renkli halka |
+| `tapRipple(ctx,x,y,p)` | Dokunma halkası; `p∈(0,1)` dışında çizmez |
+| `duelBar(ctx,x,y,w,o{p,turn,L,R,label,labelCol,flow,hit})` | Düello halatı. `p∈[-1,1]` (−1 sol uç). Bar sırası olanın (`turn`) ucuna akar; `hit` uç kırmızı parlar. Döner P(96) |
+| `betCard(ctx,x,y,w,o{e,text,sub,state:"ask"\|"wait"\|"locked",status,press,pop})` | Bahis teklifi: Kabul / Reddet / Değiştir. Döner yükseklik |
+| `duelInvite(ctx,x,y,w,o{e,from,sub,left,press,pop})` | Uygulama içi davet, 2 dk geri sayım halkası + Reddet/Kabul et. Döner yükseklik |
+| `extraBadge(ctx,x,y,o{n,of,price,size,h})` | "EKSTRA n/3 · 🪙fiyat" rozeti. Döner genişlik |
+| `passBtn(ctx,x,y,w,o{price,sub,used,glow,press,h})` | PAS jokeri butonu. Döner yükseklik |
+| `answerChip(ctx,x,y,o{word,ok,side,note,pop})` | ✓/✗ cevap çipi; `side:"R"` ise x sağ kenar. Döner {w,h} |
+| `duelScore(ctx,x,y,w,o{L,R,win,label})` | Maç sonu skor (Anton), kazanana 👑. Döner P(150) |
+| `recordCard(ctx,x,y,w,o{e,title,win,loss,hist,lastPop})` | Arkadaşa karşı düello karnesi + son maç noktaları (`hist` "G"/"M"). Döner P(156) |
+
 ## Video motoru
 
 - `RK.scenes(list)` → `draw(ctx,R,t)` fonksiyonu döndürür; `draw.total` = toplam süre (ms), `draw.list` = orijinal `list`. `list:[{dur,render(ctx,R,lp,t),say:{t1,t2,tone,big}}]`. `draw(ctx,R,t)` çağrıldığında: `bg` çizer, `t`'ye göre aktif sahneyi + yerel ilerlemeyi (`lp`) bulur, sahne sınırında 0.06-lp'lik crossfade uygular, `sc.render(ctx,R,lp,t)`'yi çağırır, `R.bodyBottom`'ı ayarlar, `RK.narrate`'i çizer, `RK.progressLine`'ı çizer.

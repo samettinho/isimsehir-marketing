@@ -621,6 +621,219 @@ function odometer(ctx,cx,y,size,value){
   });
   return total;}
 
+/* ══════════════════ 4.0.0 eklentileri — Düello + Wordle ekstra ══════════════════
+   Yalnızca EKLEME: mevcut fonksiyonlara dokunulmadı. Kullanan: yeni-oyunlar-4.html.
+   Taraf düzeni: L = sol (sen / davet eden), R = sağ (rakip). */
+
+/** Emoji avatar dairesi — panel2 zemin + renkli halka. o:{glow}. */
+function avatar(ctx,cx,cy,r,e,ring,o){o=o||{};
+  ctx.save();
+  if(o.glow){ctx.shadowColor=hexA(o.glow,.8);ctx.shadowBlur=r*0.9;}
+  ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.fillStyle=C.panel2;ctx.fill();ctx.restore();
+  ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.lineWidth=Math.max(2,r*0.1);ctx.strokeStyle=ring||C.line;ctx.stroke();ctx.restore();
+  emoji(ctx,e,cx,cy,r*1.2);}
+
+/** Dokunma halkası — p 0→1 genişleyip söner. */
+function tapRipple(ctx,x,y,p){
+  if(p<=0||p>=1)return;
+  ctx.save();ctx.globalAlpha=Math.max(0,1-p);
+  ctx.beginPath();ctx.arc(x,y,P(14)+p*P(70),0,7);ctx.lineWidth=P(3);ctx.strokeStyle=C.mint;ctx.stroke();
+  ctx.beginPath();ctx.arc(x,y,P(10),0,7);ctx.fillStyle=hexA(C.text,.85);ctx.fill();
+  ctx.restore();}
+
+/** Düello halatı/barı. p∈[-1,1]: −1 sol uç, +1 sağ uç, 0 orta. Bar sırası olanın ucuna akar;
+    uca değen raundu kaybeder. o:{p,turn:"L"|"R",L:{e,n},R:{e,n},label,labelCol,flow(0-1 kayan ok fazı),hit:"L"|"R"}.
+    Döner: yükseklik P(96). */
+function duelBar(ctx,x,y,w,o){o=o||{};
+  const h=P(96),ty=y+P(32),th=P(22),ar=P(24);
+  const tx0=x+ar*2+P(12),tx1=x+w-ar*2-P(12),tw=tx1-tx0,mid=(tx0+tx1)/2;
+  const p=Math.max(-1,Math.min(1,o.p||0)),mx=mid+p*tw/2;
+  const Lp=o.L||{e:"😎",n:"Sen"},Rp=o.R||{e:"🦊",n:"Ahmet"};
+  const fc=Math.abs(p)>0.66?C.rose:(Math.abs(p)>0.33?C.warn:C.gold);
+  rr(ctx,tx0,ty-th/2,tw,th,th/2);ctx.fillStyle=C.panel2;ctx.fill();
+  ctx.save();rr(ctx,tx0,ty-th/2,tw,th,th/2);ctx.clip();
+  const dz=tw*0.14;
+  let g=ctx.createLinearGradient(tx0,0,tx0+dz,0);g.addColorStop(0,hexA(C.rose,.6));g.addColorStop(1,hexA(C.rose,0));
+  ctx.fillStyle=g;ctx.fillRect(tx0,ty-th/2,dz,th);
+  g=ctx.createLinearGradient(tx1-dz,0,tx1,0);g.addColorStop(0,hexA(C.rose,0));g.addColorStop(1,hexA(C.rose,.6));
+  ctx.fillStyle=g;ctx.fillRect(tx1-dz,ty-th/2,dz,th);
+  ctx.fillStyle=hexA(fc,.85);ctx.fillRect(Math.min(mid,mx),ty-th/2,Math.abs(mx-mid),th);
+  ctx.restore();
+  ctx.save();ctx.lineWidth=P(1.2);ctx.strokeStyle=C.line;rr(ctx,tx0,ty-th/2,tw,th,th/2);ctx.stroke();ctx.restore();
+  ctx.fillStyle=hexA(C.text,.4);ctx.fillRect(mid-P(1),ty-th/2-P(6),P(2),th+P(12));
+  if(o.turn){
+    const dir=o.turn==="L"?-1:1,f=((o.flow||0)%1+1)%1;
+    ctx.save();ctx.strokeStyle=C.text;ctx.lineWidth=P(2.6);ctx.lineCap="round";ctx.lineJoin="round";
+    for(let i=0;i<3;i++){
+      const cx=mx+dir*(P(24)+(i+f)*P(13));
+      if(cx<tx0+P(8)||cx>tx1-P(8))continue;
+      ctx.globalAlpha=Math.max(0,0.95-(i+f)*0.28);
+      ctx.beginPath();ctx.moveTo(cx-dir*P(4),ty-P(6));ctx.lineTo(cx+dir*P(3),ty);ctx.lineTo(cx-dir*P(4),ty+P(6));ctx.stroke();}
+    ctx.restore();}
+  ctx.save();ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=P(8);
+  ctx.beginPath();ctx.arc(mx,ty,P(15),0,7);ctx.fillStyle=C.text;ctx.fill();ctx.restore();
+  ctx.beginPath();ctx.arc(mx,ty,P(9),0,7);ctx.fillStyle=fc;ctx.fill();
+  const lc=x+ar+P(4),rc=x+w-ar-P(4);
+  avatar(ctx,lc,ty,ar,Lp.e,o.turn==="L"?C.gold:C.violet,{glow:o.hit==="L"?C.rose:(o.turn==="L"?C.gold:null)});
+  avatar(ctx,rc,ty,ar,Rp.e,o.turn==="R"?C.gold:C.sky,{glow:o.hit==="R"?C.rose:(o.turn==="R"?C.gold:null)});
+  txt(ctx,Lp.n,lc,y+P(80),{size:P(12),w:"800",col:o.turn==="L"?C.gold:C.text,align:"center",base:"middle"});
+  txt(ctx,Rp.n,rc,y+P(80),{size:P(12),w:"800",col:o.turn==="R"?C.gold:C.text,align:"center",base:"middle"});
+  if(o.label)txt(ctx,o.label,mid,y+P(72),{size:P(11.5),w:"900",col:o.labelCol||C.dim,align:"center",base:"middle",ls:P(0.8)});
+  return h;}
+
+/** Lobi bahis kartı — "Samet 50 jeton bahis yapmak istiyor" + Kabul / Reddet / Değiştir.
+    o:{e,text,sub,state:"ask"|"wait"|"locked",status,press:"kabul"|"reddet"|"degistir",pop}. Döner: yükseklik. */
+function betCard(ctx,x,y,w,o){o=o||{};
+  const pad=P(16),ar=P(20);
+  const lines=wrapLines(ctx,o.text||"",{size:P(15),w:"800"},w-pad*2-ar*2-P(12));
+  const textH=lines.length*P(20),subH=o.sub?P(20):0,actH=P(44);
+  const h=pad+Math.max(ar*2,P(18)+textH+subH)+P(12)+actH+pad;
+  const pop=o.pop===undefined?1:o.pop;if(pop<=0)return h;
+  const k=0.9+0.1*eBack(clamp01(pop));
+  const locked=o.state==="locked";
+  ctx.save();ctx.globalAlpha=clamp01(pop*2);
+  ctx.translate(x+w/2,y+h/2);ctx.scale(k,k);ctx.translate(-(x+w/2),-(y+h/2));
+  card(ctx,x,y,w,h,P(20),{fill:locked?hexA(C.mint,.10):hexA(C.gold,.08),stroke:locked?hexA(C.mint,.6):hexA(C.gold,.55),lw:P(1.8)});
+  avatar(ctx,x+pad+ar,y+pad+ar,ar,o.e||"🦁",locked?C.mint:C.gold);
+  const tx=x+pad+ar*2+P(12);
+  label(ctx,locked?"Bahis kilitlendi":"Bahis",tx,y+pad+P(10),locked?C.mint:C.gold);
+  lines.forEach((ln,i)=>txt(ctx,ln,tx,y+pad+P(32)+i*P(20),{size:P(15),w:"800",col:C.text}));
+  if(o.sub)txt(ctx,o.sub,tx,y+pad+P(32)+textH,{size:P(12),w:"600",col:C.dim});
+  const ay=y+h-pad-actH;
+  if(o.state==="locked"||o.state==="wait"){
+    rr(ctx,x+pad,ay,w-pad*2,actH,P(12));ctx.fillStyle=locked?hexA(C.mint,.16):C.panel2;ctx.fill();
+    txt(ctx,o.status||(locked?"🔒 Kilitlendi":"Yanıt bekleniyor…"),x+w/2,ay+actH/2,{size:P(14),w:"800",col:locked?C.mint:C.dim,align:"center",base:"middle"});
+  }else{
+    const gap=P(8),bw=(w-pad*2-gap*2)/3;
+    [["Kabul","kabul",C.mint,"#03271a"],["Reddet","reddet",C.panel2,C.text],["Değiştir","degistir",C.panel2,C.gold]].forEach((b,i)=>{
+      const bx=x+pad+i*(bw+gap),pr=o.press===b[1];
+      ctx.save();
+      if(pr){ctx.translate(bx+bw/2,ay+actH/2);ctx.scale(.94,.94);ctx.translate(-(bx+bw/2),-(ay+actH/2));}
+      rr(ctx,bx,ay,bw,actH,P(12));ctx.fillStyle=b[2];ctx.fill();
+      if(i===2){ctx.lineWidth=P(1.4);ctx.strokeStyle=hexA(C.gold,.6);ctx.stroke();}
+      if(pr){ctx.lineWidth=P(2.6);ctx.strokeStyle=C.text;ctx.stroke();}
+      txt(ctx,b[0],bx+bw/2,ay+actH/2,{size:P(14),w:"800",col:b[3],align:"center",base:"middle"});
+      ctx.restore();});
+  }
+  ctx.restore();
+  return h;}
+
+/** Uygulama içi düello daveti — avatar + "Samet seni düelloya çağırıyor" + 2 dk geri sayım halkası + Reddet/Kabul.
+    o:{e,from,sub,left(saniye 0-120),press:"kabul"|"reddet",pop}. Döner: yükseklik. */
+function duelInvite(ctx,x,y,w,o){o=o||{};
+  const pad=P(16),ar=P(24),ringR=P(22);
+  const tx=x+pad+ar*2+P(12),maxW=x+w-pad-ringR*2-P(10)-tx;
+  const lines=wrapLines(ctx,(o.from||"Samet")+" seni düelloya çağırıyor",{size:P(15),w:"800"},maxW);
+  const subH=o.sub?P(19):0,btnH=P(44);
+  const h=pad+Math.max(ar*2,P(22)+lines.length*P(20)+subH)+P(14)+btnH+pad;
+  const pop=o.pop===undefined?1:o.pop;if(pop<=0)return h;
+  const e=eOut(clamp01(pop));
+  ctx.save();ctx.globalAlpha=clamp01(pop*2);ctx.translate(0,(1-e)*-P(18));
+  ctx.save();ctx.shadowColor="rgba(0,0,0,.55)";ctx.shadowBlur=P(22);ctx.shadowOffsetY=P(8);
+  card(ctx,x,y,w,h,P(22),{fill:"#1c2044",stroke:hexA(C.violet,.65),lw:P(1.8)});ctx.restore();
+  avatar(ctx,x+pad+ar,y+pad+ar,ar,o.e||"🦁",C.violet);
+  label(ctx,"Düello daveti",tx,y+pad+P(11),C.violetLo);
+  lines.forEach((ln,i)=>txt(ctx,ln,tx,y+pad+P(33)+i*P(20),{size:P(15),w:"800",col:C.text}));
+  if(o.sub)txt(ctx,o.sub,tx,y+pad+P(33)+lines.length*P(20),{size:P(12),w:"600",col:C.dim});
+  const left=Math.max(0,Math.min(120,o.left===undefined?120:o.left));
+  const rcx=x+w-pad-ringR,rcy=y+pad+ringR;
+  ctx.save();ctx.lineWidth=P(4);ctx.strokeStyle=C.panel2;ctx.beginPath();ctx.arc(rcx,rcy,ringR,0,7);ctx.stroke();
+  ctx.strokeStyle=left<=20?C.rose:C.gold;ctx.lineCap="round";
+  ctx.beginPath();ctx.arc(rcx,rcy,ringR,-Math.PI/2,-Math.PI/2+Math.PI*2*(left/120));ctx.stroke();ctx.restore();
+  const ls=Math.ceil(left),mm=Math.floor(ls/60),ss=String(ls%60).padStart(2,"0");
+  txt(ctx,mm+":"+ss,rcx,rcy,{size:P(11),w:"900",col:C.text,align:"center",base:"middle"});
+  const by=y+h-pad-btnH,gap=P(10),bw1=(w-pad*2-gap)*0.4,bw2=(w-pad*2-gap)-bw1;
+  [[x+pad,bw1,"Reddet","reddet",C.panel2,C.text],[x+pad+bw1+gap,bw2,"Kabul et","kabul",C.mint,"#03271a"]].forEach(b=>{
+    const pr=o.press===b[3];
+    ctx.save();
+    if(pr){ctx.translate(b[0]+b[1]/2,by+btnH/2);ctx.scale(.94,.94);ctx.translate(-(b[0]+b[1]/2),-(by+btnH/2));}
+    rr(ctx,b[0],by,b[1],btnH,P(12));ctx.fillStyle=b[4];ctx.fill();
+    txt(ctx,b[2],b[0]+b[1]/2,by+btnH/2,{size:P(14.5),w:"800",col:b[5],align:"center",base:"middle"});
+    ctx.restore();});
+  ctx.restore();
+  return h;}
+
+/** Wordle ekstra rozeti — "EKSTRA 1/3" + 🪙fiyat. o:{n,of,price,size,h}. Döner: genişlik. */
+function extraBadge(ctx,x,y,o){o=o||{};
+  const size=o.size||P(11),h=o.h||P(24);
+  const a="EKSTRA "+(o.n||1)+"/"+(o.of||3);
+  const aw=meas(ctx,a,{size,w:"900",ls:P(0.8)})+P(18);
+  const b=o.price!==undefined?"🪙"+o.price:"";
+  const bw=b?meas(ctx,b,{size,w:"800"})+P(16):0;
+  rr(ctx,x,y,aw+bw,h,h/2);ctx.fillStyle=hexA(C.gold,.14);ctx.fill();
+  ctx.lineWidth=P(1.2);ctx.strokeStyle=C.gold;ctx.stroke();
+  txt(ctx,a,x+aw/2,y+h/2,{size,w:"900",col:C.gold,align:"center",base:"middle",ls:P(0.8)});
+  if(b){ctx.fillStyle=hexA(C.gold,.5);ctx.fillRect(x+aw,y+h*0.2,P(1),h*0.6);
+    txt(ctx,b,x+aw+bw/2,y+h/2,{size,w:"800",col:C.text,align:"center",base:"middle"});}
+  return aw+bw;}
+
+/** PAS jokeri butonu — maç başına 1 kez. o:{price,sub,used,glow,press,h}. Döner: yükseklik. */
+function passBtn(ctx,x,y,w,o){o=o||{};const h=o.h||P(56);
+  ctx.save();
+  if(o.press){ctx.translate(x+w/2,y+h/2);ctx.scale(.93,.93);ctx.translate(-(x+w/2),-(y+h/2));}
+  ctx.save();if(o.glow&&!o.used){ctx.shadowColor=hexA(C.gold,.9);ctx.shadowBlur=P(18);}
+  rr(ctx,x,y,w,h,P(14));ctx.fillStyle=o.used?C.panel:(o.press?hexA(C.gold,.32):hexA(C.gold,.16));ctx.fill();ctx.restore();
+  rr(ctx,x,y,w,h,P(14));ctx.lineWidth=P(1.6);ctx.strokeStyle=o.used?C.line:C.gold;ctx.stroke();
+  const col=o.used?C.dim:C.gold;
+  txt(ctx,"PAS",x+w/2,y+h*0.38,{size:P(15),w:"900",col,align:"center",base:"middle",ls:P(1.2)});
+  txt(ctx,o.sub||("🪙"+(o.price===undefined?20:o.price)),x+w/2,y+h*0.72,{size:P(10.5),w:"800",col:o.used?C.dim:C.text,align:"center",base:"middle"});
+  ctx.restore();
+  return h;}
+
+/** Düello cevap satırı — ✓ geçerli / ✗ geçersiz. side "L": x sol kenar; "R": x sağ kenar.
+    o:{word,ok,side,note,pop}. Döner: {w,h}. */
+function answerChip(ctx,x,y,o){o=o||{};
+  const h=P(36),size=P(15),col=o.ok?C.mint:C.rose,word=o.word||"";
+  const ww=meas(ctx,word,{size,w:"800"});
+  const nw=o.note?meas(ctx,o.note,{size:P(10.5),w:"700"})+P(10):0;
+  const w=P(40)+ww+nw+P(14);
+  const bx=o.side==="R"?x-w:x;
+  const pop=o.pop===undefined?1:o.pop;if(pop<=0)return {w,h};
+  ctx.save();ctx.globalAlpha=clamp01(pop*1.6);ctx.translate(0,(1-eOut(clamp01(pop)))*P(8));
+  rr(ctx,bx,y,w,h,h/2);ctx.fillStyle=hexA(col,.12);ctx.fill();ctx.lineWidth=P(1.3);ctx.strokeStyle=hexA(col,.6);ctx.stroke();
+  txt(ctx,o.ok?"✓":"✗",bx+P(23),y+h/2,{size:P(15),w:"900",col,align:"center",base:"middle"});
+  txt(ctx,word,bx+P(40),y+h/2,{size,w:"800",col:o.ok?C.text:hexA(C.text,.7),base:"middle"});
+  if(!o.ok){ctx.fillStyle=hexA(C.rose,.85);ctx.fillRect(bx+P(38),y+h/2-P(1),ww+P(4),P(2));}
+  if(o.note)txt(ctx,o.note,bx+P(40)+ww+P(10),y+h/2,{size:P(10.5),w:"700",col,base:"middle"});
+  ctx.restore();
+  return {w,h};}
+
+/** Büyük skor tabelası — iki avatar + Anton "2–1". o:{L:{e,n,s},R:{e,n,s},win:"L"|"R",label}. Döner: yükseklik P(150). */
+function duelScore(ctx,x,y,w,o){o=o||{};
+  const Lp=o.L||{e:"😎",n:"Sen",s:0},Rp=o.R||{e:"🦊",n:"Ahmet",s:0},ar=P(30),cy=y+P(48);
+  [[Lp,x+w*0.17,"L",C.violet],[Rp,x+w*0.83,"R",C.sky]].forEach(a=>{
+    const win=o.win===a[2];
+    avatar(ctx,a[1],cy,ar,a[0].e,win?C.gold:a[3],{glow:win?C.gold:null});
+    if(win)emoji(ctx,"👑",a[1],cy-ar-P(12),P(22));
+    txt(ctx,a[0].n,a[1],y+P(98),{size:P(14),w:"800",col:win?C.gold:C.text,align:"center",base:"middle"});});
+  const s=String(Lp.s)+"–"+String(Rp.s);
+  antonTxt(ctx,s,x+w/2,y+P(74),P(62),C.text,"center");
+  if(o.label)txt(ctx,o.label,x+w/2,y+P(132),{size:P(12.5),w:"700",col:C.dim,align:"center",base:"middle"});
+  return P(150);}
+
+/** Arkadaşa karşı düello karnesi — "Ahmet'e karşı" + Anton "7-4" + son maç noktaları.
+    o:{e,title,win,loss,hist:"GGMG…" (G galibiyet, M mağlubiyet),lastPop(0-1)}. Döner: yükseklik P(156). */
+function recordCard(ctx,x,y,w,o){o=o||{};
+  const h=P(156),pad=P(18),ar=P(28);
+  card(ctx,x,y,w,h,P(22),{fill:C.panel,stroke:hexA(C.violet,.5),lw:P(1.6)});
+  avatar(ctx,x+pad+ar,y+pad+ar,ar,o.e||"🦊",C.sky);
+  const tx=x+pad+ar*2+P(14);
+  label(ctx,"Düello karnesi",tx,y+pad+P(14));
+  txt(ctx,o.title||"Ahmet'e karşı",tx,y+pad+P(40),{size:P(18),w:"800",col:C.text});
+  const sW=String(o.win||0),sL=String(o.loss||0),fs=P(54);
+  const wL=antonTxt(ctx,sL,x+w-pad,y+pad+P(52),fs,C.dim,"right");
+  const wD=antonTxt(ctx,"-",x+w-pad-wL-P(4),y+pad+P(52),fs,C.dim,"right");
+  antonTxt(ctx,sW,x+w-pad-wL-wD-P(8),y+pad+P(52),fs,C.mint,"right");
+  const hist=String(o.hist||"");const dr=P(7),step=P(21);
+  let dx=x+pad+dr;const dy=y+h-pad-P(14);
+  label(ctx,"Son maçlar",x+pad,dy-P(22),C.dim);
+  [...hist].forEach((ch,i)=>{
+    const last=i===hist.length-1;
+    const k=last&&o.lastPop!==undefined?eBack(clamp01(o.lastPop)):1;
+    if(k>0.01){ctx.beginPath();ctx.arc(dx,dy,dr*Math.max(.01,k),0,7);ctx.fillStyle=ch==="G"?C.mint:C.rose;ctx.fill();}
+    dx+=step;});
+  return h;}
+
 /* ══════════════════ video motoru ══════════════════ */
 
 /** Anlatım şeridinin ölçüsünü hesaplar — güvenli alan üstünde. */
@@ -1101,6 +1314,8 @@ window.RK={
   /* yeni bileşenler */
   notif,lockScreen,chatBubble,chatHeader,durButton,stamp,paperBg,handText,hook,
   wordleGrid,popBoard,stopwatch,odometer,
+  /* 4.0.0 eklentileri — düello + wordle ekstra */
+  avatar,tapRipple,duelBar,betCard,duelInvite,extraBadge,passBtn,answerChip,duelScore,recordCard,
   /* video motoru */
   scenes,narrate,narrMetrics,ctaScene,progressLine,
   /* stüdyo */
